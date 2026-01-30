@@ -1,0 +1,190 @@
+---
+openapi: POST /instagram/video/transcript
+title: Instagram Video Transcript
+description: "Get Instagram video transcript."
+---
+
+This endpoint allows you to retrieve transcript for an Instagram video.
+
+<Note>
+**Pricing:**
+- **rapid** channel: \$0.01 per video
+- **memories.ai** channel: \$0.01 per video
+- **apify** channel: Charged at Apify's actual cost (higher and variable pricing)
+</Note>
+
+
+### Code Example
+
+<CodeGroup>
+
+
+
+```python Python
+import requests
+
+BASE_URL = "https://mavi-backend.memories.ai/serve/api/v2"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}"
+}
+
+def instagram_video_transcript(video_url: str, channel: str):
+    url = f"{BASE_URL}/instagram/video/transcript"
+    data = {"video_url": video_url, "channel": channel}
+    resp = requests.post(url, headers=HEADERS, json=data)
+    return resp.json()
+
+# Usage example
+result = instagram_video_transcript("https://www.instagram.com/reels/DLlGZiCOBQ0/", "apify")
+print(result)
+```
+
+</CodeGroup>
+
+### Request Body
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| video_url | string | Yes | The Instagram video URL |
+| channel | string | Yes | The channel name. Supported values: `apify`, `rapid`, `memories.ai` |
+
+### Response
+
+Returns the video transcript with detailed timing information and metadata.
+
+<ResponseExample>
+```json
+{
+  "code": "0000",
+  "msg": "success",
+  "data": [
+    {
+      "transcript": "I'm gonna get a little personal. I had gastric bypass 10 years ago...",
+      "segments": [
+        {
+          "text": "I'm gonna get a little personal.",
+          "start": 0,
+          "end": 2
+        },
+        {
+          "text": "I had gastric bypass 10 years ago.",
+          "start": 2.54,
+          "end": 5.5
+        },
+        {
+          "text": "Thank you.",
+          "start": 34.32,
+          "end": 36.46
+        }
+      ],
+      "words": [
+        {
+          "word": "I'm",
+          "start": 0,
+          "end": 0.02
+        },
+        {
+          "word": "gonna",
+          "start": 0.02,
+          "end": 0.24
+        }
+      ],
+      "displayUrl": "https://scontent-ord5-3.cdninstagram.com/v/t51.2885-15/...",
+      "instagramUrl": "https://www.instagram.com/reel/DLlGZiCOBQ0/",
+      "shortCode": "DLlGZiCOBQ0",
+      "caption": "I have the moves that they're looking for.",
+      "hashtags": "",
+      "ownerUsername": "humansofny",
+      "ownerFullName": "Humans of New York",
+      "videoDuration": 41.125,
+      "timestamp": "2025-07-01T21:09:04.000Z",
+      "videoUrl": "https://scontent-ord5-2.cdninstagram.com/o1/v/t16/f2/m86/...",
+      "likesCount": 27791,
+      "videoViewCount": 27040,
+      "videoPlayCount": 1799817,
+      "commentsCount": 487,
+      "musicArtist": "humansofny",
+      "musicSong": "Original audio",
+      "usesOriginalAudio": true,
+      "locationName": "",
+      "mentions": "",
+      "firstComment": "Go for it sweetie!!!",
+      "id": "3667365614373573684",
+      "type": "Video",
+      "url": "https://www.instagram.com/p/DLlGZiCOBQ0/",
+      "ownerId": "242598499",
+      "locationId": "",
+      "productType": "clips",
+      "isSponsored": false,
+      "audioId": "24313369781619226",
+      "isCommentsDisabled": false,
+      "dimensionsHeight": 1136,
+      "dimensionsWidth": 640,
+      "processedAt": "2025-12-30T06:12:24.581Z",
+      "status": "success",
+      "metadata": {
+        "runId": "R5tnfCOZ6KueHW6uI",
+        "actorId": "3C7L8IMQOkq3isV2Y",
+        "processingType": "single-processing",
+        "urlIndex": 1,
+        "totalUrls": 1,
+        "userTier": "PAID",
+        "processingSpeed": "standard"
+      }
+    }
+  ],
+  "failed": false,
+  "success": true
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code indicating the result status |
+| msg | string | Response message describing the operation result |
+| data | array[object] | Array containing transcript data objects |
+| data[].transcript | string | Complete transcript text |
+| data[].segments | array[object] | Array of transcript segments with timing information |
+| data[].segments[].text | string | Text content of the segment |
+| data[].segments[].start | number | Start time of the segment in seconds |
+| data[].segments[].end | number | End time of the segment in seconds |
+| data[].words | array[object] | Array of individual words with timing information |
+| data[].words[].word | string | The word text |
+| data[].words[].start | number | Start time of the word in seconds |
+| data[].words[].end | number | End time of the word in seconds |
+| data[].displayUrl | string | Display image URL |
+| data[].instagramUrl | string | Instagram video URL |
+| data[].shortCode | string | Instagram short code |
+| data[].caption | string | Video caption |
+| data[].ownerUsername | string | Instagram owner username |
+| data[].ownerFullName | string | Instagram owner full name |
+| data[].videoDuration | number | Video duration in seconds |
+| data[].timestamp | string | Video timestamp |
+| data[].videoUrl | string | Direct video URL |
+| data[].likesCount | number | Number of likes |
+| data[].videoViewCount | number | Number of video views |
+| data[].videoPlayCount | number | Number of video plays |
+| data[].commentsCount | number | Number of comments |
+| data[].musicArtist | string | Music artist name |
+| data[].musicSong | string | Music song name |
+| data[].usesOriginalAudio | boolean | Whether the video uses original audio |
+| data[].firstComment | string | First comment text |
+| data[].id | string | Video ID |
+| data[].type | string | Content type |
+| data[].url | string | Video URL |
+| data[].ownerId | string | Owner ID |
+| data[].productType | string | Product type |
+| data[].isSponsored | boolean | Whether the video is sponsored |
+| data[].isCommentsDisabled | boolean | Whether comments are disabled |
+| data[].dimensionsHeight | number | Video height in pixels |
+| data[].dimensionsWidth | number | Video width in pixels |
+| data[].processedAt | string | Processing timestamp |
+| data[].status | string | Processing status |
+| data[].metadata | object | Additional metadata information |
+| success | boolean | Indicates whether the operation was successful |
+| failed | boolean | Indicates whether the operation failed |
+

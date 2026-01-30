@@ -1,0 +1,119 @@
+---
+openapi: POST /youtube/video/comment/reply
+title: YouTube Video Comment Reply
+description: "Get the reply list for YouTube video comments."
+---
+
+This API is used to get the reply list for YouTube video comments with pagination support.
+
+<Note>
+Each API call costs **$0.01 USD**.
+</Note>
+
+<Warning>
+- The maximum value for pagination parameter `page_size` is **100**
+- `next_page_token` should be **null** for the first request, use the `next_page_token` returned from the previous response for subsequent requests
+- When `next_page_token` in the response is `null`, it indicates all replies have been retrieved
+</Warning>
+
+### Code Example
+
+<CodeGroup>
+
+```python Python
+import requests
+
+BASE_URL = "https://mavi-security-backend.openinterx.com/serve"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}",
+    "Content-Type": "application/json"
+}
+
+def youtube_video_comment_reply(comment_id: str):
+    url = f"{BASE_URL}/youtube/video/comment/reply"
+    page_size = 100
+    next_page_token = None
+    all_replies = []
+    while True:
+        data = {"comment_id": comment_id, "page_size": page_size, "next_page_token": next_page_token}
+        resp = requests.post(url, json=data, headers=HEADERS).json()
+        replies = resp.get("items", [])
+        all_replies.extend(replies)
+        next_page_token = resp.get("next_page_token")
+        if not next_page_token:
+            break
+    return all_replies
+
+# Usage example
+replies = youtube_video_comment_reply("comment_id")
+print(replies)
+```
+
+</CodeGroup>
+
+### Request Body
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| comment_id | string | Yes | Comment ID |
+| page_size | number | No | Number of replies returned per page, maximum value is 100, default is 100 |
+| next_page_token | string \| null | No | Next page token, should be null for the first request, use the value returned from the previous response for subsequent requests |
+
+### Response
+
+Returns an object containing the reply list and pagination information.
+
+<ResponseExample>
+```json
+{
+  "items": [
+    {
+      "id": "reply_id_1",
+      "text": "Reply content",
+      "published_at": "2024-01-01T00:00:00Z",
+      "like_count": 5,
+      "author": {
+        "id": "user_id",
+        "name": "username",
+        "channel_url": "https://..."
+      }
+    },
+    {
+      "id": "reply_id_2",
+      "text": "Another reply",
+      "published_at": "2024-01-02T00:00:00Z",
+      "like_count": 3,
+      "author": {
+        "id": "user_id_2",
+        "name": "username2",
+        "channel_url": "https://..."
+      }
+    }
+  ],
+  "next_page_token": "CAoQAA",
+  "page_info": {
+    "total_results": 50,
+    "results_per_page": 100
+  }
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| items | array[object] | Reply list array |
+| items[].id | string | Reply ID |
+| items[].text | string | Reply content |
+| items[].published_at | string | Reply published time (ISO 8601 format) |
+| items[].like_count | number | Like count |
+| items[].author | object | Reply author information |
+| items[].author.id | string | Author ID |
+| items[].author.name | string | Author username |
+| items[].author.channel_url | string | Author channel URL |
+| next_page_token | string \| null | Next page token, used to get the next page of data, null indicates all data has been retrieved |
+| page_info | object | Pagination information |
+| page_info.total_results | number | Total number of replies |
+| page_info.results_per_page | number | Number of results per page |

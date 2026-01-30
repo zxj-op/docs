@@ -1,0 +1,110 @@
+---
+openapi: POST /tiktok/video/comment
+title: TikTok Video Comment
+description: "Get the comment list for TikTok videos."
+---
+
+This API is used to get the comment list for TikTok videos with pagination support.
+
+<Note>
+Each API call costs **$0.01 USD**.
+</Note>
+
+<Warning>
+- The maximum value for pagination parameter `page_size` is **50**
+- `cursor` starts from **0**, increment by `page_size` value each time
+- When the number of returned comments is less than `page_size`, it indicates all comments have been retrieved
+</Warning>
+
+### Code Example
+
+<CodeGroup>
+
+```python Python
+import requests
+
+BASE_URL = "https://mavi-security-backend.openinterx.com/serve"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}",
+    "Content-Type": "application/json"
+}
+
+def tiktok_video_comment(video_id: str):
+    url = f"{BASE_URL}/tiktok/video/comment"
+    page_size = 50
+    cursor = 0
+    all_comments = []
+    while True:
+        data = {"video_id": video_id, "page_size": page_size, "cursor": cursor}
+        resp = requests.post(url, json=data, headers=HEADERS).json()
+        comments = resp if isinstance(resp, list) else []
+        all_comments.extend(comments)
+        if len(comments) < page_size:
+            break
+        cursor += page_size
+    return all_comments
+
+# Usage example
+comments = tiktok_video_comment("your_tiktok_video_id")
+print(comments)
+```
+
+</CodeGroup>
+
+### Request Body
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| video_id | string | Yes | TikTok video ID |
+| page_size | number | No | Number of comments returned per page, maximum value is 50, default is 50 |
+| cursor | number | No | Pagination cursor, starts from 0, default is 0 |
+
+### Response
+
+Returns an array of comment list.
+
+<ResponseExample>
+```json
+[
+  {
+    "cid": "comment_id_1",
+    "text": "Comment content",
+    "create_time": 1756245606,
+    "like_count": 10,
+    "author": {
+      "id": "user_id",
+      "name": "username",
+      "nick_name": "Display name"
+    },
+    "reply_count": 5
+  },
+  {
+    "cid": "comment_id_2",
+    "text": "Another comment",
+    "create_time": 1756245700,
+    "like_count": 20,
+    "author": {
+      "id": "user_id_2",
+      "name": "username2",
+      "nick_name": "Display name 2"
+    },
+    "reply_count": 0
+  }
+]
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| [].cid | string | Comment ID |
+| [].text | string | Comment content |
+| [].create_time | number | Comment creation timestamp |
+| [].like_count | number | Like count |
+| [].author | object | Comment author information |
+| [].author.id | string | Author ID |
+| [].author.name | string | Author username |
+| [].author.nick_name | string | Author display name |
+| [].reply_count | number | Reply count |

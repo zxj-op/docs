@@ -1,0 +1,103 @@
+---
+openapi: POST /tiktok/video/detail
+title: TikTok Video Detail
+description: "Get detailed information for TikTok videos."
+---
+
+This API is used to get detailed information for TikTok videos.
+
+<Note>
+Each API call costs **$0.01 USD**.
+</Note>
+
+### Code Example
+
+<CodeGroup>
+
+```python Python
+import requests
+
+BASE_URL = "https://mavi-security-backend.openinterx.com/serve"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}",
+    "Content-Type": "application/json"
+}
+
+def tiktok_video_detail(video_id: str):
+    url = f"{BASE_URL}/tiktok/video/detail"
+    data = {"video_id": video_id}
+    resp = requests.post(url, json=data, headers=HEADERS)
+    return resp.json()
+
+# Usage example
+result = tiktok_video_detail("your_tiktok_video_id")
+print(result)
+```
+
+</CodeGroup>
+
+### Request Body
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| video_id | string | Yes | TikTok video ID |
+
+### Response
+
+Returns detailed information for the TikTok video.
+
+<ResponseExample>
+```json
+{
+  "code": "0000",
+  "msg": "success",
+  "data": {
+    "video_id": "7543017294226558221",
+    "title": "Video title",
+    "description": "Video description",
+    "author": {
+      "id": "6638037497953681414",
+      "name": "username",
+      "nick_name": "Display name"
+    },
+    "stats": {
+      "like_count": 1000,
+      "comment_count": 100,
+      "share_count": 50,
+      "view_count": 10000
+    },
+    "create_time": 1756245606,
+    "video_url": "https://...",
+    "cover_url": "https://..."
+  },
+  "success": true,
+  "failed": false
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code, indicates the operation result status |
+| msg | string | Response message, describes the operation result |
+| data | object | Response data object, contains video detailed information |
+| data.video_id | string | Video ID |
+| data.title | string | Video title |
+| data.description | string | Video description |
+| data.author | object | Author information |
+| data.author.id | string | Author ID |
+| data.author.name | string | Author username |
+| data.author.nick_name | string | Author display name |
+| data.stats | object | Statistics data |
+| data.stats.like_count | number | Like count |
+| data.stats.comment_count | number | Comment count |
+| data.stats.share_count | number | Share count |
+| data.stats.view_count | number | View count |
+| data.create_time | number | Creation timestamp |
+| data.video_url | string | Video URL |
+| data.cover_url | string | Cover image URL |
+| success | boolean | Indicates whether the operation was successful |
+| failed | boolean | Indicates whether the operation failed |

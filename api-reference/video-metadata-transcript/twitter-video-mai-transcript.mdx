@@ -1,0 +1,250 @@
+---
+openapi: POST /twitter/video/mai/transcript
+title: Twitter Video MAI Transcript
+description: "Get Twitter video transcript using MAI."
+---
+
+This endpoint allows you to retrieve transcript for a Twitter video using MAI method.
+
+<Note>
+**Pricing:**
+Total cost = Base fee + Input tokens fee + Output tokens fee + Duration fee
+
+- Base fee: \$0.1 per video
+- Input tokens: \$0.45/1M tokens
+- Output tokens: \$3.75/1M tokens
+- Video duration: \$0.0001 per second
+
+**Example calculation:**
+For a 41-second video with 15,160 input tokens and 813 output tokens:
+- Base: \$0.1
+- Input: 15,160 × \$0.45/1M = \$0.00682
+- Output: 813 × \$3.75/1M = \$0.00305
+- Duration: 41 × \$0.0001 = \$0.0041
+- **Total: \$0.11397**
+</Note>
+
+
+### Code Example
+
+<CodeGroup>
+
+
+
+```python Python
+import requests
+
+BASE_URL = "https://mavi-backend.memories.ai/serve/api/v2"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}"
+}
+
+def twitter_video_mai_transcript(video_url: str):
+    url = f"{BASE_URL}/twitter/video/mai/transcript"
+    data = {"video_url": video_url}
+    resp = requests.post(url, headers=HEADERS, json=data)
+    return resp.json()
+
+# Usage example
+result = twitter_video_mai_transcript("https://x.com/NBCOlympics/status/1989901761650323606")
+print(result)
+```
+
+</CodeGroup>
+
+### Response
+
+Returns the transcription task information.
+
+<ResponseExample>
+```json Response
+{
+  "code": "0000",
+  "msg": "success",
+  "data": {
+    "task_id": "1cd78354af824c8eb1dafe4ed2435720"
+  },
+  "failed": false,
+  "success": true
+}
+```
+
+```json Callback Response
+{
+  "code": "0000",
+  "message": "SUCCESS",
+  "data": {
+    "videoTranscript": {
+      "data": {
+        "data": [
+          {
+            "end_time": 19.0,
+            "start_time": 0.0,
+            "transcript": "A man in a blue jacket and red gloves sits between two women, all three looking at something off-screen. The man gestures with his hands, then covers his mouth in surprise, his eyes wide. The women on either side of him smile and laugh, one patting his arm. The man then throws his hands up in excitement, then covers his face with his red-gloved hands, appearing to cry tears of joy. The women continue to smile and laugh, one of them patting his shoulder."
+          }
+        ],
+        "error_rate": 0.0,
+        "usage_metadata": {
+          "duration": 0.0,
+          "model": "gemini-2.5-flash",
+          "output_tokens": 153,
+          "prompt_tokens": 7009
+        }
+      },
+      "msg": "Video transcription completed successfully",
+      "success": true
+    },
+    "audioTranscript": {
+      "data": {
+        "data": [
+          {
+            "end_time": 3.0,
+            "speaker": null,
+            "start_time": 0.0,
+            "text": " Wait for his reaction."
+          },
+          {
+            "end_time": 5.0,
+            "speaker": null,
+            "start_time": 3.0,
+            "text": " Yes, first place."
+          },
+          {
+            "end_time": 7.0,
+            "speaker": null,
+            "start_time": 5.0,
+            "text": " Ah!"
+          }
+        ],
+        "usage_metadata": {
+          "duration": 18.304,
+          "model": "whisper-1",
+          "output_tokens": 0,
+          "prompt_tokens": 0
+        }
+      },
+      "msg": "ASR transcription completed successfully",
+      "success": true
+    }
+  },
+  "task_id": "3adc70ed358b469da2c0553a59c5f2c5"
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code indicating the result status |
+| msg | string | Response message describing the operation result |
+| data | object | Response data object containing task information |
+| data.task_id | string | Unique identifier of the transcription task |
+| success | boolean | Indicates whether the operation was successful |
+| failed | boolean | Indicates whether the operation failed |
+
+### Callback Response Parameters
+
+When the Twitter video transcription is complete, a callback will be sent to your configured webhook URL.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code ("0000" indicates success) |
+| message | string | Status message (e.g., "SUCCESS") |
+| data | object | Response data object containing both video and audio transcription results |
+| data.videoTranscript | object | Video transcription result object |
+| data.videoTranscript.data | object | Inner data object containing video transcription segments and usage information |
+| data.videoTranscript.data.data | array | Array of video transcription segments with timestamps |
+| data.videoTranscript.data.data[].start_time | number | Start time of the video segment in seconds |
+| data.videoTranscript.data.data[].end_time | number | End time of the video segment in seconds |
+| data.videoTranscript.data.data[].transcript | string | Video transcription text describing the visual content |
+| data.videoTranscript.data.error_rate | number | Error rate of the video transcription (0.0 means no errors) |
+| data.videoTranscript.data.usage_metadata | object | Usage statistics for the video transcription |
+| data.videoTranscript.data.usage_metadata.duration | number | Processing duration in seconds |
+| data.videoTranscript.data.usage_metadata.model | string | The AI model used for video transcription (e.g., "gemini-2.5-flash") |
+| data.videoTranscript.data.usage_metadata.output_tokens | integer | Number of tokens in the generated video transcription |
+| data.videoTranscript.data.usage_metadata.prompt_tokens | integer | Number of tokens in the input prompt |
+| data.videoTranscript.msg | string | Detailed message about the video transcription result |
+| data.videoTranscript.success | boolean | Indicates whether the video transcription was successful |
+| data.audioTranscript | object | Audio transcription result object |
+| data.audioTranscript.data | object | Inner data object containing audio transcription segments and usage information |
+| data.audioTranscript.data.data | array | Array of audio transcription segments with timestamps |
+| data.audioTranscript.data.data[].start_time | number | Start time of the audio segment in seconds |
+| data.audioTranscript.data.data[].end_time | number | End time of the audio segment in seconds |
+| data.audioTranscript.data.data[].text | string | Audio transcription text for this segment |
+| data.audioTranscript.data.data[].speaker | string \| null | Speaker identifier (null if speaker identification not enabled) |
+| data.audioTranscript.data.usage_metadata | object | Usage statistics for the audio transcription |
+| data.audioTranscript.data.usage_metadata.duration | number | Audio duration in seconds |
+| data.audioTranscript.data.usage_metadata.model | string | The model used for audio transcription (e.g., "whisper-1") |
+| data.audioTranscript.data.usage_metadata.output_tokens | integer | Number of output tokens (0 for audio transcription) |
+| data.audioTranscript.data.usage_metadata.prompt_tokens | integer | Number of prompt tokens (0 for audio transcription) |
+| data.audioTranscript.msg | string | Detailed message about the audio transcription result |
+| data.audioTranscript.success | boolean | Indicates whether the audio transcription was successful |
+| task_id | string | The task ID associated with this transcription request |
+
+### Understanding the Callback Response
+
+The callback response has a nested structure with both video and audio transcription results inside `data`.
+
+**Response Structure:**
+```
+callback_response
+├── code: "0000"
+├── message: "SUCCESS"
+├── data
+│   ├── videoTranscript
+│   │   ├── data
+│   │   │   ├── data: [array of video transcription segments]
+│   │   │   │   └── [
+│   │   │   │       {
+│   │   │   │         start_time: 0.0,
+│   │   │   │         end_time: 19.0,
+│   │   │   │         transcript: "..."
+│   │   │   │       },
+│   │   │   │       ...
+│   │   │   │     ]
+│   │   │   ├── error_rate: 0.0
+│   │   │   └── usage_metadata
+│   │   │       ├── duration: 0.0
+│   │   │       ├── model: "gemini-2.5-flash"
+│   │   │       ├── output_tokens: 153
+│   │   │       └── prompt_tokens: 7009
+│   │   ├── msg: "Video transcription completed successfully"
+│   │   └── success: true
+│   └── audioTranscript
+│       ├── data
+│       │   ├── data: [array of audio transcription segments]
+│       │   │   └── [
+│       │   │       {
+│       │   │         start_time: 0.0,
+│       │   │         end_time: 3.0,
+│       │   │         text: " Wait for his reaction.",
+│       │   │         speaker: null
+│       │   │       },
+│       │   │       ...
+│       │   │     ]
+│       │   └── usage_metadata
+│       │       ├── duration: 18.304
+│       │       ├── model: "whisper-1"
+│       │       ├── output_tokens: 0
+│       │       └── prompt_tokens: 0
+│       ├── msg: "ASR transcription completed successfully"
+│       └── success: true
+└── task_id: "3adc70ed358b469da2c0553a59c5f2c5"
+```
+
+**How to access the data:**
+- Video transcription segments: `callback_response.data.videoTranscript.data.data`
+- First video segment text: `callback_response.data.videoTranscript.data.data[0].transcript`
+- Video error rate: `callback_response.data.videoTranscript.data.error_rate`
+- Video usage statistics: `callback_response.data.videoTranscript.data.usage_metadata`
+- Video model used: `callback_response.data.videoTranscript.data.usage_metadata.model`
+- Audio transcription segments: `callback_response.data.audioTranscript.data.data`
+- First audio segment text: `callback_response.data.audioTranscript.data.data[0].text`
+- First audio segment speaker: `callback_response.data.audioTranscript.data.data[0].speaker`
+- Audio usage statistics: `callback_response.data.audioTranscript.data.usage_metadata`
+- Audio model used: `callback_response.data.audioTranscript.data.usage_metadata.model`
+- Success status: `callback_response.data.videoTranscript.success` and `callback_response.data.audioTranscript.success`
+- Task ID: `callback_response.task_id`
+

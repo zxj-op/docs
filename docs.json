@@ -23,64 +23,64 @@
             ]
           },
           {
-            "group": "Base",
+            "group": "base",
             "icon": "at",
             "pages": [
-              "api-reference/Base/upload",
+              "api-reference/base/upload",
               {
                 "group": "Upload by Signed URL",
                 "pages": [
-                  "api-reference/Base/upload-by-signed-url/get-upload-signed-url",
-                  "api-reference/Base/upload-by-signed-url/upload-file-using-signed-url"
+                  "api-reference/base/upload-by-signed-url/get-upload-signed-url",
+                  "api-reference/base/upload-by-signed-url/upload-file-using-signed-url"
                 ]
               },
-              "api-reference/Base/delete",
-              "api-reference/Base/get-metadata",
-              "api-reference/Base/download",
-              "api-reference/Base/extract-frames",
-              "api-reference/Base/video-clip",
-              "api-reference/Base/video-split",
-              "api-reference/Base/video-edit"
+              "api-reference/base/delete",
+              "api-reference/base/get-metadata",
+              "api-reference/base/download",
+              "api-reference/base/extract-frames",
+              "api-reference/base/video-clip",
+              "api-reference/base/video-split",
+              "api-reference/base/video-edit"
             ]
           },
           {
             "group": "Transcript",
             "icon": "file-text",
             "pages": [
-              "api-reference/Transcript/sync-generate-speaker",
-              "api-reference/Transcript/sync-generate-audio",
-              "api-reference/Transcript/async-summary",
-              "api-reference/Transcript/async-generate-video",
-              "api-reference/Transcript/async-generate-speaker",
-              "api-reference/Transcript/speaker-recgonition",
-              "api-reference/Transcript/async-generate-audio"
+              "api-reference/transcript/sync-generate-speaker",
+              "api-reference/transcript/sync-generate-audio",
+              "api-reference/transcript/async-summary",
+              "api-reference/transcript/async-generate-video",
+              "api-reference/transcript/async-generate-speaker",
+              "api-reference/transcript/speaker-recgonition",
+              "api-reference/transcript/async-generate-audio"
             ]
           },
           {
             "group": "Video Metadata & Transcript",
             "icon": "video",
             "pages": [
-              "api-reference/Video-Metadata-Transcript/youtube-video-metadata",
-              "api-reference/Video-Metadata-Transcript/youtube-video-transcript",
-              "api-reference/Video-Metadata-Transcript/youtube-video-mai-transcript",
-              "api-reference/Video-Metadata-Transcript/instagram-video-metadata",
-              "api-reference/Video-Metadata-Transcript/instagram-video-transcript",
-              "api-reference/Video-Metadata-Transcript/instagram-video-mai-transcript",
-              "api-reference/Video-Metadata-Transcript/tiktok-video-metadata",
-              "api-reference/Video-Metadata-Transcript/tiktok-video-transcript",
-              "api-reference/Video-Metadata-Transcript/tiktok-video-mai-transcript",
-              "api-reference/Video-Metadata-Transcript/twitter-video-metadata",
-              "api-reference/Video-Metadata-Transcript/twitter-video-transcript",
-              "api-reference/Video-Metadata-Transcript/twitter-video-mai-transcript"
+              "api-reference/video-Metadata-Transcript/youtube-video-metadata",
+              "api-reference/video-Metadata-Transcript/youtube-video-transcript",
+              "api-reference/video-Metadata-Transcript/youtube-video-mai-transcript",
+              "api-reference/video-Metadata-Transcript/instagram-video-metadata",
+              "api-reference/video-Metadata-Transcript/instagram-video-transcript",
+              "api-reference/video-Metadata-Transcript/instagram-video-mai-transcript",
+              "api-reference/video-Metadata-Transcript/tiktok-video-metadata",
+              "api-reference/video-Metadata-Transcript/tiktok-video-transcript",
+              "api-reference/video-Metadata-Transcript/tiktok-video-mai-transcript",
+              "api-reference/video-Metadata-Transcript/twitter-video-metadata",
+              "api-reference/video-Metadata-Transcript/twitter-video-transcript",
+              "api-reference/video-Metadata-Transcript/twitter-video-mai-transcript"
             ]
           },
           {
             "group": "Embeddings",
             "icon": "vector-square",
             "pages": [
-              "api-reference/Embeddings/image-embedding",
-              "api-reference/Embeddings/video-embedding",
-              "api-reference/Embeddings/text-embedding"
+              "api-reference/embeddings/image-embedding",
+              "api-reference/embeddings/video-embedding",
+              "api-reference/embeddings/text-embedding"
             ]
           },
           {

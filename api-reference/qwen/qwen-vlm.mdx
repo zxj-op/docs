@@ -1,0 +1,185 @@
+---
+openapi: api-reference/qwen/openapi.json POST /vu/chat/completions
+title: Qwen
+description: "Generate chat completions using Qwen VLM model with image and video inputs."
+---
+
+This endpoint allows you to generate chat completions with image and video inputs using Qwen VLM model.
+
+## Supported Models
+
+All models require the `qwen:` prefix when used in the `model` parameter (e.g., `qwen:qwen3-vl-plus`).
+
+### Qwen 3 VL Plus (Premium - Tiered Pricing)
+
+| Model | Input Price | Output Price |
+|-------|------------|--------------|
+| **qwen3-vl-plus** | \$0.00021/1K (≤32K), \$0.00031/1K (32K-128K), \$0.00063/1K (128K-256K) | \$0.00168/1K (≤32K), \$0.00252/1K (32K-128K), \$0.00503/1K (128K-256K) |
+| **qwen3-vl-plus-2025-12-19** | \$0.00021/1K (≤32K), \$0.00031/1K (32K-128K), \$0.00063/1K (128K-256K) | \$0.00168/1K (≤32K), \$0.00252/1K (32K-128K), \$0.00503/1K (128K-256K) |
+| **qwen3-vl-plus-2025-09-23** | \$0.00021/1K (≤32K), \$0.00031/1K (32K-128K), \$0.00063/1K (128K-256K) | \$0.00168/1K (≤32K), \$0.00252/1K (32K-128K), \$0.00503/1K (128K-256K) |
+
+### Qwen 3 VL Flash (Cost-Effective - Tiered Pricing)
+
+| Model | Input Price | Output Price |
+|-------|------------|--------------|
+| **qwen3-vl-flash** | \$0.000052/1K (≤32K), \$0.000079/1K (32K-128K), \$0.000126/1K (128K-256K) | \$0.00042/1K (≤32K), \$0.00063/1K (32K-128K), \$0.00101/1K (128K-256K) |
+| **qwen3-vl-flash-2025-10-15** | \$0.000052/1K (≤32K), \$0.000079/1K (32K-128K), \$0.000126/1K (128K-256K) | \$0.00042/1K (≤32K), \$0.00063/1K (32K-128K), \$0.00101/1K (128K-256K) |
+
+### Qwen VL Max (Legacy)
+
+| Model | Input Price | Output Price |
+|-------|------------|--------------|
+| **qwen-vl-max** | \$0.00084/1K tokens | \$0.00335/1K tokens |
+| **qwen-vl-max-latest** | \$0.00084/1K tokens | \$0.00335/1K tokens |
+| **qwen-vl-max-2025-08-13** | \$0.00084/1K tokens | \$0.00335/1K tokens |
+| **qwen-vl-max-2025-04-08** | \$0.00084/1K tokens | \$0.00335/1K tokens |
+
+### Qwen VL Plus (Legacy)
+
+| Model | Input Price | Output Price |
+|-------|------------|--------------|
+| **qwen-vl-plus** | \$0.00022/1K tokens | \$0.00066/1K tokens |
+| **qwen-vl-plus-latest** | \$0.00022/1K tokens | \$0.00066/1K tokens |
+| **qwen-vl-plus-2025-08-15** | \$0.00022/1K tokens | \$0.00066/1K tokens |
+| **qwen-vl-plus-2025-05-07** | \$0.00022/1K tokens | \$0.00066/1K tokens |
+| **qwen-vl-plus-2025-01-25** | \$0.00022/1K tokens | \$0.00066/1K tokens |
+
+<Note>
+**Pricing Notes:**
+- All prices are per 1,000 tokens and converted from CNY at exchange rate of 7.0
+- Qwen 3 VL models support tiered pricing: ≤32K, 32K-128K, 128K-256K token ranges
+- Legacy models (Qwen VL Max/Plus) use flat-rate pricing
+- Remember to include the `qwen:` prefix: `"model": "qwen:qwen3-vl-plus"`
+</Note>
+
+### Request Body
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| model | string | Yes | - | The model to use (e.g., `qwen:qwen3-vl-plus`) |
+| messages | array | Yes | - | Array of message objects. Each message contains:<br/>- `role`: Role type, values: `system`, `user`<br/>- `content`: Message content, can be a string or array. Array items can contain:<br/>  - `image`: Image URL or base64 encoded image<br/>  - `video`: Video URL only (video does not support base64)<br/>  - `text`: Text content |
+| temperature | number | No | 0.7 | Controls randomness: 0.0-2.0, higher = more random |
+| max_tokens | integer | No | 1024 | Maximum number of tokens to generate |
+| top_p | number | No | 0.9 | Nucleus sampling: 0.0-1.0, consider tokens with top_p probability mass |
+| frequency_penalty | number | No | 0.0 | Reduces repetition of frequent tokens: -2.0 to 2.0 |
+| presence_penalty | number | No | 0.0 | Increases likelihood of new topics: -2.0 to 2.0 |
+| n | integer | No | 1 | Number of completions to generate |
+| stream | boolean | No | false | Whether to stream the response |
+| stop | string \| array \| null | No | null | Stop sequences. Can be a string, array of strings, or null |
+| extra_body | object | No | - | Additional body parameters. Contains:<br/>- `metadata`: Metadata object<br/>  - `enable_thinking`: Boolean to enable thinking mode<br/>  - `thinking_budget`: Integer value for thinking budget<br/>  - `response_format`: Response format configuration<br/>    - `type`: Format type (`json_schema`)<br/>    - `json_schema`: JSON schema object<br/>      - `name`: Schema name<br/>      - `schema`: JSON schema definition |
+
+### Code Example
+
+<CodeGroup>
+
+
+
+```python Python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-mai-this_a_test_string_please_use_your_generated_key_during_testing",
+    base_url="https://mavi-backend.memories.ai/serve/api/v2/iu"
+)
+
+resp = client.chat.completions.create(
+    model="qwen:qwen3-vl-plus",
+    messages=[
+        {"role": "system", "content": "You are a multimodal assistant. Keep your answers concise."},
+        {
+            "role": "user",
+            "content": [
+                {
+                    "image": "https://storage.googleapis.com/memories-test-data/gun5.png"  # url or base64
+                },
+                {
+                    "video": "https://storage.googleapis.com/memories-test-data/test_1min.mp4"  # url only
+                },
+                {"text": "What is the content of this image?"}
+            ]
+        }
+    ],
+    temperature=0.7,  # Controls randomness: 0.0-2.0, higher = more random
+    max_tokens=1024,  # Maximum number of tokens to generate
+    top_p=0.9,  # Nucleus sampling: 0.0-1.0, consider tokens with top_p probability mass
+    frequency_penalty=0.0,  # -2.0 to 2.0, reduces repetition of frequent tokens
+    presence_penalty=0.0,  # -2.0 to 2.0, increases likelihood of new topics
+    n=1,  # Number of completions to generate
+    stream=False,  # Whether to stream the response
+    stop=None,  # Stop sequences (list of strings)
+    extra_body={
+        "metadata": {
+            "enable_thinking": True,
+            "thinking_budget": 1024,
+            "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                    "name": "answer",
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "result": {"type": "string"}
+                        },
+                        "required": ["result"]
+                    }
+                }
+            }
+        }
+    }
+)
+print(resp)
+```
+
+</CodeGroup>
+
+### Response
+
+Returns the chat completion response with structured output.
+
+<ResponseExample>
+```json
+{
+  "id": "9212f247-2372-95b3-8c9b-968368a952fc",
+  "object": "completion",
+  "model": "qwen3-vl-plus",
+  "created_at": 1767095035,
+  "status": "completed",
+  "choices": [
+    {
+      "text": "This video shows an interesting scientific experiment conducted in a vacuum environment, titled \"Vacuum vs Orange\".\n\n**Experimental Setup and Preparation:**\n- The experiment is conducted in a transparent vacuum chamber with a red lid on top, equipped with a pressure gauge and valve.\n- Three items are placed inside the chamber:\n  1. A whole orange placed on a metal stand.\n  2. A peeled orange (or small orange) also placed on a stand.\n  3. A glass of orange juice in a wine glass.\n\n**Experimental Process:**\n1. **Vacuum begins (around 0:02)**: The operator opens the valve and starts evacuating. As the pressure inside the chamber decreases (pressure gauge needle moves), the orange juice begins to bubble and expand vigorously.\n2. **Orange juice reacts violently (around 0:14)**: The orange juice rapidly expands and overflows from the wine glass, forming a large amount of foam and flowing to the bottom of the chamber. This is due to dissolved gases in the liquid rapidly releasing under low pressure.\n3. **Fruit changes (around 0:28)**: The peeled orange surface begins to exude juice, the flesh expands and becomes moist and juicy; the whole orange surface also begins to have slight water seepage, but the changes are less obvious.\n4. **Sustained low pressure state (around 0:35-0:53)**: Orange juice continues to bubble, foam gradually stabilizes; peeled orange continues to exude juice, flesh significantly expands; whole orange surface has water droplets condensing.\n5. **Ending stage (around 0:55)**: The operator closes the valve, stops evacuating, pressure gauge needle swings back, and the pressure inside the chamber recovers. Orange juice foam gradually subsides, but the spilled liquid and exuded juice remain at the bottom of the chamber.\n\n**Experimental Results Summary:**\n- **Orange juice**: Under vacuum, due to sudden pressure drop, dissolved gases rapidly escape, causing violent boiling and overflow.\n- **Peeled orange**: Flesh exposed to low pressure environment, intracellular gas expands, causing flesh expansion and exuding large amounts of juice.\n- **Whole orange**: Protected by the peel, changes are minimal, only slight water vapor condensation on the surface.\n\n**Scientific Principle:**\nThis experiment visually demonstrates the physical phenomena of \"pressure reduction causing liquid boiling point to decrease\" and \"gas solubility decreases as pressure decreases\", commonly used in science education to vividly demonstrate the effects of vacuum environment on different forms of matter.\n\nThe entire video reveals the effects of pressure changes on matter states in a vivid and interesting way by comparing the different reactions of three forms of orange products in vacuum.",
+      "index": 0
+    }
+  ],
+  "usage": {
+    "input_tokens": 34578,
+    "output_tokens": 561,
+    "total_tokens": 35139
+  },
+  "meta": {
+    "provider": "qwen",
+    "provider_model": "qwen3-vl-plus"
+  }
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| id | string | Unique identifier for the completion |
+| object | string | Object type, always "completion" |
+| model | string | The model used for the completion |
+| created_at | integer | Unix timestamp of when the completion was created |
+| status | string | Status of the completion (e.g., "completed") |
+| choices | array | Array of completion choices |
+| choices[].text | string | Text content of the completion |
+| choices[].index | integer | Index of the choice in the choices array |
+| usage | object | Token usage information |
+| usage.input_tokens | integer | Number of input tokens used |
+| usage.output_tokens | integer | Number of output tokens generated |
+| usage.total_tokens | integer | Total number of tokens used |
+| meta | object | Metadata about the completion |
+| meta.provider | string | Provider name (e.g., "qwen") |
+| meta.provider_model | string | Provider-specific model name |
+

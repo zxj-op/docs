@@ -1,0 +1,1060 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Mem0 API Reference",
+    "description": "REST APIs for memory management, search, and entity operations",
+    "version": "v1.0.1"
+  },
+  "servers": [
+    {
+      "url": "https://mavi-backend.memories.ai/serve/api/v2"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/upload": {
+      "post": {
+        "summary": "Upload File",
+        "operationId": "upload_file",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "The file to upload"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "File uploaded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "asset_id": {
+                      "type": "string",
+                      "example": "re_657739295220518912"
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "url": {
+                      "type": "string",
+                      "example": "https://example.com/uploads/video.mp4"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/upload/signed-url": {
+      "post": {
+        "summary": "Get Upload Signed URL",
+        "operationId": "upload_signed_url",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "original_filename": {
+                    "type": "string",
+                    "description": "The original filename with extension",
+                    "example": "video.mp4"
+                  }
+                },
+                "required": [
+                  "original_filename"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Signed URL generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "signed_url": {
+                          "type": "string",
+                          "example": "https://storage.example.com/upload?signature=..."
+                        },
+                        "asset_id": {
+                          "type": "string",
+                          "example": "re_657739295220518912"
+                        },
+                        "expires_in": {
+                          "type": "integer",
+                          "example": 3600
+                        }
+                      }
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{asset_id}": {
+      "delete": {
+        "summary": "Delete Asset",
+        "operationId": "delete_asset",
+        "parameters": [
+          {
+            "name": "asset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The unique identifier of the asset to delete",
+            "example": "re_657739295220518912"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Asset deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Asset deleted successfully"
+                    },
+                    "asset_id": {
+                      "type": "string",
+                      "example": "re_657739295220518912"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{asset_id}/metadata": {
+      "get": {
+        "summary": "Get Asset Metadata",
+        "operationId": "get_metadata",
+        "parameters": [
+          {
+            "name": "asset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The unique identifier of the asset",
+            "example": "re_657739295220518912"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Metadata retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "asset_id": {
+                      "type": "string",
+                      "example": "re_657739295220518912"
+                    },
+                    "filename": {
+                      "type": "string",
+                      "example": "video.mp4"
+                    },
+                    "file_size": {
+                      "type": "integer",
+                      "example": 15728640
+                    },
+                    "mime_type": {
+                      "type": "string",
+                      "example": "video/mp4"
+                    },
+                    "duration": {
+                      "type": "number",
+                      "example": 120.5
+                    },
+                    "width": {
+                      "type": "integer",
+                      "example": 1920
+                    },
+                    "height": {
+                      "type": "integer",
+                      "example": 1080
+                    },
+                    "format": {
+                      "type": "string",
+                      "example": "mp4"
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2024-01-15T10:30:00Z"
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "ready"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{asset_id}/download": {
+      "get": {
+        "summary": "Download Asset",
+        "operationId": "download_asset",
+        "parameters": [
+          {
+            "name": "asset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The unique identifier of the asset to download",
+            "example": "re_657739295220518912"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "File downloaded successfully",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            },
+            "headers": {
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "video/mp4"
+                },
+                "description": "The MIME type of the file"
+              },
+              "Content-Disposition": {
+                "schema": {
+                  "type": "string",
+                  "example": "attachment; filename=\"video.mp4\""
+                },
+                "description": "Attachment with original filename"
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": 15728640
+                },
+                "description": "File size in bytes"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/video/extract-frames": {
+      "post": {
+        "summary": "Extract Video Frames",
+        "operationId": "extract_frames",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_id": {
+                    "type": "string",
+                    "description": "The video asset ID to extract frames from",
+                    "example": "re_657739295220518912"
+                  }
+                },
+                "required": [
+                  "asset_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Frame extraction initiated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "task_id": {
+                      "type": "string",
+                      "example": "task_123456"
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "processing"
+                    },
+                    "asset_id": {
+                      "type": "string",
+                      "example": "re_657739295220518912"
+                    },
+                    "frames": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "frame_number": {
+                            "type": "integer",
+                            "example": 1
+                          },
+                          "timestamp": {
+                            "type": "number",
+                            "example": 0.0
+                          },
+                          "url": {
+                            "type": "string",
+                            "example": "https://example.com/frames/frame_001.jpg"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/video/clip": {
+      "post": {
+        "summary": "Clip Video",
+        "operationId": "video_clip",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_id": {
+                    "type": "string",
+                    "description": "The video asset ID to create a clip from",
+                    "example": "re_657739295220518912"
+                  }
+                },
+                "required": [
+                  "asset_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Video clip creation initiated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "task_id": {
+                      "type": "string",
+                      "example": "task_789012"
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "processing"
+                    },
+                    "original_asset_id": {
+                      "type": "string",
+                      "example": "re_657739295220518912"
+                    },
+                    "clip_asset_id": {
+                      "type": "string",
+                      "example": "re_657739295220518999"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Video clip is being processed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/video/split": {
+      "post": {
+        "summary": "Split Video",
+        "operationId": "video_split",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_id": {
+                    "type": "string",
+                    "description": "The video asset ID to split",
+                    "example": "re_657739295220518912"
+                  }
+                },
+                "required": [
+                  "asset_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Video split initiated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "task_id": {
+                      "type": "string",
+                      "example": "task_345678"
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "processing"
+                    },
+                    "original_asset_id": {
+                      "type": "string",
+                      "example": "re_657739295220518912"
+                    },
+                    "segments": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "segment_number": {
+                            "type": "integer",
+                            "example": 1
+                          },
+                          "asset_id": {
+                            "type": "string",
+                            "example": "re_657739295220519000"
+                          },
+                          "duration": {
+                            "type": "number",
+                            "example": 30.0
+                          },
+                          "start_time": {
+                            "type": "number",
+                            "example": 0.0
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/video/edit": {
+      "post": {
+        "summary": "Edit Video",
+        "operationId": "video_edit",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Array of video asset IDs to combine and edit",
+                    "example": [
+                      "re_657739295220518912",
+                      "re_657739295220518913"
+                    ]
+                  },
+                  "orientation": {
+                    "type": "string",
+                    "enum": [
+                      "landscape",
+                      "portrait"
+                    ],
+                    "description": "Output video orientation",
+                    "example": "portrait"
+                  },
+                  "user_prompt": {
+                    "type": "string",
+                    "description": "AI editing instructions describing desired output",
+                    "example": "Create a dynamic montage with smooth transitions"
+                  }
+                },
+                "required": [
+                  "asset_ids",
+                  "orientation",
+                  "user_prompt"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Video editing initiated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "task_id": {
+                      "type": "string",
+                      "example": "task_901234"
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "processing"
+                    },
+                    "input_assets": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": [
+                        "re_657739295220518912",
+                        "re_657739295220518913"
+                      ]
+                    },
+                    "output_asset_id": {
+                      "type": "string",
+                      "example": "re_657739295220519500"
+                    },
+                    "orientation": {
+                      "type": "string",
+                      "example": "portrait"
+                    },
+                    "estimated_completion": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2024-01-15T10:35:00Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transcriptions/sync-generate-speaker": {
+      "post": {
+        "summary": "Sync Generate Speaker",
+        "operationId": "sync_generate_speaker",
+        "description": "Generate speaker identification synchronously.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_id": {
+                    "type": "string",
+                    "description": "The asset ID to identify speakers for",
+                    "example": "re_657929111888723968"
+                  }
+                },
+                "required": [
+                  "asset_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Speaker identification result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "speakers": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": [
+                        "speaker_1",
+                        "speaker_2"
+                      ]
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transcriptions/sync-generate-audio": {
+      "post": {
+        "summary": "Sync Generate Audio Transcription",
+        "operationId": "sync_generate_audio",
+        "description": "Generate audio transcription synchronously.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_id": {
+                    "type": "string",
+                    "description": "The asset ID to transcribe",
+                    "example": "re_657929111888723968"
+                  },
+                  "model": {
+                    "type": "string",
+                    "description": "The transcription model to use",
+                    "example": "whisper-1"
+                  },
+                  "speaker": {
+                    "type": "boolean",
+                    "description": "Whether to include speaker identification",
+                    "example": true
+                  }
+                },
+                "required": [
+                  "asset_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Transcription result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "transcription": {
+                      "type": "string",
+                      "example": "Hello, world."
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transcriptions/async-summary": {
+      "post": {
+        "summary": "Async Generate Summary",
+        "operationId": "async_summary",
+        "description": "Generate transcription summary asynchronously.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_id": {
+                    "type": "string",
+                    "description": "The transcription asset ID",
+                    "example": "re_657929111888723968"
+                  }
+                },
+                "required": [
+                  "asset_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Summary generation task information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "task_id": {
+                      "type": "string",
+                      "example": "task_123456"
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "pending"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transcriptions/async-generate-video": {
+      "post": {
+        "summary": "Async Generate Video Transcription",
+        "operationId": "async_generate_video",
+        "description": "Generate video transcription asynchronously.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_id": {
+                    "type": "string",
+                    "description": "The video asset ID to transcribe",
+                    "example": "re_657929111888723968"
+                  },
+                  "model": {
+                    "type": "string",
+                    "description": "The transcription model to use",
+                    "example": "gemini-2.5-flash-lite"
+                  }
+                },
+                "required": [
+                  "asset_id",
+                  "model"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Transcription task information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "task_id": {
+                      "type": "string",
+                      "example": "task_123456"
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "pending"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transcriptions/async-generate-speaker": {
+      "post": {
+        "summary": "Async Generate Speaker",
+        "operationId": "async_generate_speaker",
+        "description": "Generate speaker identification asynchronously.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_id": {
+                    "type": "string",
+                    "description": "The asset ID to identify speakers for",
+                    "example": "re_657929111888723968"
+                  }
+                },
+                "required": [
+                  "asset_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Speaker identification task information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "task_id": {
+                      "type": "string",
+                      "example": "task_123456"
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "pending"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transcriptions/async-generate-multi-speaker": {
+      "post": {
+        "summary": "Async Generate Multi Speaker",
+        "operationId": "speaker-recgonition",
+        "description": "Generate multi-speaker identification asynchronously.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_id": {
+                    "type": "string",
+                    "description": "The asset ID to identify multiple speakers for",
+                    "example": "re_657929111888723968"
+                  }
+                },
+                "required": [
+                  "asset_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Multi-speaker identification task information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "task_id": {
+                      "type": "string",
+                      "example": "task_123456"
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "pending"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transcriptions/async-generate-audio": {
+      "post": {
+        "summary": "Async Generate Audio Transcription",
+        "operationId": "async_generate_audio",
+        "description": "Generate audio transcription asynchronously.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_id": {
+                    "type": "string",
+                    "description": "The audio asset ID to transcribe",
+                    "example": "re_657929111888723968"
+                  },
+                  "model": {
+                    "type": "string",
+                    "description": "The transcription model to use",
+                    "example": "whisper-1"
+                  },
+                  "speaker": {
+                    "type": "boolean",
+                    "description": "Whether to include speaker identification",
+                    "example": true
+                  }
+                },
+                "required": [
+                  "asset_id",
+                  "model",
+                  "speaker"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Transcription task information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "task_id": {
+                      "type": "string",
+                      "example": "task_123456"
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "pending"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Message": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          }
+        }
+      },
+      "AddMemoriesPayload": {
+        "type": "object",
+        "properties": {
+          "messages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Message"
+            }
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          }
+        }
+      },
+      "UpdateMemoryPayload": {
+        "type": "object",
+        "properties": {
+          "memory_id": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          }
+        }
+      },
+      "Memory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "metadata": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization"
+      }
+    }
+  }
+}

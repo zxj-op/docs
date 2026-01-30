@@ -1,0 +1,186 @@
+---
+openapi: api-reference/gemini/openapi.json POST /iu/chat/completions
+title: Gemini
+description: "Generate chat completions using Gemini ILM model with image inputs."
+---
+
+This endpoint allows you to generate chat completions with image inputs using Gemini ILM model.
+
+## Supported Models
+
+All models require the `gemini:` prefix when used in the `model` parameter (e.g., `gemini:gemini-2.5-flash`).
+
+### Premium Models
+
+| Model | Input Price | Output Price |
+|-------|------------|--------------|
+| **gemini-3-pro-preview** | \$2/1M (≤200K), \$4/1M (>200K) | \$12/1M (≤200K), \$18/1M (>200K) |
+| **gemini-2.5-pro** | \$1.25/1M (≤200K), \$2.5/1M (>200K) | \$10/1M (≤200K), \$15/1M (>200K) |
+
+### Flash Models (High Performance)
+
+| Model | Input Price | Output Price |
+|-------|------------|--------------|
+| **gemini-3-flash-preview** | \$0.5/1M tokens | \$3/1M tokens |
+| **gemini-2.5-flash** | \$0.30/1M tokens | \$2.5/1M tokens |
+| **gemini-2.5-flash-preview-09-2025** | \$0.30/1M tokens | \$2.5/1M tokens |
+| **gemini-2.0-flash** | \$0.1/1M tokens | \$0.4/1M tokens |
+
+### Lite Models (Cost-Effective)
+
+| Model | Input Price | Output Price |
+|-------|------------|--------------|
+| **gemini-2.5-flash-lite** | \$0.1/1M tokens | \$0.4/1M tokens |
+| **gemini-2.5-flash-lite-preview-09-2025** | \$0.1/1M tokens | \$0.4/1M tokens |
+| **gemini-2.0-flash-lite** | \$0.075/1M tokens | \$0.3/1M tokens |
+
+<Note>
+When using these models, remember to include the `gemini:` prefix in your API calls:
+- ✅ Correct: `"model": "gemini:gemini-2.5-flash"`
+- ❌ Incorrect: `"model": "gemini-2.5-flash"`
+</Note>
+
+### Request Body
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| model | string | Yes | - | The model to use (e.g., `gemini:gemini-2.5-flash`) |
+| messages | array | Yes | - | Array of message objects. Each message contains:<br/>- `role`: Role type, values: `system`, `user`, `assistant`<br/>- `content`: Message content, can be a string or array. Array items can contain:<br/>  - `type`: Content type, `text` or `input_file`<br/>  - `text`: Text content (when type is text)<br/>  - `file_uri`: File URL or base64 encoded file (when type is input_file)<br/>  - `mime_type`: MIME type of the file (e.g., image/jpeg, video/mp4) |
+| temperature | number | No | 0.7 | Controls randomness: 0.0-2.0, higher = more random |
+| max_tokens | integer | No | 1000 | Maximum number of tokens to generate |
+| top_p | number | No | 1.0 | Nucleus sampling: 0.0-1.0, consider tokens with top_p probability mass |
+| frequency_penalty | number | No | 0.0 | Reduces repetition of frequent tokens: -2.0 to 2.0 |
+| presence_penalty | number | No | 0.0 | Increases likelihood of new topics: -2.0 to 2.0 |
+| n | integer | No | 1 | Number of completions to generate |
+| stream | boolean | No | false | Whether to stream the response |
+| stop | string \| array \| null | No | null | Stop sequences. Can be a string, array of strings, or null |
+| extra_body | object | No | - | Additional body parameters. Contains:<br/>- `metadata`: Metadata object<br/>  - `thinking_config`: Thinking configuration<br/>    - `thinking_budget`: Integer value for thinking budget<br/>  - `response_mime_type`: Response MIME type (`application/json` or `json_schema`)<br/>  - `responseSchema`: JSON schema object for structured output |
+
+### Code Example
+
+<CodeGroup>
+
+
+
+```python Pythons
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-mai-this_a_test_string_please_use_your_generated_key_during_testing",
+    base_url="https://mavi-backend.memories.ai/serve/api/v2/iu"
+)
+
+def call_my_vlm():
+    resp = client.chat.completions.create(
+        model="gemini:gemini-2.5-flash",  # or qwen:vl-30b-a3b-instruct / gemini:gemini-2.5-flash
+        messages=[
+            {"role": "system", "content": "You are a multimodal assistant. Keep your answers concise."},
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Please summarize the content of this video and image"
+                    },
+                    {
+                        "type": "input_file",
+                        "file_uri": "https://storage.googleapis.com/memories-test-data/gun5.png",  # base64 or url
+                        "mime_type": "image/jpeg"
+                    }
+                ]
+            }
+        ],
+        temperature=0.7,  # Controls randomness: 0.0-2.0, higher = more random
+        max_tokens=1000,  # Maximum number of tokens to generate
+        top_p=1.0,  # Nucleus sampling: 0.0-1.0, consider tokens with top_p probability mass
+        frequency_penalty=0.0,  # -2.0 to 2.0, reduces repetition of frequent tokens
+        presence_penalty=0.0,  # -2.0 to 2.0, increases likelihood of new topics
+        n=1,  # Number of completions to generate
+        stream=False,  # Whether to stream the response
+        stop=None,  # Stop sequences (list of strings)
+        extra_body={
+            "metadata": {
+                "thinking_config": {
+                    "thinking_budget": 1024
+                },
+                "response_mime_type": "application/json",  # application/json, json_schema
+                "responseSchema": {
+                    "type": "OBJECT",
+                    "properties": {
+                        "video_summary": {
+                            "type": "STRING",
+                            "description": "Summary of the video content from 1 second to 8 seconds."
+                        },
+                        "image_summary": {
+                            "type": "STRING",
+                            "description": "Summary of the image content."
+                        }
+                    },
+                    "required": [
+                        "video_summary",
+                        "image_summary"
+                    ]
+                }
+            }
+        }
+    )
+    return resp
+
+# Usage example
+result = call_my_vlm()
+print(result)
+```
+
+</CodeGroup>
+
+### Response
+
+Returns the chat completion response with structured output.
+
+<ResponseExample>
+```json
+{
+  "id": "resp_f8d13263-95b3-4337-b4c9-dbe9f6eb1e43",
+  "object": "completion",
+  "model": "gemini:gemini-2.5-flash",
+  "created_at": 1767093024,
+  "status": "completed",
+  "choices": [
+    {
+      "text": "This image shows a humorous scene presented from a first-person perspective (FPS).\n\n**Main Scene:**\n*   In the center of the frame, both hands are holding weapons",
+      "index": 0
+    }
+  ],
+  "usage": {
+    "input_tokens": 1812,
+    "output_tokens": 38,
+    "total_tokens": 1850
+  },
+  "meta": {
+    "provider": "gemini",
+    "provider_model": "gemini-2.5-flash"
+  }
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| id | string | Unique identifier for the completion |
+| object | string | Object type, always "completion" |
+| model | string | The model used for the completion |
+| created_at | integer | Unix timestamp of when the completion was created |
+| status | string | Status of the completion (e.g., "completed") |
+| choices | array | Array of completion choices |
+| choices[].text | string | Text content of the completion |
+| choices[].index | integer | Index of the choice in the choices array |
+| usage | object | Token usage information |
+| usage.input_tokens | integer | Number of input tokens used |
+| usage.output_tokens | integer | Number of output tokens generated |
+| usage.total_tokens | integer | Total number of tokens used |
+| meta | object | Metadata about the completion |
+| meta.provider | string | Provider name (e.g., "gemini") |
+| meta.provider_model | string | Provider-specific model name |
+

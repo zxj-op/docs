@@ -1,0 +1,597 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Qwen API Reference",
+    "description": "REST APIs for Qwen ILM and VLM models",
+    "version": "v1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://mavi-backend.memories.ai/serve/api/v2"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/vu/chat/completions": {
+      "post": {
+        "summary": "Chat Completions qwen ",
+        "operationId": "chat_completions_qwen",
+        "description": "Generate chat completions using Qwen ILM or VLM models with image and video inputs.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "model": {
+                    "type": "string",
+                    "description": "The model to use (e.g., qwen:qwen3-vl-plus)",
+                    "example": "qwen:qwen3-vl-plus"
+                  },
+                  "messages": {
+                    "type": "array",
+                    "description": "Array of message objects",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "role": {
+                          "type": "string",
+                          "enum": ["system", "user"]
+                        },
+                        "content": {
+                          "oneOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "array",
+                              "items": {
+                                "oneOf": [
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "image": {
+                                        "type": "string",
+                                        "description": "URL or base64 encoded image"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "video": {
+                                        "type": "string",
+                                        "description": "URL only (video does not support base64)"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "text": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": ["text"]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      "required": ["role", "content"]
+                    }
+                  },
+                  "temperature": {
+                    "type": "number",
+                    "description": "Controls randomness: 0.0-2.0, higher = more random",
+                    "minimum": 0,
+                    "maximum": 2,
+                    "default": 0.7
+                  },
+                  "max_tokens": {
+                    "type": "integer",
+                    "description": "Maximum number of tokens to generate",
+                    "default": 1024
+                  },
+                  "top_p": {
+                    "type": "number",
+                    "description": "Nucleus sampling: 0.0-1.0",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "default": 0.9
+                  },
+                  "frequency_penalty": {
+                    "type": "number",
+                    "description": "Reduces repetition of frequent tokens: -2.0 to 2.0",
+                    "minimum": -2,
+                    "maximum": 2,
+                    "default": 0.0
+                  },
+                  "presence_penalty": {
+                    "type": "number",
+                    "description": "Increases likelihood of new topics: -2.0 to 2.0",
+                    "minimum": -2,
+                    "maximum": 2,
+                    "default": 0.0
+                  },
+                  "n": {
+                    "type": "integer",
+                    "description": "Number of completions to generate",
+                    "default": 1
+                  },
+                  "stream": {
+                    "type": "boolean",
+                    "description": "Whether to stream the response",
+                    "default": false
+                  },
+                  "stop": {
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "description": "Stop sequences"
+                  },
+                  "extra_body": {
+                    "type": "object",
+                    "properties": {
+                      "metadata": {
+                        "type": "object",
+                        "properties": {
+                          "enable_thinking": {
+                            "type": "boolean"
+                          },
+                          "thinking_budget": {
+                            "type": "integer"
+                          },
+                          "response_format": {
+                            "type": "object",
+                            "properties": {
+                              "type": {
+                                "type": "string",
+                                "enum": ["json_schema"]
+                              },
+                              "json_schema": {
+                                "type": "object",
+                                "properties": {
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                      "type": {
+                                        "type": "string",
+                                        "enum": ["object"]
+                                      },
+                                      "properties": {
+                                        "type": "object"
+                                      },
+                                      "required": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": ["model", "messages"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Chat completion response with structured output",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "9212f247-2372-95b3-8c9b-968368a952fc",
+                      "description": "Unique identifier for the completion"
+                    },
+                    "object": {
+                      "type": "string",
+                      "example": "completion",
+                      "description": "Object type, always 'completion'"
+                    },
+                    "model": {
+                      "type": "string",
+                      "example": "qwen3-vl-plus",
+                      "description": "The model used for the completion"
+                    },
+                    "created_at": {
+                      "type": "integer",
+                      "example": 1767095035,
+                      "description": "Unix timestamp of when the completion was created"
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "completed",
+                      "description": "Status of the completion"
+                    },
+                    "choices": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "text": {
+                            "type": "string",
+                            "description": "Text content of the completion",
+                            "example": "This video shows an interesting scientific experiment conducted in a vacuum environment, titled \"Vacuum vs Orange\"."
+                          },
+                          "index": {
+                            "type": "integer",
+                            "description": "Index of the choice in the choices array",
+                            "example": 0
+                          }
+                        },
+                        "required": ["text", "index"]
+                      }
+                    },
+                    "usage": {
+                      "type": "object",
+                      "properties": {
+                        "input_tokens": {
+                          "type": "integer",
+                          "description": "Number of input tokens used",
+                          "example": 34578
+                        },
+                        "output_tokens": {
+                          "type": "integer",
+                          "description": "Number of output tokens generated",
+                          "example": 561
+                        },
+                        "total_tokens": {
+                          "type": "integer",
+                          "description": "Total number of tokens used",
+                          "example": 35139
+                        }
+                      },
+                      "required": ["input_tokens", "output_tokens", "total_tokens"]
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string",
+                          "description": "Provider name",
+                          "example": "qwen"
+                        },
+                        "provider_model": {
+                          "type": "string",
+                          "description": "Provider-specific model name",
+                          "example": "qwen3-vl-plus"
+                        }
+                      },
+                      "required": ["provider", "provider_model"]
+                    }
+                  },
+                  "required": ["id", "object", "model", "created_at", "status", "choices", "usage", "meta"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/iu/chat/completions": {
+      "post": {
+        "summary": "Chat Completions qwen ilm",
+        "operationId": "chat_completions_qwen_ilm",
+        "description": "Generate chat completions using Qwen ILM or VLM models with image and video inputs.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "model": {
+                    "type": "string",
+                    "description": "The model to use (e.g., qwen:qwen3-vl-plus)",
+                    "example": "qwen:qwen3-vl-plus"
+                  },
+                  "messages": {
+                    "type": "array",
+                    "description": "Array of message objects",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "role": {
+                          "type": "string",
+                          "enum": ["system", "user"]
+                        },
+                        "content": {
+                          "oneOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "array",
+                              "items": {
+                                "oneOf": [
+                                  {
+                                    "type": "object",
+                                    "name": "image",
+                                    "properties": {
+                                      "image": {
+                                        "type": "string",
+                                        "description": "URL or base64 encoded image"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "type": "object",
+                                    "name": "image",
+                                    "properties": {
+                                      "text": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": ["text"]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      "required": ["role", "content"]
+                    }
+                  },
+                  "temperature": {
+                    "type": "number",
+                    "description": "Controls randomness: 0.0-2.0, higher = more random",
+                    "minimum": 0,
+                    "maximum": 2,
+                    "default": 0.7
+                  },
+                  "max_tokens": {
+                    "type": "integer",
+                    "description": "Maximum number of tokens to generate",
+                    "default": 1024
+                  },
+                  "top_p": {
+                    "type": "number",
+                    "description": "Nucleus sampling: 0.0-1.0",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "default": 0.9
+                  },
+                  "frequency_penalty": {
+                    "type": "number",
+                    "description": "Reduces repetition of frequent tokens: -2.0 to 2.0",
+                    "minimum": -2,
+                    "maximum": 2,
+                    "default": 0.0
+                  },
+                  "presence_penalty": {
+                    "type": "number",
+                    "description": "Increases likelihood of new topics: -2.0 to 2.0",
+                    "minimum": -2,
+                    "maximum": 2,
+                    "default": 0.0
+                  },
+                  "n": {
+                    "type": "integer",
+                    "description": "Number of completions to generate",
+                    "default": 1
+                  },
+                  "stream": {
+                    "type": "boolean",
+                    "description": "Whether to stream the response",
+                    "default": false
+                  },
+                  "stop": {
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "description": "Stop sequences"
+                  },
+                  "extra_body": {
+                    "type": "object",
+                    "properties": {
+                      "metadata": {
+                        "type": "object",
+                        "properties": {
+                          "enable_thinking": {
+                            "type": "boolean"
+                          },
+                          "thinking_budget": {
+                            "type": "integer"
+                          },
+                          "response_format": {
+                            "type": "object",
+                            "properties": {
+                              "type": {
+                                "type": "string",
+                                "enum": ["json_schema"]
+                              },
+                              "json_schema": {
+                                "type": "object",
+                                "properties": {
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                      "type": {
+                                        "type": "string",
+                                        "enum": ["object"]
+                                      },
+                                      "properties": {
+                                        "type": "object"
+                                      },
+                                      "required": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": ["model", "messages"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Chat completion response with structured output",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "6612267a-d08f-9ea0-a254-7bcea6339f49",
+                      "description": "Unique identifier for the completion"
+                    },
+                    "object": {
+                      "type": "string",
+                      "example": "completion",
+                      "description": "Object type, always 'completion'"
+                    },
+                    "model": {
+                      "type": "string",
+                      "example": "qwen3-vl-plus",
+                      "description": "The model used for the completion"
+                    },
+                    "created_at": {
+                      "type": "integer",
+                      "example": 1767094289,
+                      "description": "Unix timestamp of when the completion was created"
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "completed",
+                      "description": "Status of the completion"
+                    },
+                    "choices": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "text": {
+                            "type": "string",
+                            "description": "Text content of the completion",
+                            "example": "This image is from the game Half-Life 2, showing a game scene from a first-person perspective."
+                          },
+                          "index": {
+                            "type": "integer",
+                            "description": "Index of the choice in the choices array",
+                            "example": 0
+                          }
+                        },
+                        "required": ["text", "index"]
+                      }
+                    },
+                    "usage": {
+                      "type": "object",
+                      "properties": {
+                        "input_tokens": {
+                          "type": "integer",
+                          "description": "Number of input tokens used",
+                          "example": 235
+                        },
+                        "output_tokens": {
+                          "type": "integer",
+                          "description": "Number of output tokens generated",
+                          "example": 229
+                        },
+                        "total_tokens": {
+                          "type": "integer",
+                          "description": "Total number of tokens used",
+                          "example": 464
+                        }
+                      },
+                      "required": ["input_tokens", "output_tokens", "total_tokens"]
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string",
+                          "description": "Provider name",
+                          "example": "qwen"
+                        },
+                        "provider_model": {
+                          "type": "string",
+                          "description": "Provider-specific model name",
+                          "example": "qwen3-vl-plus"
+                        }
+                      },
+                      "required": ["provider", "provider_model"]
+                    }
+                  },
+                  "required": ["id", "object", "model", "created_at", "status", "choices", "usage", "meta"]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization"
+      }
+    }
+  }
+}
+

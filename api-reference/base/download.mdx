@@ -1,0 +1,262 @@
+---
+# openapi: GET /{asset_id}/download
+title: Download Asset
+description: "Download an asset file as a binary stream and save to local storage"
+---
+
+This endpoint **directly downloads the file to your local storage** when successful. When you call this endpoint successfully, the browser will automatically download the file (video, image, etc.) directly to your computer's download folder. The `Content-Disposition: attachment` header tells the browser to save the file locally.
+
+<Note>
+**Pricing:**
+- \$0.12/1GB download
+</Note>
+
+**Response Behavior:**
+- ✅ **Success **: Returns **file stream** (binary data) - browser **automatically downloads to local storage**
+- ❌ **Error **: Returns **JSON error** - use `json()` to parse error message
+
+**Key Points:**
+- Success response is a **file** (binary data), NOT JSON
+- Browser **automatically downloads** the file to your local storage
+- Error response is **JSON** with error details
+- Check response status before deciding how to handle the response
+
+### Code Examples
+
+
+
+<CodeGroup>
+
+```bash cURL
+# Download file stream and save to local storage
+# Use -O -J to automatically use filename from Content-Disposition header
+curl --request GET \
+  --url https://mavi-backend.memories.ai/serve/api/v2/re_657739295220518912/download \
+  --header 'Authorization: sk-mai-this_a_test_string_please_use_your_generated_key_during_testing' \
+  --remote-name \
+  --remote-header-name
+
+# -O (--remote-name): Save file with remote filename
+# --remote-header-name: Use filename from Content-Disposition header
+# File will be saved with the original filename and format from the server
+```
+
+```javascript fetch
+const assetId = "re_657739295220518912";
+const BASE_URL = "https://mavi-backend.memories.ai/serve/api/v2";
+const API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing";
+
+// Fetch the file with Authorization header
+const response = await fetch(`${BASE_URL}/${assetId}/download`, {
+  method: 'GET',
+  headers: {
+    'Authorization': API_KEY
+  }
+});
+
+// Check if request was successful
+if (!response.ok) {
+  // Error response is JSON
+  const error = await response.json();
+  console.error('Download failed:', error);
+  throw new Error(error.msg || 'Download failed');
+}
+
+// Extract filename from Content-Disposition header
+const contentDisposition = response.headers.get('Content-Disposition');
+let filename = 'download'; // Default filename if header is missing
+if (contentDisposition) {
+  const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+  if (filenameMatch && filenameMatch[1]) {
+    // Remove quotes if present
+    filename = filenameMatch[1].replace(/['"]/g, '');
+  }
+}
+
+// Success: Get the file blob and trigger browser download
+// Browser will automatically download to local storage with original filename
+const blob = await response.blob();
+const url = window.URL.createObjectURL(blob);
+const a = document.createElement('a');
+a.href = url;
+a.download = filename; // Use filename from Content-Disposition header
+a.click();
+window.URL.revokeObjectURL(url);
+// File is now downloading directly to your local storage with original format
+```
+
+```javascript axios
+import axios from 'axios';
+import fs from 'fs';
+
+const BASE_URL = "https://mavi-backend.memories.ai/serve/api/v2";
+const API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing";
+const assetId = "re_657739295220518912";
+
+try {
+  // Download file stream and save to local storage
+  const response = await axios.get(`${BASE_URL}/${assetId}/download`, {
+    headers: {
+      'Authorization': API_KEY
+    },
+    responseType: 'stream',
+    validateStatus: (status) => status === 200 // Only treat 200 as success
+  });
+
+  // Extract filename from Content-Disposition header
+  const contentDisposition = response.headers['content-disposition'];
+  let filename = 'download'; // Default filename if header is missing
+  if (contentDisposition) {
+    const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+    if (filenameMatch && filenameMatch[1]) {
+      // Remove quotes if present
+      filename = filenameMatch[1].replace(/['"]/g, '');
+    }
+  }
+
+  // Success: Save the file stream directly to a file with original filename
+  const writer = fs.createWriteStream(filename);
+  response.data.pipe(writer);
+
+  await new Promise((resolve, reject) => {
+    writer.on('finish', () => {
+      console.log(`File saved to: ${filename}`);
+      resolve();
+    });
+    writer.on('error', reject);
+  });
+} catch (error) {
+  // Error: Response is JSON
+  if (error.response && error.response.data) {
+    // Try to parse JSON error
+    const errorData = typeof error.response.data === 'string' 
+      ? JSON.parse(error.response.data) 
+      : error.response.data;
+    console.error('Download failed:', errorData.msg || errorData);
+  } else {
+    console.error('Download failed:', error.message);
+  }
+  throw error;
+}
+```
+
+```python Python
+import requests
+import re
+
+BASE_URL = "https://mavi-backend.memories.ai/serve/api/v2"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}"
+}
+
+def download_asset(asset_id: str) -> str:
+    """
+    Download asset file stream and save to local storage with original filename
+    
+    Args:
+        asset_id: The unique identifier of the asset to download
+    
+    Returns:
+        The path where the file was saved (with original filename from server)
+    
+    Raises:
+        Exception: If download fails (error response is JSON)
+    """
+    url = f"{BASE_URL}/{asset_id}/download"
+    # Download as stream to handle large files efficiently
+    response = requests.get(url, headers=HEADERS, stream=True)
+    
+    # Check if request was successful
+    if not response.ok:
+        # Error response is JSON
+        error = response.json()
+        raise Exception(f"Download failed: {error.get('msg', 'Unknown error')}")
+    
+    # Check Content-Type to confirm it's a file, not JSON
+    content_type = response.headers.get('Content-Type', '')
+    if 'application/json' in content_type:
+        # This shouldn't happen on success, but handle it
+        error = response.json()
+        raise Exception(f"Unexpected JSON response: {error.get('msg', 'Unknown error')}")
+    
+    # Extract filename from Content-Disposition header
+    content_disposition = response.headers.get('Content-Disposition', '')
+    filename = 'download'  # Default filename if header is missing
+    if content_disposition:
+        # Try to extract filename from Content-Disposition header
+        filename_match = re.search(r'filename[^;=\n]*=(([\'"]).*?\2|[^;\n]*)', content_disposition)
+        if filename_match:
+            filename = filename_match.group(1).strip('\'"')
+    
+    # Success response is a FILE (binary stream)
+    # Save the file stream directly to local storage with original filename
+    with open(filename, "wb") as f:
+        for chunk in response.iter_content(chunk_size=8192):
+            if chunk:
+                f.write(chunk)
+    
+    return filename
+
+# Usage example - downloads file stream and saves with original filename and format
+try:
+    file_path = download_asset("re_657739295220518912")
+    print(f"File downloaded and saved to: {file_path}")
+except Exception as e:
+    print(f"Error: {e}")
+```
+
+</CodeGroup>
+
+### Path Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| asset_id | string | Yes | The unique identifier of the asset to download (e.g., "re_657739295220518912") |
+
+### Response
+
+**Success Response (200 OK):**
+
+Returns the **file directly as a binary stream**. The response body contains the actual file content (video, image, document, etc.).
+
+**Response Type:** `application/octet-stream` (binary file stream)
+
+**Response Headers:**
+- `Content-Type`: The MIME type of the file (e.g., `video/mp4`, `image/jpeg`)
+- `Content-Disposition`: Attachment header with the original filename (e.g., `attachment; filename="video.mp4"`)
+- `Content-Length`: File size in bytes
+
+**⚠️ Important:** 
+- ✅ **USE** `response.blob()` (JavaScript) or `stream=True` (Python) to handle the file
+- ✅ The response is the **actual file content**, not JSON
+- ❌ **DO NOT** use `response.json()` on success - this will cause errors!
+
+**Error Response**
+
+Returns **JSON** with error information.
+
+
+**Error Response Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Error code indicating the type of error |
+| msg | string | Error message describing what went wrong |
+| data | null | Error data (usually null) |
+| success | boolean | Always `false` for errors |
+| failed | boolean | Always `true` for errors |
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| Response Body | binary stream | The file content as a binary stream - must be saved to a file |
+
+### Notes
+
+- **Direct file download**: The response is a binary file stream that should be saved directly to local storage
+- **Streaming**: Files are streamed for efficient transfer of large files without loading entire file into memory
+- **Filename**: The original filename is included in the `Content-Disposition` header
+- **Memory efficient**: Use stream processing (as shown in examples) to handle large files efficiently
+- **No JSON response**: Unlike other endpoints, this returns binary data, not JSON

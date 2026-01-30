@@ -1,0 +1,103 @@
+---
+openapi: POST /youtube/video/detail
+title: YouTube Video Detail
+description: "Get detailed information for YouTube videos."
+---
+
+This API is used to get detailed information for YouTube videos.
+
+<Note>
+Each API call costs **$0.01 USD**.
+</Note>
+
+### Code Example
+
+<CodeGroup>
+
+```python Python
+import requests
+
+BASE_URL = "https://mavi-security-backend.openinterx.com/serve"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}",
+    "Content-Type": "application/json"
+}
+
+def youtube_video_detail(video_id: str):
+    url = f"{BASE_URL}/youtube/video/detail"
+    data = {"video_id": video_id}
+    resp = requests.post(url, json=data, headers=HEADERS)
+    return resp.json()
+
+# Usage example
+result = youtube_video_detail("your_youtube_video_id")
+print(result)
+```
+
+</CodeGroup>
+
+### Request Body
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| video_id | string | Yes | YouTube video ID |
+
+### Response
+
+Returns detailed information for the YouTube video.
+
+<ResponseExample>
+```json
+{
+  "code": "0000",
+  "msg": "success",
+  "data": {
+    "video_id": "Y2y4OpzKIK4",
+    "title": "Video title",
+    "description": "Video description",
+    "channel": {
+      "id": "channel_id",
+      "name": "Channel name",
+      "subscriber_count": 1000000
+    },
+    "stats": {
+      "view_count": 100000,
+      "like_count": 5000,
+      "comment_count": 1000
+    },
+    "published_at": "2024-01-01T00:00:00Z",
+    "duration": "PT10M30S",
+    "thumbnail": "https://...",
+    "video_url": "https://..."
+  },
+  "success": true,
+  "failed": false
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code, indicates the operation result status |
+| msg | string | Response message, describes the operation result |
+| data | object | Response data object, contains video detailed information |
+| data.video_id | string | Video ID |
+| data.title | string | Video title |
+| data.description | string | Video description |
+| data.channel | object | Channel information |
+| data.channel.id | string | Channel ID |
+| data.channel.name | string | Channel name |
+| data.channel.subscriber_count | number | Subscriber count |
+| data.stats | object | Statistics data |
+| data.stats.view_count | number | View count |
+| data.stats.like_count | number | Like count |
+| data.stats.comment_count | number | Comment count |
+| data.published_at | string | Published time (ISO 8601 format) |
+| data.duration | string | Video duration (ISO 8601 format) |
+| data.thumbnail | string | Thumbnail URL |
+| data.video_url | string | Video URL |
+| success | boolean | Indicates whether the operation was successful |
+| failed | boolean | Indicates whether the operation failed |

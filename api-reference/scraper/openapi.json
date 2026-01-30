@@ -1,0 +1,465 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Scraper API Reference",
+    "description": "REST APIs for scraping TikTok and YouTube video data",
+    "version": "v1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://mavi-backend.memories.ai/serve/api/v2"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/tiktok/video/detail": {
+      "post": {
+        "summary": "TikTok Video Detail",
+        "operationId": "tiktok_video_detail",
+        "description": "Get detailed information for TikTok videos. Each API call costs $0.01 USD.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "video_id": {
+                    "type": "string",
+                    "description": "TikTok video ID",
+                    "example": "7543017294226558221"
+                  }
+                },
+                "required": [
+                  "video_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully returned video detailed information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "example": "0000",
+                      "description": "Response code, indicates the operation result status"
+                    },
+                    "msg": {
+                      "type": "string",
+                      "example": "success",
+                      "description": "Response message, describes the operation result"
+                    },
+                    "data": {
+                      "type": "object",
+                      "description": "Response data object, contains video detailed information"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true,
+                      "description": "Indicates whether the operation was successful"
+                    },
+                    "failed": {
+                      "type": "boolean",
+                      "example": false,
+                      "description": "Indicates whether the operation failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tiktok/video/comment": {
+      "post": {
+        "summary": "TikTok Video Comment",
+        "operationId": "tiktok_video_comment",
+        "description": "Get the comment list for TikTok videos. Each API call costs $0.01 USD. The maximum value for pagination parameter pageSize is 50, cursor starts from 0.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "video_id": {
+                    "type": "string",
+                    "description": "TikTok video ID",
+                    "example": "7543017294226558221"
+                  },
+                  "page_size": {
+                    "type": "integer",
+                    "description": "Number of comments returned per page, maximum value is 50, default is 50",
+                    "example": 50,
+                    "maximum": 50,
+                    "default": 50
+                  },
+                  "cursor": {
+                    "type": "integer",
+                    "description": "Pagination cursor, starts from 0, default is 0",
+                    "example": 0,
+                    "default": 0,
+                    "minimum": 0
+                  }
+                },
+                "required": [
+                  "video_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully returned comment list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "cid": {
+                        "type": "string",
+                        "description": "Comment ID"
+                      },
+                      "text": {
+                        "type": "string",
+                        "description": "Comment content"
+                      },
+                      "create_time": {
+                        "type": "integer",
+                        "description": "Comment creation timestamp"
+                      },
+                      "like_count": {
+                        "type": "integer",
+                        "description": "Like count"
+                      },
+                      "author": {
+                        "type": "object",
+                        "description": "Comment author information"
+                      },
+                      "reply_count": {
+                        "type": "integer",
+                        "description": "Reply count"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tiktok/video/comment/reply": {
+      "post": {
+        "summary": "TikTok Video Comment Reply",
+        "operationId": "tiktok_video_comment_reply",
+        "description": "Get the reply list for TikTok video comments. Each API call costs $0.01 USD. The maximum value for pagination parameter pageSize is 6, cursor starts from 0.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "video_id": {
+                    "type": "string",
+                    "description": "TikTok video ID",
+                    "example": "7543017294226558221"
+                  },
+                  "comment_id": {
+                    "type": "string",
+                    "description": "Comment ID",
+                    "example": "comment_id"
+                  },
+                  "page_size": {
+                    "type": "integer",
+                    "description": "Number of replies returned per page, maximum value is 6, default is 6",
+                    "example": 6,
+                    "maximum": 6,
+                    "default": 6
+                  },
+                  "cursor": {
+                    "type": "integer",
+                    "description": "Pagination cursor, starts from 0, default is 0",
+                    "example": 0,
+                    "default": 0,
+                    "minimum": 0
+                  }
+                },
+                "required": [
+                  "video_id",
+                  "comment_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully returned reply list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "rid": {
+                        "type": "string",
+                        "description": "Reply ID"
+                      },
+                      "text": {
+                        "type": "string",
+                        "description": "Reply content"
+                      },
+                      "create_time": {
+                        "type": "integer",
+                        "description": "Reply creation timestamp"
+                      },
+                      "like_count": {
+                        "type": "integer",
+                        "description": "Like count"
+                      },
+                      "author": {
+                        "type": "object",
+                        "description": "Reply author information"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/youtube/video/detail": {
+      "post": {
+        "summary": "YouTube Video Detail",
+        "operationId": "youtube_video_detail",
+        "description": "Get detailed information for YouTube videos. Each API call costs $0.01 USD.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "video_id": {
+                    "type": "string",
+                    "description": "YouTube video ID",
+                    "example": "Y2y4OpzKIK4"
+                  }
+                },
+                "required": [
+                  "video_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully returned video detailed information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "example": "0000",
+                      "description": "Response code, indicates the operation result status"
+                    },
+                    "msg": {
+                      "type": "string",
+                      "example": "success",
+                      "description": "Response message, describes the operation result"
+                    },
+                    "data": {
+                      "type": "object",
+                      "description": "Response data object, contains video detailed information"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true,
+                      "description": "Indicates whether the operation was successful"
+                    },
+                    "failed": {
+                      "type": "boolean",
+                      "example": false,
+                      "description": "Indicates whether the operation failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/youtube/video/comment": {
+      "post": {
+        "summary": "YouTube Video Comment",
+        "operationId": "youtube_video_comment",
+        "description": "Get the comment list for YouTube videos. Each API call costs $0.01 USD. The maximum value for pagination parameter pageSize is 100, nextPageToken should be null for the first request.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "video_id": {
+                    "type": "string",
+                    "description": "YouTube video ID",
+                    "example": "Y2y4OpzKIK4"
+                  },
+                  "page_size": {
+                    "type": "integer",
+                    "description": "Number of comments returned per page, maximum value is 100, default is 100",
+                    "example": 100,
+                    "maximum": 100,
+                    "default": 100
+                  },
+                  "next_page_token": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Next page token, should be null for the first request, use the value returned from the previous response for subsequent requests",
+                    "example": null
+                  }
+                },
+                "required": [
+                  "video_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully returned comment list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "description": "Comment list array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "next_page_token": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Next page token, used to get the next page of data, null indicates all data has been retrieved"
+                    },
+                    "page_info": {
+                      "type": "object",
+                      "description": "Pagination information"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/youtube/video/comment/reply": {
+      "post": {
+        "summary": "YouTube Video Comment Reply",
+        "operationId": "youtube_video_comment_reply",
+        "description": "Get the reply list for YouTube video comments. Each API call costs $0.01 USD. The maximum value for pagination parameter pageSize is 100, nextPageToken should be null for the first request.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "comment_id": {
+                    "type": "string",
+                    "description": "Comment ID",
+                    "example": "comment_id"
+                  },
+                  "page_size": {
+                    "type": "integer",
+                    "description": "Number of replies returned per page, maximum value is 100, default is 100",
+                    "example": 100,
+                    "maximum": 100,
+                    "default": 100
+                  },
+                  "next_page_token": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Next page token, should be null for the first request, use the value returned from the previous response for subsequent requests",
+                    "example": null
+                  }
+                },
+                "required": [
+                  "comment_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully returned reply list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "description": "Reply list array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "next_page_token": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Next page token, used to get the next page of data, null indicates all data has been retrieved"
+                    },
+                    "page_info": {
+                      "type": "object",
+                      "description": "Pagination information"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization"
+      }
+    }
+  }
+}

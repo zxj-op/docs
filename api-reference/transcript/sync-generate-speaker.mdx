@@ -1,0 +1,95 @@
+---
+openapi: POST /transcriptions/sync-generate-speaker
+title: Sync Generate Speaker
+description: "Generate speaker identification synchronously."
+---
+
+This endpoint allows you to identify speakers synchronously.
+
+<Note>
+**Pricing:**
+- \$0.001/second of video and aduio
+</Note>
+
+### Code Example
+
+<CodeGroup>
+
+
+
+```python Python
+import requests
+
+BASE_URL = "https://mavi-backend.memories.ai/serve/api/v2/transcriptions"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}"
+}
+
+def sync_generate_speaker(asset_id: str):
+    url = f"{BASE_URL}/sync-generate-speaker"
+    data = {"asset_id": asset_id}
+    resp = requests.post(url, json=data, headers=HEADERS)
+    return resp.json()
+
+# Usage example
+result = sync_generate_speaker("re_657929111888723968")
+print(result)
+```
+
+</CodeGroup>
+
+### Response
+
+Returns the speaker identification result directly. The response contains speaker segments with timing information organized in an array.
+
+**Response Structure:**
+- Returns a standard response format with `code`, `msg`, `data`, `success`, and `failed` fields
+- The `data` object contains:
+  - `model`: The model used for speaker identification (e.g., "pyannote")
+  - `items`: Array of speaker segments, each containing:
+    - `start`: Start time of the speaker segment in seconds
+    - `end`: End time of the speaker segment in seconds
+    - `speaker`: Speaker identifier (e.g., "SPEAKER_00", "SPEAKER_01")
+
+<ResponseExample>
+```json
+{
+  "code": "0000",
+  "msg": "success",
+  "data": {
+    "model": "pyannote",
+    "items": [
+      {
+        "start": 0.03096875,
+        "end": 0.13221875,
+        "speaker": "SPEAKER_01"
+      },
+      {
+        "start": 0.13221875,
+        "end": 13.395968750000002,
+        "speaker": "SPEAKER_00"
+      }
+    ]
+  },
+  "failed": false,
+  "success": true
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code indicating the result status |
+| msg | string | Response message describing the operation result |
+| data | object | Response data object containing speaker identification results |
+| data.model | string | The model used for speaker identification (e.g., "pyannote") |
+| data.items | array[object] | Array of speaker segments with timing information |
+| data.items[].start | number | Start time of the speaker segment in seconds |
+| data.items[].end | number | End time of the speaker segment in seconds |
+| data.items[].speaker | string | Speaker identifier (e.g., "SPEAKER_00", "SPEAKER_01") |
+| success | boolean | Indicates whether the operation was successful |
+| failed | boolean | Indicates whether the operation failed |
+

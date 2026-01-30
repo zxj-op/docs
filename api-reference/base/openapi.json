@@ -1,0 +1,720 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Mem0 API Reference",
+    "description": "REST APIs for memory management, search, and entity operations",
+    "version": "v1.0.1"
+  },
+  "servers": [
+    {
+      "url": "https://mavi-backend.memories.ai/serve/api/v2"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/upload": {
+      "post": {
+        "summary": "Upload File",
+        "operationId": "upload_file",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "The file to upload"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "File uploaded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "example": "0000",
+                      "description": "Response code indicating the result status"
+                    },
+                    "msg": {
+                      "type": "string",
+                      "example": "success",
+                      "description": "Response message describing the operation result"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "asset_id": {
+                          "type": "string",
+                          "example": "re_660727003963174912",
+                          "description": "Unique identifier of the uploaded asset"
+                        }
+                      },
+                      "description": "Response data object containing the uploaded asset information"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true,
+                      "description": "Indicates whether the operation was successful"
+                    },
+                    "failed": {
+                      "type": "boolean",
+                      "example": false,
+                      "description": "Indicates whether the operation failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/upload/signed-url": {
+      "post": {
+        "summary": "Get Upload Signed URL",
+        "operationId": "upload_signed_url",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "original_filename": {
+                    "type": "string",
+                    "description": "The original filename with extension",
+                    "example": "video.mp4"
+                  }
+                },
+                "required": [
+                  "original_filename"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Signed URL generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "example": "0000",
+                      "description": "Response code indicating the result status"
+                    },
+                    "msg": {
+                      "type": "string",
+                      "example": "success",
+                      "description": "Response message describing the operation result"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "asset_id": {
+                          "type": "string",
+                          "example": "re_660736410386149376",
+                          "description": "Unique identifier of the asset that will be created after upload"
+                        },
+                        "signed_url": {
+                          "type": "string",
+                          "example": "https://storage.googleapis.com/...",
+                          "description": "Pre-signed URL for direct file upload to cloud storage"
+                        },
+                        "expires_in": {
+                          "type": "integer",
+                          "example": 93600,
+                          "description": "Validity period of the signed URL in seconds"
+                        }
+                      },
+                      "description": "Response data object containing the signed URL and asset information"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true,
+                      "description": "Indicates whether the operation was successful"
+                    },
+                    "failed": {
+                      "type": "boolean",
+                      "example": false,
+                      "description": "Indicates whether the operation failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{asset_id}": {
+      "delete": {
+        "summary": "Delete Asset",
+        "operationId": "delete_asset",
+        "parameters": [
+          {
+            "name": "asset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The unique identifier of the asset to delete",
+            "example": "re_657739295220518912"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Asset deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "example": "0000",
+                      "description": "Response code indicating the result status"
+                    },
+                    "msg": {
+                      "type": "string",
+                      "example": "success",
+                      "description": "Response message describing the operation result"
+                    },
+                    "data": {
+                      "type": "null",
+                      "example": null,
+                      "description": "Response data object (null for delete operations)"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true,
+                      "description": "Indicates whether the operation was successful"
+                    },
+                    "failed": {
+                      "type": "boolean",
+                      "example": false,
+                      "description": "Indicates whether the operation failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{asset_id}/metadata": {
+      "get": {
+        "summary": "Get Asset Metadata",
+        "operationId": "get_metadata",
+        "parameters": [
+          {
+            "name": "asset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The unique identifier of the asset",
+            "example": "re_657739295220518912"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Metadata retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "example": "0000",
+                      "description": "Response code indicating the result status"
+                    },
+                    "msg": {
+                      "type": "string",
+                      "example": "success",
+                      "description": "Response message describing the operation result"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "integer",
+                          "example": 1,
+                          "description": "Total number of assets returned"
+                        },
+                        "resource": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "extension": {
+                                "type": "string",
+                                "example": "mp4",
+                                "description": "File extension of the asset (e.g., \"mp4\", \"jpg\")"
+                              },
+                              "asset_id": {
+                                "type": "string",
+                                "example": "re_660729180626595840",
+                                "description": "Unique identifier of the asset"
+                              },
+                              "original_filename": {
+                                "type": "string",
+                                "example": "3",
+                                "description": "Original filename of the uploaded file"
+                              },
+                              "file_size": {
+                                "type": "string",
+                                "example": "133652816",
+                                "description": "Size of the file in bytes (as string)"
+                              },
+                              "upload_status": {
+                                "type": "string",
+                                "example": "SUCCESS",
+                                "description": "Status of the upload operation (e.g., \"SUCCESS\")"
+                              },
+                              "create_time": {
+                                "type": "string",
+                                "example": "1766989317192",
+                                "description": "Timestamp when the asset was created (Unix timestamp in milliseconds)"
+                              },
+                              "modify_time": {
+                                "type": "string",
+                                "example": "1766989317192",
+                                "description": "Timestamp when the asset was last modified (Unix timestamp in milliseconds)"
+                              }
+                            }
+                          },
+                          "description": "Array of asset metadata objects"
+                        }
+                      },
+                      "description": "Response data object containing asset metadata information"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true,
+                      "description": "Indicates whether the operation was successful"
+                    },
+                    "failed": {
+                      "type": "boolean",
+                      "example": false,
+                      "description": "Indicates whether the operation failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/video/extract-frames": {
+      "post": {
+        "summary": "Extract Video Frames",
+        "operationId": "extract_frames",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_id": {
+                    "type": "string",
+                    "description": "The video asset ID to extract frames from",
+                    "example": "re_657739295220518912"
+                  }
+                },
+                "required": [
+                  "asset_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Frame extraction initiated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "example": "0000",
+                      "description": "Response code indicating the result status"
+                    },
+                    "msg": {
+                      "type": "string",
+                      "example": "success",
+                      "description": "Response message describing the operation result"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "task_id": {
+                          "type": "string",
+                          "example": "1e8ae1075e054e8abb58e7598c53cbf1",
+                          "description": "Unique identifier of the frame extraction task"
+                        }
+                      },
+                      "description": "Response data object containing task information"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true,
+                      "description": "Indicates whether the operation was successful"
+                    },
+                    "failed": {
+                      "type": "boolean",
+                      "example": false,
+                      "description": "Indicates whether the operation failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/video/clip": {
+      "post": {
+        "summary": "Clip Video",
+        "operationId": "video_clip",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_id": {
+                    "type": "string",
+                    "description": "The video asset ID to create a clip from",
+                    "example": "re_657739295220518912"
+                  }
+                },
+                "required": [
+                  "asset_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Video clip creation initiated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "example": "0000",
+                      "description": "Response code indicating the result status"
+                    },
+                    "msg": {
+                      "type": "string",
+                      "example": "success",
+                      "description": "Response message describing the operation result"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "task_id": {
+                          "type": "string",
+                          "example": "f432bc84bfd141d1b05c1d24af0abe6a",
+                          "description": "Unique identifier of the video clip creation task"
+                        }
+                      },
+                      "description": "Response data object containing task information"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true,
+                      "description": "Indicates whether the operation was successful"
+                    },
+                    "failed": {
+                      "type": "boolean",
+                      "example": false,
+                      "description": "Indicates whether the operation failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/video/split": {
+      "post": {
+        "summary": "Split Video",
+        "operationId": "video_split",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_id": {
+                    "type": "string",
+                    "description": "The video asset ID to split",
+                    "example": "re_657739295220518912"
+                  }
+                },
+                "required": [
+                  "asset_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Video split initiated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "example": "0000",
+                      "description": "Response code indicating the result status"
+                    },
+                    "msg": {
+                      "type": "string",
+                      "example": "success",
+                      "description": "Response message describing the operation result"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "task_id": {
+                          "type": "string",
+                          "example": "f432bc84bfd141d1b05c1d24af0abe6a",
+                          "description": "Unique identifier of the video split task"
+                        }
+                      },
+                      "description": "Response data object containing task information"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true,
+                      "description": "Indicates whether the operation was successful"
+                    },
+                    "failed": {
+                      "type": "boolean",
+                      "example": false,
+                      "description": "Indicates whether the operation failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/video/edit": {
+      "post": {
+        "summary": "Edit Video",
+        "operationId": "video_edit",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Array of video asset IDs to combine and edit",
+                    "example": [
+                      "re_657739295220518912",
+                      "re_657739295220518913"
+                    ]
+                  },
+                  "orientation": {
+                    "type": "string",
+                    "enum": [
+                      "landscape",
+                      "portrait"
+                    ],
+                    "description": "Output video orientation",
+                    "example": "portrait"
+                  },
+                  "user_prompt": {
+                    "type": "string",
+                    "description": "AI editing instructions describing desired output",
+                    "example": "Create a dynamic montage with smooth transitions"
+                  }
+                },
+                "required": [
+                  "asset_ids",
+                  "orientation",
+                  "user_prompt"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Video editing initiated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "example": "0000",
+                      "description": "Response code indicating the result status"
+                    },
+                    "msg": {
+                      "type": "string",
+                      "example": "success",
+                      "description": "Response message describing the operation result"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "task_id": {
+                          "type": "string",
+                          "example": "f432bc84bfd141d1b05c1d24af0abe6a",
+                          "description": "Unique identifier of the video editing task"
+                        }
+                      },
+                      "description": "Response data object containing task information"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true,
+                      "description": "Indicates whether the operation was successful"
+                    },
+                    "failed": {
+                      "type": "boolean",
+                      "example": false,
+                      "description": "Indicates whether the operation failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Message": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          }
+        }
+      },
+      "AddMemoriesPayload": {
+        "type": "object",
+        "properties": {
+          "messages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Message"
+            }
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          }
+        }
+      },
+      "UpdateMemoryPayload": {
+        "type": "object",
+        "properties": {
+          "memory_id": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          }
+        }
+      },
+      "Memory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "metadata": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization"
+      }
+    }
+  }
+}

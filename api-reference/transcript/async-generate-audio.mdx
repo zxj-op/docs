@@ -1,0 +1,176 @@
+---
+openapi: POST /transcriptions/async-generate-audio
+title: Async Generate Audio Transcription
+description: "Generate audio transcription asynchronously."
+---
+
+This endpoint allows you to generate audio transcription asynchronously.
+
+<Note>
+**Pricing:**
+- \$0.001/second of video and audio (when `speaker` parameter is `false`)
+- \$0.002/second of video and audio (when `speaker` parameter is `true`)
+</Note>
+
+## Supported Models
+
+Currently supported:
+- `whisper-1`
+
+More models will be added in the future.
+
+### Code Example
+
+<CodeGroup>
+
+
+
+```python Python
+import requests
+
+BASE_URL = "https://mavi-backend.memories.ai/serve/api/v2/transcriptions"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}"
+}
+
+def async_generate_audio(asset_id: str, model: str, speaker: bool):
+    url = f"{BASE_URL}/async-generate-audio"
+    data = {"asset_id": asset_id, "model": model, "speaker": speaker}
+    resp = requests.post(url, json=data, headers=HEADERS)
+    return resp.json()
+
+# Usage example
+result = async_generate_audio("re_657929111888723968", "whisper-1", True)
+print(result)
+```
+
+</CodeGroup>
+
+### Response
+
+Returns the transcription task information.
+
+<ResponseExample>
+```json Response
+{
+  "code": "0000",
+  "msg": "success",
+  "data": {
+    "task_id": "ec2449885ba84c4f943a80ff0633158e"
+  },
+  "failed": false,
+  "success": true
+}
+```
+
+```json Callback Response
+{
+  "code": "0000",
+  "message": "SUCCESS",
+  "data": {
+    "data": {
+      "data": [
+        {
+          "end_time": 2.0,
+          "speaker": null,
+          "start_time": 0.0,
+          "text": " Oh"
+        }
+      ],
+      "usage_metadata": {
+        "duration": 2,
+        "model": "whisper-1",
+        "output_tokens": 0,
+        "prompt_tokens": 0
+      }
+    },
+    "msg": "ASR transcription completed successfully",
+    "success": true
+  },
+  "task_id": "016c7052f8224d5c971e35b7d08972fc"
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code indicating the result status |
+| msg | string | Response message describing the operation result |
+| data | object | Response data object containing task information |
+| data.task_id | string | Unique identifier of the transcription task |
+| success | boolean | Indicates whether the operation was successful |
+| failed | boolean | Indicates whether the operation failed |
+
+### Callback Response Parameters
+
+When the audio transcription is complete, a callback will be sent to your configured webhook URL.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code ("0000" indicates success) |
+| message | string | Status message (e.g., "SUCCESS") |
+| data | object | Response data object containing the transcription result and metadata |
+| data.data | object | Inner data object containing transcription segments and usage information |
+| data.data.data | array | Array of transcription segments with timestamps |
+| data.data.data[].start_time | number | Start time of the segment in seconds |
+| data.data.data[].end_time | number | End time of the segment in seconds |
+| data.data.data[].text | string | Transcription text for this segment |
+| data.data.data[].speaker | string \| null | Speaker identifier if `speaker=true` was requested, otherwise `null` |
+| data.data.usage_metadata | object | Usage statistics for the API call |
+| data.data.usage_metadata.duration | number | Audio duration in seconds |
+| data.data.usage_metadata.model | string | The model used for transcription (e.g., "whisper-1") |
+| data.data.usage_metadata.output_tokens | integer | Number of output tokens (0 for audio transcription) |
+| data.data.usage_metadata.prompt_tokens | integer | Number of prompt tokens (0 for audio transcription) |
+| data.msg | string | Detailed message about the operation result |
+| data.success | boolean | Indicates whether the transcription was successful |
+| task_id | string | The task ID associated with this transcription request |
+
+<Note>
+**Speaker Identification**: The `speaker` field in each transcription segment will only contain a speaker identifier (e.g., "SPEAKER_00") when the request parameter `speaker=true` is set. Otherwise, it will be `null`.
+</Note>
+
+### Understanding the Callback Response
+
+The callback response has a nested structure with the transcription segments and usage information inside `data.data`.
+
+**Response Structure:**
+```
+callback_response
+├── code: "0000"
+├── message: "SUCCESS"
+├── data
+│   ├── data
+│   │   ├── data: [array of transcription segments]
+│   │   │   └── [
+│   │   │       {
+│   │   │         start_time: 0.0,
+│   │   │         end_time: 2.0,
+│   │   │         text: " Oh",
+│   │   │         speaker: null  // or "SPEAKER_00" if speaker=true
+│   │   │       },
+│   │   │       ...
+│   │   │     ]
+│   │   └── usage_metadata
+│   │       ├── duration: 2
+│   │       ├── model: "whisper-1"
+│   │       ├── output_tokens: 0
+│   │       └── prompt_tokens: 0
+│   ├── msg: "ASR transcription completed successfully"
+│   └── success: true
+└── task_id: "016c7052f8224d5c971e35b7d08972fc"
+```
+
+**How to access the data:**
+- Transcription segments: `callback_response.data.data.data`
+- First segment text: `callback_response.data.data.data[0].text`
+- First segment speaker: `callback_response.data.data.data[0].speaker` (will be `null` if `speaker=false`)
+- Time range: `callback_response.data.data.data[0].start_time` to `callback_response.data.data.data[0].end_time`
+- Usage statistics: `callback_response.data.data.usage_metadata`
+- Audio duration: `callback_response.data.data.usage_metadata.duration`
+- Model used: `callback_response.data.data.usage_metadata.model`
+- Success status: `callback_response.data.success`
+- Task ID: `callback_response.task_id`
+

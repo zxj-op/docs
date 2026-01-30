@@ -1,0 +1,162 @@
+---
+openapi: POST /transcriptions/sync-generate-audio
+title: Sync Generate Audio Transcription
+description: "Generate audio transcription synchronously."
+---
+
+This endpoint allows you to generate audio transcription synchronously.
+
+<Note>
+**Pricing:**
+- \$0.001/second of video and audio (when `speaker` parameter is `false`)
+- \$0.002/second of video and audio (when `speaker` parameter is `true`)
+</Note>
+
+## Supported Models
+
+Currently supported:
+- `whisper-1`
+
+More models will be added in the future.
+
+### Code Example
+
+<CodeGroup>
+
+
+
+```python Python
+import requests
+
+BASE_URL = "https://mavi-backend.memories.ai/serve/api/v2/transcriptions"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}"
+}
+
+def sync_generate_audio(asset_id: str, model: str = None, speaker: bool = None):
+    url = f"{BASE_URL}/sync-generate-audio"
+    data = {"asset_id": asset_id}
+    if model:
+        data["model"] = model
+    if speaker:
+        data["speaker"] = speaker
+    resp = requests.post(url, json=data, headers=HEADERS)
+    return resp.json()
+
+# Usage example
+result = sync_generate_audio("re_657929111888723968", "whisper-1", True)
+print(result)
+```
+
+</CodeGroup>
+
+### Response
+
+Returns the transcription result directly. The response contains transcription segments with timing information organized in an array.
+
+**Response Structure:**
+- Returns a standard response format with `code`, `msg`, `data`, `success`, and `failed` fields
+- The `data` object contains:
+  - `model`: The transcription model used (e.g., "whisper-1")
+  - `items`: Array of transcription segments, each containing:
+    - `text`: The transcribed text for the segment
+    - `start_time`: Start time of the segment in seconds
+    - `end_time`: End time of the segment in seconds
+    - `speaker`: Speaker identifier (only present when `speaker=true` parameter is set)
+
+**Response Format Variations:**
+- **When `speaker=false`**: Items do not include the `speaker` field
+- **When `speaker=true`**: Items include the `speaker` field with speaker identification
+
+<ResponseExample>
+```json
+{
+  "code": "0000",
+  "msg": "success",
+  "data": {
+    "model": "whisper-1",
+    "items": [
+      {
+        "text": "Hello, how are you today?",
+        "start_time": 0.0,
+        "end_time": 2.98
+      },
+      {
+        "text": "I'm doing well, thank you.",
+        "start_time": 2.98,
+        "end_time": 6.78
+      },
+      {
+        "text": "What are you planning to do?",
+        "start_time": 6.78,
+        "end_time": 10.56
+      },
+      {
+        "text": "I'm going to the park.",
+        "start_time": 10.56,
+        "end_time": 13.1
+      }
+    ]
+  },
+  "failed": false,
+  "success": true
+}
+```
+
+**When `speaker=true`:**
+```json
+{
+  "code": "0000",
+  "msg": "success",
+  "data": {
+    "model": "whisper-1",
+    "items": [
+      {
+        "text": "Hello, how are you today?",
+        "speaker": "SPEAKER_00",
+        "start_time": 0.0,
+        "end_time": 2.98
+      },
+      {
+        "text": "I'm doing well, thank you.",
+        "speaker": "SPEAKER_00",
+        "start_time": 2.98,
+        "end_time": 6.78
+      },
+      {
+        "text": "What are you planning to do?",
+        "speaker": "SPEAKER_00",
+        "start_time": 6.78,
+        "end_time": 10.56
+      },
+      {
+        "text": "I'm going to the park.",
+        "speaker": "SPEAKER_00",
+        "start_time": 10.56,
+        "end_time": 13.1
+      }
+    ]
+  },
+  "failed": false,
+  "success": true
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code indicating the result status |
+| msg | string | Response message describing the operation result |
+| data | object | Response data object containing transcription results |
+| data.model | string | The transcription model used (e.g., "whisper-1") |
+| data.items | array[object] | Array of transcription segments with timing information |
+| data.items[].text | string | Transcribed text for the segment |
+| data.items[].start_time | number | Start time of the segment in seconds |
+| data.items[].end_time | number | End time of the segment in seconds |
+| data.items[].speaker | string | Speaker identifier (only present when `speaker=true`) |
+| success | boolean | Indicates whether the operation was successful |
+| failed | boolean | Indicates whether the operation failed |
+

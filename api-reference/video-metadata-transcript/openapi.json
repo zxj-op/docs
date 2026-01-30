@@ -1,0 +1,2193 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Video Metadata & Transcript API Reference",
+        "description": "REST APIs for retrieving video metadata and transcripts from YouTube, Instagram, TikTok, and Twitter",
+        "version": "v1.0.1"
+    },
+    "servers": [
+        {
+            "url": "https://mavi-backend.memories.ai/serve/api/v2"
+        }
+    ],
+    "security": [
+        {
+            "ApiKeyAuth": []
+        }
+    ],
+    "paths": {
+        "/youtube/video/metadata": {
+            "post": {
+                "summary": "YouTube Video Metadata",
+                "operationId": "youtube_video_metadata",
+                "description": "Get YouTube video metadata.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "video_url": {
+                                        "type": "string",
+                                        "description": "The YouTube video URL",
+                                        "example": "https://www.youtube.com/watch?v=Y2y4OpzKIK4"
+                                    },
+                                    "channel": {
+                                        "type": "string",
+                                        "description": "The channel name. Supported values: apify, rapid, memories.ai",
+                                        "enum": ["apify", "rapid", "memories.ai"],
+                                        "example": "apify"
+                                    }
+                                },
+                                "required": [
+                                    "video_url",
+                                    "channel"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Video metadata information",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "string",
+                                            "example": "0000",
+                                            "description": "Response code indicating the result status"
+                                        },
+                                        "msg": {
+                                            "type": "string",
+                                            "example": "success",
+                                            "description": "Response message describing the operation result"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "original_url": {
+                                                        "type": "string",
+                                                        "example": "https://www.youtube.com/watch?v=Y2y4OpzKIK4",
+                                                        "description": "The original YouTube video URL"
+                                                    },
+                                                    "requested_resolution": {
+                                                        "type": "string",
+                                                        "example": "720p",
+                                                        "description": "The requested video resolution"
+                                                    },
+                                        "title": {
+                                            "type": "string",
+                                                        "example": "Close Encounter with a Siamese Crocodile | Saving Planet Earth: Crocodiles | BBC Earth",
+                                                        "description": "Video title"
+                                        },
+                                                    "channel": {
+                                            "type": "string",
+                                                        "example": "BBC Earth",
+                                                        "description": "YouTube channel name"
+                                        },
+                                        "duration": {
+                                                        "type": "string",
+                                                        "example": "2m 39s",
+                                                        "description": "Video duration in human-readable format"
+                                        },
+                                                    "provided_resolution": {
+                                            "type": "string",
+                                                        "example": "360p",
+                                                        "description": "The actual video resolution provided"
+                                                    },
+                                                    "thumbnail": {
+                                                        "type": "string",
+                                                        "example": "https://i.ytimg.com/vi/Y2y4OpzKIK4/maxresdefault.jpg",
+                                                        "description": "Thumbnail image URL"
+                                                    },
+                                                    "downloadable_video_link": {
+                                                        "type": "string",
+                                                        "example": "https://rr8---sn-bvvbaxivnuxq5uu-vgql.googlevideo.com/videoplayback?...",
+                                                        "description": "Direct download link for video file"
+                                                    },
+                                                    "downloadable_audio_link": {
+                                                        "type": "string",
+                                                        "example": "https://rr8---sn-bvvbaxivnuxq5uu-vgql.googlevideo.com/videoplayback?...",
+                                                        "description": "Direct download link for audio file"
+                                                    },
+                                                    "merged_downloadable_link": {
+                                                        "type": "string",
+                                                        "example": "https://rr8---sn-bvvbaxivnuxq5uu-vgql.googlevideo.com/videoplayback?...",
+                                                        "description": "Merged video and audio download link"
+                                                    },
+                                                    "view_count": {
+                                                        "type": "string",
+                                                        "example": "48.4K",
+                                                        "description": "Number of views"
+                                                    },
+                                                    "categories": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        },
+                                                        "example": ["Pets & Animals"],
+                                                        "description": "Video categories"
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "example": "Radio DJ Edith Bowman has a close encounter with a young crocodile...",
+                                                        "description": "Video description"
+                                                    },
+                                                    "availability": {
+                                                        "type": "string",
+                                                        "example": "public",
+                                                        "description": "Video availability status"
+                                                    },
+                                                    "live_status": {
+                                                        "type": "string",
+                                                        "example": "not_live",
+                                                        "description": "Live streaming status"
+                                                    },
+                                                    "channel_subscribers": {
+                                                        "type": "string",
+                                                        "example": "14.2M",
+                                                        "description": "Number of channel subscribers"
+                                                    },
+                                                    "video_filesize": {
+                                                        "type": "string",
+                                                        "example": "8.50MB",
+                                                        "description": "Video file size"
+                                                    },
+                                                    "audio_filesize": {
+                                                        "type": "string",
+                                                        "example": "950.39KB",
+                                                        "description": "Audio file size"
+                                                    },
+                                                    "additional_metadata": {
+                                                        "type": "object",
+                                                        "description": "Additional metadata including format details, keywords, channel information, etc.",
+                                                        "properties": {
+                                                            "view_count": {
+                                                                "type": "string",
+                                                                "example": "48.4K"
+                                                            },
+                                                            "like_count": {
+                                                                "type": "string",
+                                                                "example": "223"
+                                                            },
+                                                            "comment_count": {
+                                                                "type": "string",
+                                                                "example": "7"
+                                                            },
+                                                            "video_type": {
+                                                                "type": "string",
+                                                                "example": "long"
+                                                            },
+                                                            "keywords": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "type": "string"
+                                                                },
+                                                                "example": ["Close encounter with a Siamese Crocodile", "saving siamese crocodile"]
+                                                            },
+                                                            "categories": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "type": "string"
+                                                                },
+                                                                "example": ["Pets & Animals"]
+                                                            },
+                                                            "language": {
+                                                                "type": "string",
+                                                                "example": "en"
+                                                            },
+                                                            "channel_name": {
+                                                                "type": "string",
+                                                                "example": "BBC Earth"
+                                                            },
+                                                            "channel_id": {
+                                                                "type": "string",
+                                                                "example": "UCwmZiChSryoWQCZMIQezgTg"
+                                                            },
+                                                            "video_format": {
+                                                                "type": "object",
+                                                                "description": "Video format details"
+                                                            },
+                                                            "audio_format": {
+                                                                "type": "object",
+                                                                "description": "Audio format details"
+                                                            },
+                                                            "source_platform": {
+                                                                "type": "string",
+                                                                "example": "youtube"
+                                                            },
+                                                            "webpage_url": {
+                                                                "type": "string",
+                                                                "example": "https://www.youtube.com/watch?v=Y2y4OpzKIK4"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "description": "Array of video metadata objects"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true,
+                                            "description": "Indicates whether the operation was successful"
+                                        },
+                                        "failed": {
+                                            "type": "boolean",
+                                            "example": false,
+                                            "description": "Indicates whether the operation failed"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/youtube/video/transcript": {
+            "post": {
+                "summary": "YouTube Video Transcript",
+                "operationId": "youtube_video_transcript",
+                "description": "Get YouTube video transcript.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "video_url": {
+                                        "type": "string",
+                                        "description": "The YouTube video URL",
+                                        "example": "https://www.youtube.com/watch?v=Y2y4OpzKIK4"
+                                    },
+                                    "channel": {
+                                        "type": "string",
+                                        "description": "The channel name. Supported values: apify, rapid, memories.ai",
+                                        "enum": ["apify", "rapid", "memories.ai"],
+                                        "example": "apify"
+                                    }
+                                },
+                                "required": [
+                                    "video_url",
+                                    "channel"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Video transcript",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "string",
+                                            "example": "0000",
+                                            "description": "Response code indicating the result status"
+                                        },
+                                        "msg": {
+                                            "type": "string",
+                                            "example": "success",
+                                            "description": "Response message describing the operation result"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "data": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "start": {
+                                                                    "type": "string",
+                                                                    "example": "1.480",
+                                                                    "description": "Start time of the transcript segment in seconds"
+                                                                },
+                                                                "dur": {
+                                                                    "type": "string",
+                                                                    "example": "4.839",
+                                                                    "description": "Duration of the transcript segment in seconds"
+                                                                },
+                                                                "text": {
+                                                                    "type": "string",
+                                                                    "example": "they've intercepted a croc from the",
+                                                                    "description": "The transcript text for this segment"
+                                                                }
+                                                            }
+                                                        },
+                                                        "description": "Array of transcript segments"
+                                                    }
+                                                }
+                                            },
+                                            "description": "Array containing transcript data objects"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true,
+                                            "description": "Indicates whether the operation was successful"
+                                        },
+                                        "failed": {
+                                            "type": "boolean",
+                                            "example": false,
+                                            "description": "Indicates whether the operation failed"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/youtube/video/mai/transcript": {
+            "post": {
+                "summary": "YouTube Video MAI Transcript",
+                "operationId": "youtube_video_mai_transcript",
+                "description": "Get YouTube video transcript using MAI.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "video_url": {
+                                        "type": "string",
+                                        "description": "The YouTube video URL",
+                                        "example": "https://www.youtube.com/shorts/m8sOA8MxmQE"
+                                    }
+                                },
+                                "required": [
+                                    "video_url"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Transcription task information",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "string",
+                                            "example": "0000",
+                                            "description": "Response code indicating the result status"
+                                        },
+                                        "msg": {
+                                            "type": "string",
+                                            "example": "success",
+                                            "description": "Response message describing the operation result"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "task_id": {
+                                                    "type": "string",
+                                                    "example": "1cd78354af824c8eb1dafe4ed2435720",
+                                                    "description": "Unique identifier of the transcription task"
+                                                }
+                                            },
+                                            "description": "Response data object containing task information"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true,
+                                            "description": "Indicates whether the operation was successful"
+                                        },
+                                        "failed": {
+                                            "type": "boolean",
+                                            "example": false,
+                                            "description": "Indicates whether the operation failed"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/instagram/video/metadata": {
+            "post": {
+                "summary": "Instagram Video Metadata",
+                "operationId": "instagram_video_metadata",
+                "description": "Get Instagram video metadata.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "video_url": {
+                                        "type": "string",
+                                        "description": "The Instagram video URL",
+                                        "example": "https://www.instagram.com/reels/DLlGZiCOBQ0/"
+                                    },
+                                    "channel": {
+                                        "type": "string",
+                                        "description": "The channel name. Supported values: apify, rapid, memories.ai",
+                                        "enum": ["apify", "rapid", "memories.ai"],
+                                        "example": "apify"
+                                    }
+                                },
+                                "required": [
+                                    "video_url",
+                                    "channel"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Video metadata information with detailed Instagram data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "string",
+                                            "example": "0000",
+                                            "description": "Response code indicating the result status"
+                                        },
+                                        "msg": {
+                                            "type": "string",
+                                            "example": "success",
+                                            "description": "Response message describing the operation result"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "xdt_shortcode_media": {
+                                                            "type": "object",
+                                                            "description": "Instagram video media object",
+                                                            "properties": {
+                                                                "__typename": {
+                                                                    "type": "string",
+                                                                    "example": "XDTGraphVideo"
+                                                                },
+                                                                "id": {
+                                                                    "type": "string",
+                                                                    "example": "3667365614373573684",
+                                                                    "description": "Video ID"
+                                                                },
+                                                                "shortcode": {
+                                                                    "type": "string",
+                                                                    "example": "DLlGZiCOBQ0",
+                                                                    "description": "Instagram short code"
+                                                                },
+                                                                "thumbnail_src": {
+                                                                    "type": "string",
+                                                                    "example": "https://scontent-jnb2-1.cdninstagram.com/v/t51.2885-15/...",
+                                                                    "description": "Thumbnail image URL"
+                                                                },
+                                                                "dimensions": {
+                                                                    "type": "object",
+                                                                    "properties": {
+                                                                        "height": {
+                                                                            "type": "number",
+                                                                            "example": 1136
+                                                                        },
+                                                                        "width": {
+                                                                            "type": "number",
+                                                                            "example": 640
+                                                                        }
+                                                                    },
+                                                                    "description": "Video dimensions"
+                                                                },
+                                                                "display_url": {
+                                                                    "type": "string",
+                                                                    "example": "https://scontent-jnb2-1.cdninstagram.com/v/t51.2885-15/...",
+                                                                    "description": "Display image URL"
+                                                                },
+                                                                "video_url": {
+                                                                    "type": "string",
+                                                                    "example": "https://scontent-jnb2-1.cdninstagram.com/o1/v/t2/f2/m86/...",
+                                                                    "description": "Direct video URL"
+                                                                },
+                                                                "video_view_count": {
+                                                                    "type": "number",
+                                                                    "example": 27040,
+                                                                    "description": "Number of video views"
+                                                                },
+                                                                "video_play_count": {
+                                                                    "type": "number",
+                                                                    "example": 1799817,
+                                                                    "description": "Number of video plays"
+                                                                },
+                                                                "video_duration": {
+                                                                    "type": "number",
+                                                                    "example": 41.125,
+                                                                    "description": "Video duration in seconds"
+                                                                },
+                                                                "product_type": {
+                                                                    "type": "string",
+                                                                    "example": "clips",
+                                                                    "description": "Product type"
+                                                                },
+                                                                "has_audio": {
+                                                                    "type": "boolean",
+                                                                    "example": true,
+                                                                    "description": "Whether the video has audio"
+                                                                },
+                                                                "owner": {
+                                                                    "type": "object",
+                                                                    "description": "Video owner information",
+                                                                    "properties": {
+                                                                        "id": {
+                                                                            "type": "string",
+                                                                            "example": "242598499"
+                                                                        },
+                                                                        "username": {
+                                                                            "type": "string",
+                                                                            "example": "humansofny"
+                                                                        },
+                                                                        "full_name": {
+                                                                            "type": "string",
+                                                                            "example": "Humans of New York"
+                                                                        },
+                                                                        "is_verified": {
+                                                                            "type": "boolean",
+                                                                            "example": true
+                                                                        },
+                                                                        "profile_pic_url": {
+                                                                            "type": "string",
+                                                                            "example": "https://scontent-jnb2-1.cdninstagram.com/v/t51.2885-19/..."
+                                                                        },
+                                                                        "edge_followed_by": {
+                                                                            "type": "object",
+                                                                            "properties": {
+                                                                                "count": {
+                                                                                    "type": "number",
+                                                                                    "example": 12804266
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "edge_media_to_caption": {
+                                                                    "type": "object",
+                                                                    "description": "Video caption information",
+                                                                    "properties": {
+                                                                        "edges": {
+                                                                            "type": "array",
+                                                                            "items": {
+                                                                                "type": "object",
+                                                                                "properties": {
+                                                                                    "node": {
+                                                                                        "type": "object",
+                                                                                        "properties": {
+                                                                                            "text": {
+                                                                                                "type": "string",
+                                                                                                "example": "I have the moves that they're looking for."
+                                                                                            },
+                                                                                            "created_at": {
+                                                                                                "type": "string",
+                                                                                                "example": "1751404145"
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "edge_media_to_parent_comment": {
+                                                                    "type": "object",
+                                                                    "description": "Comments information",
+                                                                    "properties": {
+                                                                        "count": {
+                                                                            "type": "number",
+                                                                            "example": 487
+                                                                        },
+                                                                        "edges": {
+                                                                            "type": "array",
+                                                                            "items": {
+                                                                                "type": "object",
+                                                                                "properties": {
+                                                                                    "node": {
+                                                                                        "type": "object",
+                                                                                        "properties": {
+                                                                                            "id": {
+                                                                                                "type": "string",
+                                                                                                "example": "18094151056886709"
+                                                                                            },
+                                                                                            "text": {
+                                                                                                "type": "string",
+                                                                                                "example": "Go for it sweetie!!!"
+                                                                                            },
+                                                                                            "created_at": {
+                                                                                                "type": "number",
+                                                                                                "example": 1762011704
+                                                                                            },
+                                                                                            "owner": {
+                                                                                                "type": "object",
+                                                                                                "properties": {
+                                                                                                    "username": {
+                                                                                                        "type": "string",
+                                                                                                        "example": "iam_carrongrazette"
+                                                                                                    }
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "edge_media_preview_like": {
+                                                                    "type": "object",
+                                                                    "description": "Likes information",
+                                                                    "properties": {
+                                                                        "count": {
+                                                                            "type": "number",
+                                                                            "example": 27791
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "taken_at_timestamp": {
+                                                                    "type": "number",
+                                                                    "example": 1751404144,
+                                                                    "description": "Timestamp when the video was taken"
+                                                                },
+                                                                "dash_info": {
+                                                                    "type": "object",
+                                                                    "description": "DASH video information",
+                                                                    "properties": {
+                                                                        "is_dash_eligible": {
+                                                                            "type": "boolean",
+                                                                            "example": true
+                                                                        },
+                                                                        "video_dash_manifest": {
+                                                                            "type": "string",
+                                                                            "example": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>...",
+                                                                            "description": "DASH manifest XML"
+                                                                        },
+                                                                        "number_of_qualities": {
+                                                                            "type": "number",
+                                                                            "example": 1
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "clips_music_attribution_info": {
+                                                                    "type": "object",
+                                                                    "description": "Music attribution information",
+                                                                    "properties": {
+                                                                        "artist_name": {
+                                                                            "type": "string",
+                                                                            "example": "humansofny"
+                                                                        },
+                                                                        "song_name": {
+                                                                            "type": "string",
+                                                                            "example": "Original audio"
+                                                                        },
+                                                                        "uses_original_audio": {
+                                                                            "type": "boolean",
+                                                                            "example": true
+                                                                        },
+                                                                        "audio_id": {
+                                                                            "type": "string",
+                                                                            "example": "24313369781619226"
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "description": "Instagram data object"
+                                                },
+                                                "extensions": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "is_final": {
+                                                            "type": "boolean",
+                                                            "example": true
+                                                        }
+                                                    }
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "ok",
+                                                    "description": "Response status"
+                                                }
+                                            },
+                                            "description": "Response data object containing Instagram metadata"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true,
+                                            "description": "Indicates whether the operation was successful"
+                                        },
+                                        "failed": {
+                                            "type": "boolean",
+                                            "example": false,
+                                            "description": "Indicates whether the operation failed"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/instagram/video/transcript": {
+            "post": {
+                "summary": "Instagram Video Transcript",
+                "operationId": "instagram_video_transcript",
+                "description": "Get Instagram video transcript.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "video_url": {
+                                        "type": "string",
+                                        "description": "The Instagram video URL",
+                                        "example": "https://www.instagram.com/reels/DLlGZiCOBQ0/"
+                                    },
+                                    "channel": {
+                                        "type": "string",
+                                        "description": "The channel name. Supported values: apify, rapid, memories.ai",
+                                        "enum": ["apify", "rapid", "memories.ai"],
+                                        "example": "apify"
+                                    }
+                                },
+                                "required": [
+                                    "video_url",
+                                    "channel"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Video transcript with detailed timing information and metadata",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "string",
+                                            "example": "0000",
+                                            "description": "Response code indicating the result status"
+                                        },
+                                        "msg": {
+                                            "type": "string",
+                                            "example": "success",
+                                            "description": "Response message describing the operation result"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "transcript": {
+                                            "type": "string",
+                                                        "example": "I'm gonna get a little personal. I had gastric bypass 10 years ago...",
+                                                        "description": "Complete transcript text"
+                                                    },
+                                                    "segments": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "text": {
+                                                                    "type": "string",
+                                                                    "example": "I'm gonna get a little personal.",
+                                                                    "description": "Text content of the segment"
+                                                                },
+                                                                "start": {
+                                                                    "type": "number",
+                                                                    "example": 0,
+                                                                    "description": "Start time of the segment in seconds"
+                                                                },
+                                                                "end": {
+                                                                    "type": "number",
+                                                                    "example": 2,
+                                                                    "description": "End time of the segment in seconds"
+                                                                }
+                                                            }
+                                                        },
+                                                        "description": "Array of transcript segments with timing information"
+                                                    },
+                                                    "words": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "word": {
+                                                                    "type": "string",
+                                                                    "example": "I'm",
+                                                                    "description": "The word text"
+                                                                },
+                                                                "start": {
+                                                                    "type": "number",
+                                                                    "example": 0,
+                                                                    "description": "Start time of the word in seconds"
+                                                                },
+                                                                "end": {
+                                                                    "type": "number",
+                                                                    "example": 0.02,
+                                                                    "description": "End time of the word in seconds"
+                                                                }
+                                                            }
+                                                        },
+                                                        "description": "Array of individual words with timing information"
+                                                    },
+                                                    "displayUrl": {
+                                                        "type": "string",
+                                                        "example": "https://scontent-ord5-3.cdninstagram.com/v/t51.2885-15/...",
+                                                        "description": "Display image URL"
+                                                    },
+                                                    "instagramUrl": {
+                                                        "type": "string",
+                                                        "example": "https://www.instagram.com/reel/DLlGZiCOBQ0/",
+                                                        "description": "Instagram video URL"
+                                                    },
+                                                    "shortCode": {
+                                                        "type": "string",
+                                                        "example": "DLlGZiCOBQ0",
+                                                        "description": "Instagram short code"
+                                                    },
+                                                    "caption": {
+                                                        "type": "string",
+                                                        "example": "I have the moves that they're looking for.",
+                                                        "description": "Video caption"
+                                                    },
+                                                    "ownerUsername": {
+                                                        "type": "string",
+                                                        "example": "humansofny",
+                                                        "description": "Instagram owner username"
+                                                    },
+                                                    "ownerFullName": {
+                                                        "type": "string",
+                                                        "example": "Humans of New York",
+                                                        "description": "Instagram owner full name"
+                                                    },
+                                                    "videoDuration": {
+                                                        "type": "number",
+                                                        "example": 41.125,
+                                                        "description": "Video duration in seconds"
+                                                    },
+                                                    "timestamp": {
+                                                        "type": "string",
+                                                        "example": "2025-07-01T21:09:04.000Z",
+                                                        "description": "Video timestamp"
+                                                    },
+                                                    "videoUrl": {
+                                                        "type": "string",
+                                                        "example": "https://scontent-ord5-2.cdninstagram.com/o1/v/t16/f2/m86/...",
+                                                        "description": "Direct video URL"
+                                                    },
+                                                    "likesCount": {
+                                                        "type": "number",
+                                                        "example": 27791,
+                                                        "description": "Number of likes"
+                                                    },
+                                                    "videoViewCount": {
+                                                        "type": "number",
+                                                        "example": 27040,
+                                                        "description": "Number of video views"
+                                                    },
+                                                    "videoPlayCount": {
+                                                        "type": "number",
+                                                        "example": 1799817,
+                                                        "description": "Number of video plays"
+                                                    },
+                                                    "commentsCount": {
+                                                        "type": "number",
+                                                        "example": 487,
+                                                        "description": "Number of comments"
+                                                    },
+                                                    "musicArtist": {
+                                                        "type": "string",
+                                                        "example": "humansofny",
+                                                        "description": "Music artist name"
+                                                    },
+                                                    "musicSong": {
+                                                        "type": "string",
+                                                        "example": "Original audio",
+                                                        "description": "Music song name"
+                                                    },
+                                                    "usesOriginalAudio": {
+                                                        "type": "boolean",
+                                                        "example": true,
+                                                        "description": "Whether the video uses original audio"
+                                                    },
+                                                    "firstComment": {
+                                                        "type": "string",
+                                                        "example": "Go for it sweetie!!!",
+                                                        "description": "First comment text"
+                                                    },
+                                                    "id": {
+                                                        "type": "string",
+                                                        "example": "3667365614373573684",
+                                                        "description": "Video ID"
+                                                    },
+                                                    "type": {
+                                                        "type": "string",
+                                                        "example": "Video",
+                                                        "description": "Content type"
+                                                    },
+                                                    "url": {
+                                                        "type": "string",
+                                                        "example": "https://www.instagram.com/p/DLlGZiCOBQ0/",
+                                                        "description": "Video URL"
+                                                    },
+                                                    "ownerId": {
+                                                        "type": "string",
+                                                        "example": "242598499",
+                                                        "description": "Owner ID"
+                                                    },
+                                                    "productType": {
+                                                        "type": "string",
+                                                        "example": "clips",
+                                                        "description": "Product type"
+                                                    },
+                                                    "isSponsored": {
+                                                        "type": "boolean",
+                                                        "example": false,
+                                                        "description": "Whether the video is sponsored"
+                                                    },
+                                                    "isCommentsDisabled": {
+                                                        "type": "boolean",
+                                                        "example": false,
+                                                        "description": "Whether comments are disabled"
+                                                    },
+                                                    "dimensionsHeight": {
+                                                        "type": "number",
+                                                        "example": 1136,
+                                                        "description": "Video height in pixels"
+                                                    },
+                                                    "dimensionsWidth": {
+                                                        "type": "number",
+                                                        "example": 640,
+                                                        "description": "Video width in pixels"
+                                                    },
+                                                    "processedAt": {
+                                                        "type": "string",
+                                                        "example": "2025-12-30T06:12:24.581Z",
+                                                        "description": "Processing timestamp"
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                                        "example": "success",
+                                                        "description": "Processing status"
+                                                    },
+                                                    "metadata": {
+                                                        "type": "object",
+                                                        "description": "Additional metadata information",
+                                                        "properties": {
+                                                            "runId": {
+                                                                "type": "string",
+                                                                "example": "R5tnfCOZ6KueHW6uI"
+                                                            },
+                                                            "actorId": {
+                                                                "type": "string",
+                                                                "example": "3C7L8IMQOkq3isV2Y"
+                                                            },
+                                                            "processingType": {
+                                                                "type": "string",
+                                                                "example": "single-processing"
+                                                            },
+                                                            "urlIndex": {
+                                                                "type": "number",
+                                                                "example": 1
+                                                            },
+                                                            "totalUrls": {
+                                                                "type": "number",
+                                                                "example": 1
+                                                            },
+                                                            "userTier": {
+                                                                "type": "string",
+                                                                "example": "PAID"
+                                                            },
+                                                            "processingSpeed": {
+                                                                "type": "string",
+                                                                "example": "standard"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "description": "Array containing transcript data objects"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true,
+                                            "description": "Indicates whether the operation was successful"
+                                        },
+                                        "failed": {
+                                            "type": "boolean",
+                                            "example": false,
+                                            "description": "Indicates whether the operation failed"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/instagram/video/mai/transcript": {
+            "post": {
+                "summary": "Instagram Video MAI Transcript",
+                "operationId": "instagram_video_mai_transcript",
+                "description": "Get Instagram video transcript using MAI.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "video_url": {
+                                        "type": "string",
+                                        "description": "The Instagram video URL",
+                                        "example": "https://www.instagram.com/reels/DLlGZiCOBQ0/"
+                                    }
+                                },
+                                "required": [
+                                    "video_url"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Transcription task information",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "string",
+                                            "example": "0000",
+                                            "description": "Response code indicating the result status"
+                                        },
+                                        "msg": {
+                                            "type": "string",
+                                            "example": "success",
+                                            "description": "Response message describing the operation result"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "task_id": {
+                                                    "type": "string",
+                                                    "example": "1cd78354af824c8eb1dafe4ed2435720",
+                                                    "description": "Unique identifier of the transcription task"
+                                                }
+                                            },
+                                            "description": "Response data object containing task information"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true,
+                                            "description": "Indicates whether the operation was successful"
+                                        },
+                                        "failed": {
+                                            "type": "boolean",
+                                            "example": false,
+                                            "description": "Indicates whether the operation failed"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/tiktok/video/metadata": {
+            "post": {
+                "summary": "TikTok Video Metadata",
+                "operationId": "tiktok_video_metadata",
+                "description": "Get TikTok video metadata.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "video_url": {
+                                        "type": "string",
+                                        "description": "The TikTok video URL",
+                                        "example": "https://www.tiktok.com/@cutshall73/video/7543017294226558221"
+                                    },
+                                    "channel": {
+                                        "type": "string",
+                                        "description": "The channel name. Supported values: apify, rapid, memories.ai",
+                                        "enum": ["apify", "rapid", "memories.ai"],
+                                        "example": "apify"
+                                    }
+                                },
+                                "required": [
+                                    "video_url",
+                                    "channel"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Video metadata information with detailed TikTok data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "string",
+                                            "example": "0000",
+                                            "description": "Response code indicating the result status"
+                                        },
+                                        "msg": {
+                                            "type": "string",
+                                            "example": "success",
+                                            "description": "Response message describing the operation result"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "example": "7543017294226558221",
+                                                        "description": "Video ID"
+                                                    },
+                                                    "text": {
+                                                        "type": "string",
+                                                        "example": "OOTD and confirmation Reacher is alive 🧸🏼",
+                                                        "description": "Video caption/text"
+                                                    },
+                                                    "textLanguage": {
+                                                        "type": "string",
+                                                        "example": "en",
+                                                        "description": "Language of the video text"
+                                                    },
+                                                    "createTime": {
+                                                        "type": "number",
+                                                        "example": 1756245606,
+                                                        "description": "Creation timestamp"
+                                                    },
+                                                    "createTimeISO": {
+                                                        "type": "string",
+                                                        "example": "2025-08-26T22:00:06.000Z",
+                                                        "description": "Creation time in ISO format"
+                                                    },
+                                                    "locationCreated": {
+                                                        "type": "string",
+                                                        "example": "US",
+                                                        "description": "Location where the video was created"
+                                                    },
+                                                    "isAd": {
+                                                        "type": "boolean",
+                                                        "example": true,
+                                                        "description": "Whether the video is an advertisement"
+                                                    },
+                                                    "authorMeta": {
+                                                        "type": "object",
+                                                        "description": "Author/user metadata",
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "string",
+                                                                "example": "6638037497953681414"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "cutshall73",
+                                                                "description": "Author username"
+                                                            },
+                                                            "profileUrl": {
+                                                                "type": "string",
+                                                                "example": "https://www.tiktok.com/@cutshall73"
+                                                            },
+                                                            "nickName": {
+                                                                "type": "string",
+                                                                "example": "Whitney Lee Cutshall",
+                                                                "description": "Author display name"
+                                                            },
+                                                            "verified": {
+                                                                "type": "boolean",
+                                                                "example": false,
+                                                                "description": "Whether the author is verified"
+                                                            },
+                                                            "avatar": {
+                                                                "type": "string",
+                                                                "example": "https://p19-common-sign.tiktokcdn-us.com/tos-useast5-avt-0068-tx/...",
+                                                                "description": "Avatar URL"
+                                                            },
+                                                            "following": {
+                                                                "type": "number",
+                                                                "example": 5835,
+                                                                "description": "Number of users the author follows"
+                                                            },
+                                                            "fans": {
+                                                                "type": "number",
+                                                                "example": 3908,
+                                                                "description": "Number of followers"
+                                                            },
+                                                            "heart": {
+                                                                "type": "number",
+                                                                "example": 3600000,
+                                                                "description": "Total likes received"
+                                                            },
+                                                            "video": {
+                                                                "type": "number",
+                                                                "example": 76,
+                                                                "description": "Number of videos posted"
+                                                            },
+                                                            "digg": {
+                                                                "type": "number",
+                                                                "example": 33000,
+                                                                "description": "Total diggs"
+                                                            }
+                                                        }
+                                                    },
+                                                    "musicMeta": {
+                                                        "type": "object",
+                                                        "description": "Music metadata",
+                                                        "properties": {
+                                                            "musicName": {
+                                                                "type": "string",
+                                                                "example": "original sound",
+                                                                "description": "Music name"
+                                                            },
+                                                            "musicAuthor": {
+                                                                "type": "string",
+                                                                "example": "Whitney Lee Cutshall",
+                                                                "description": "Music author"
+                                                            },
+                                                            "musicOriginal": {
+                                                                "type": "boolean",
+                                                                "example": true,
+                                                                "description": "Whether it's original audio"
+                                                            },
+                                                            "playUrl": {
+                                                                "type": "string",
+                                                                "example": "https://v16m.tiktokcdn-us.com/401d56406f99341037e41da12523731a/...",
+                                                                "description": "Music playback URL"
+                                                            },
+                                                            "coverMediumUrl": {
+                                                                "type": "string",
+                                                                "example": "https://p19-common-sign.tiktokcdn-us.com/tos-useast5-avt-0068-tx/...",
+                                                                "description": "Cover image URL"
+                                                            },
+                                                            "musicId": {
+                                                                "type": "string",
+                                                                "example": "7543017437262023437",
+                                                                "description": "Music ID"
+                                                            }
+                                                        }
+                                                    },
+                                                    "webVideoUrl": {
+                                                        "type": "string",
+                                                        "example": "https://www.tiktok.com/@cutshall73/video/7543017294226558221",
+                                                        "description": "TikTok web video URL"
+                                                    },
+                                                    "mediaUrls": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        },
+                                                        "example": ["https://api.apify.com/v2/key-value-stores/YvBVzx9NfbVwyqE45/records/video-cutshall73-20250826220006-7543017294226558221.mp4"],
+                                                        "description": "Array of media URLs"
+                                                    },
+                                                    "videoMeta": {
+                                                        "type": "object",
+                                                        "description": "Video metadata",
+                                                        "properties": {
+                                                            "height": {
+                                                                "type": "number",
+                                                                "example": 1024,
+                                                                "description": "Video height in pixels"
+                                                            },
+                                                            "width": {
+                                                                "type": "number",
+                                                                "example": 576,
+                                                                "description": "Video width in pixels"
+                                                            },
+                                                            "duration": {
+                                                                "type": "number",
+                                                                "example": 36,
+                                                                "description": "Video duration in seconds"
+                                                            },
+                                                            "coverUrl": {
+                                                                "type": "string",
+                                                                "example": "https://api.apify.com/v2/key-value-stores/YvBVzx9NfbVwyqE45/records/cover-cutshall73-20250826220006-7543017294226558221.jpg",
+                                                                "description": "Cover image URL"
+                                                            },
+                                                            "originalCoverUrl": {
+                                                                "type": "string",
+                                                                "example": "https://p16-common-sign.tiktokcdn-us.com/tos-useast5-p-0068-tx/...",
+                                                                "description": "Original cover image URL"
+                                                            },
+                                                            "definition": {
+                                                                "type": "string",
+                                                                "example": "540p",
+                                                                "description": "Video definition"
+                                                            },
+                                                            "format": {
+                                                                "type": "string",
+                                                                "example": "mp4",
+                                                                "description": "Video format"
+                                                            },
+                                                            "subtitleLinks": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "type": "object",
+                                                                    "properties": {
+                                                                        "language": {
+                                                                            "type": "string",
+                                                                            "example": "eng-US",
+                                                                            "description": "Subtitle language code"
+                                                                        },
+                                                                        "downloadLink": {
+                                                                            "type": "string",
+                                                                            "example": "https://v16m-webapp.tiktokcdn-us.com/2c1ed634ee265bbff4a38111e7511061/...",
+                                                                            "description": "Subtitle download link"
+                                                                        },
+                                                                        "tiktokLink": {
+                                                                            "type": "string",
+                                                                            "example": "https://v16m-webapp.tiktokcdn-us.com/2c1ed634ee265bbff4a38111e7511061/...",
+                                                                            "description": "TikTok subtitle link"
+                                                                        },
+                                                                        "source": {
+                                                                            "type": "string",
+                                                                            "example": "ASR",
+                                                                            "description": "Subtitle source"
+                                                                        },
+                                                                        "sourceUnabbreviated": {
+                                                                            "type": "string",
+                                                                            "example": "automatic speech recognition",
+                                                                            "description": "Full subtitle source name"
+                                                                        },
+                                                                        "version": {
+                                                                            "type": "string",
+                                                                            "example": "1:big_caption",
+                                                                            "description": "Subtitle version"
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "description": "Array of subtitle links with language information"
+                                                            },
+                                                            "downloadAddr": {
+                                                                "type": "string",
+                                                                "example": "https://api.apify.com/v2/key-value-stores/YvBVzx9NfbVwyqE45/records/video-cutshall73-20250826220006-7543017294226558221.mp4",
+                                                                "description": "Video download address"
+                                                            }
+                                                        }
+                                                    },
+                                                    "diggCount": {
+                                                        "type": "number",
+                                                        "example": 507,
+                                                        "description": "Number of likes"
+                                                    },
+                                                    "shareCount": {
+                                                        "type": "number",
+                                                        "example": 2,
+                                                        "description": "Number of shares"
+                                                    },
+                                                    "playCount": {
+                                                        "type": "number",
+                                                        "example": 20200,
+                                                        "description": "Number of plays"
+                                                    },
+                                                    "collectCount": {
+                                                        "type": "number",
+                                                        "example": 3,
+                                                        "description": "Number of collections"
+                                                    },
+                                                    "commentCount": {
+                                                        "type": "number",
+                                                        "example": 6,
+                                                        "description": "Number of comments"
+                                                    },
+                                                    "repostCount": {
+                                                        "type": "number",
+                                                        "example": 0,
+                                                        "description": "Number of reposts"
+                                                    },
+                                                    "mentions": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        },
+                                                        "description": "Array of mentions"
+                                                    },
+                                                    "detailedMentions": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object"
+                                                        },
+                                                        "description": "Array of detailed mentions"
+                                                    },
+                                                    "hashtags": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        },
+                                                        "description": "Array of hashtags"
+                                                    },
+                                                    "effectStickers": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object"
+                                                        },
+                                                        "description": "Array of effect stickers"
+                                                    },
+                                                    "isSlideshow": {
+                                                        "type": "boolean",
+                                                        "example": false,
+                                                        "description": "Whether the video is a slideshow"
+                                                    },
+                                                    "isPinned": {
+                                                        "type": "boolean",
+                                                        "example": false,
+                                                        "description": "Whether the video is pinned"
+                                                    },
+                                                    "isSponsored": {
+                                                        "type": "boolean",
+                                                        "example": false,
+                                                        "description": "Whether the video is sponsored"
+                                                    },
+                                                    "submittedVideoUrl": {
+                                                        "type": "string",
+                                                        "example": "https://www.tiktok.com/@cutshall73/video/7543017294226558221",
+                                                        "description": "Submitted video URL"
+                                                    }
+                                                }
+                                            },
+                                            "description": "Array containing TikTok video metadata objects"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true,
+                                            "description": "Indicates whether the operation was successful"
+                                        },
+                                        "failed": {
+                                            "type": "boolean",
+                                            "example": false,
+                                            "description": "Indicates whether the operation failed"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/tiktok/video/transcript": {
+            "post": {
+                "summary": "TikTok Video Transcript",
+                "operationId": "tiktok_video_transcript",
+                "description": "Get TikTok video transcript.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "video_url": {
+                                        "type": "string",
+                                        "description": "The TikTok video URL",
+                                        "example": "https://www.tiktok.com/@cutshall73/video/7543017294226558221"
+                                    },
+                                    "channel": {
+                                        "type": "string",
+                                        "description": "The channel name. Supported values: apify, rapid, memories.ai",
+                                        "enum": ["apify", "rapid", "memories.ai"],
+                                        "example": "apify"
+                                    }
+                                },
+                                "required": [
+                                    "video_url",
+                                    "channel"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Video transcript in WEBVTT format",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "string",
+                                            "example": "0000",
+                                            "description": "Response code indicating the result status"
+                                        },
+                                        "msg": {
+                                            "type": "string",
+                                            "example": "success",
+                                            "description": "Response message describing the operation result"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "credits_remaining": {
+                                                        "type": "string",
+                                                        "example": "9997665621",
+                                                        "description": "Remaining API credits"
+                                                    },
+                                                    "id": {
+                                                        "type": "string",
+                                                        "example": "7543017294226558221",
+                                                        "description": "TikTok video ID"
+                                                    },
+                                                    "url": {
+                                                        "type": "string",
+                                                        "example": "https://www.tiktok.com/@cutshall73/video/7543017294226558221",
+                                                        "description": "TikTok video URL"
+                                                    },
+                                                    "transcript": {
+                                                        "type": "string",
+                                                        "example": "WEBVTT\n\n\n00:00:00.140 --> 00:00:01.600\nSay hi. Hi.\n\n00:00:01.700 --> 00:00:03.560\nSay. Say I'm alive.\n\n00:00:03.660 --> 00:00:06.280\nI'm alive. We're gonna do a little OOTD.",
+                                                        "description": "Video transcript in WEBVTT format with timing information"
+                                                    }
+                                                }
+                                            },
+                                            "description": "Array containing transcript data objects"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true,
+                                            "description": "Indicates whether the operation was successful"
+                                        },
+                                        "failed": {
+                                            "type": "boolean",
+                                            "example": false,
+                                            "description": "Indicates whether the operation failed"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/tiktok/video/mai/transcript": {
+            "post": {
+                "summary": "TikTok Video MAI Transcript",
+                "operationId": "tiktok_video_mai_transcript",
+                "description": "Get TikTok video transcript using MAI.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "video_url": {
+                                        "type": "string",
+                                        "description": "The TikTok video URL",
+                                        "example": "https://www.tiktok.com/@cutshall73/video/7543017294226558221"
+                                    }
+                                },
+                                "required": [
+                                    "video_url"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Video transcript",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "transcript": {
+                                            "type": "string",
+                                            "example": "Hello, this is the transcript text..."
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/twitter/video/metadata": {
+            "post": {
+                "summary": "Twitter Video Metadata",
+                "operationId": "twitter_video_metadata",
+                "description": "Get Twitter video metadata.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "video_url": {
+                                        "type": "string",
+                                        "description": "The Twitter video URL",
+                                        "example": "https://x.com/NBCOlympics/status/1989901761650323606"
+                                    },
+                                    "channel": {
+                                        "type": "string",
+                                        "description": "The channel name. Supported values: apify, rapid, memories.ai",
+                                        "enum": ["apify", "rapid", "memories.ai"],
+                                        "example": "apify"
+                                    }
+                                },
+                                "required": [
+                                    "video_url",
+                                    "channel"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Video metadata information with detailed Twitter/X data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "string",
+                                            "example": "0000",
+                                            "description": "Response code indicating the result status"
+                                        },
+                                        "msg": {
+                                            "type": "string",
+                                            "example": "success",
+                                            "description": "Response message describing the operation result"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "type": {
+                                                        "type": "string",
+                                                        "example": "tweet",
+                                                        "description": "Content type"
+                                                    },
+                                                    "id": {
+                                                        "type": "string",
+                                                        "example": "1989901761650323606",
+                                                        "description": "Tweet ID"
+                                                    },
+                                                    "url": {
+                                                        "type": "string",
+                                                        "example": "https://x.com/NBCOlympics/status/1989901761650323606",
+                                                        "description": "X.com URL"
+                                                    },
+                                                    "twitterUrl": {
+                                                        "type": "string",
+                                                        "example": "https://twitter.com/NBCOlympics/status/1989901761650323606",
+                                                        "description": "Twitter.com URL"
+                                                    },
+                                                    "text": {
+                                                        "type": "string",
+                                                        "example": "France's Kevin Aymoz couldn't believe his 159.97 free skate score that led to his first-ever ISU Grand Prix GOLD. 🤯 https://t.co/901FxyK1Jc",
+                                                        "description": "Tweet text"
+                                                    },
+                                                    "fullText": {
+                                                        "type": "string",
+                                                        "example": "France's Kevin Aymoz couldn't believe his 159.97 free skate score that led to his first-ever ISU Grand Prix GOLD. 🤯 https://t.co/901FxyK1Jc",
+                                                        "description": "Full tweet text"
+                                                    },
+                                                    "source": {
+                                                        "type": "string",
+                                                        "example": "Wildmoka",
+                                                        "description": "Source of the tweet"
+                                                    },
+                                                    "retweetCount": {
+                                                        "type": "number",
+                                                        "example": 257,
+                                                        "description": "Number of retweets"
+                                                    },
+                                                    "replyCount": {
+                                                        "type": "number",
+                                                        "example": 139,
+                                                        "description": "Number of replies"
+                                                    },
+                                                    "likeCount": {
+                                                        "type": "number",
+                                                        "example": 5002,
+                                                        "description": "Number of likes"
+                                                    },
+                                                    "quoteCount": {
+                                                        "type": "number",
+                                                        "example": 39,
+                                                        "description": "Number of quotes"
+                                                    },
+                                                    "viewCount": {
+                                                        "type": "number",
+                                                        "example": 43099524,
+                                                        "description": "Number of views"
+                                                    },
+                                                    "createdAt": {
+                                                        "type": "string",
+                                                        "example": "Sun Nov 16 03:42:05 +0000 2025",
+                                                        "description": "Creation timestamp"
+                                                    },
+                                                    "lang": {
+                                                        "type": "string",
+                                                        "example": "en",
+                                                        "description": "Language code"
+                                                    },
+                                                    "bookmarkCount": {
+                                                        "type": "number",
+                                                        "example": 607,
+                                                        "description": "Number of bookmarks"
+                                                    },
+                                                    "isReply": {
+                                                        "type": "boolean",
+                                                        "example": false,
+                                                        "description": "Whether the tweet is a reply"
+                                                    },
+                                                    "conversationId": {
+                                                        "type": "string",
+                                                        "example": "1989901761650323606",
+                                                        "description": "Conversation ID"
+                                                    },
+                                                    "possiblySensitive": {
+                                                        "type": "boolean",
+                                                        "example": false,
+                                                        "description": "Whether the content is possibly sensitive"
+                                                    },
+                                                    "isPinned": {
+                                                        "type": "boolean",
+                                                        "example": false,
+                                                        "description": "Whether the tweet is pinned"
+                                                    },
+                                                    "author": {
+                                                        "type": "object",
+                                                        "description": "Author/user information",
+                                                        "properties": {
+                                                            "type": {
+                                                                "type": "string",
+                                                                "example": "user"
+                                                            },
+                                                            "userName": {
+                                                                "type": "string",
+                                                                "example": "NBCOlympics",
+                                                                "description": "Author username"
+                                                            },
+                                                            "url": {
+                                                                "type": "string",
+                                                                "example": "https://x.com/NBCOlympics"
+                                                            },
+                                                            "twitterUrl": {
+                                                                "type": "string",
+                                                                "example": "https://twitter.com/NBCOlympics"
+                                                            },
+                                                            "id": {
+                                                                "type": "string",
+                                                                "example": "14955353"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "NBC Olympics & Paralympics",
+                                                                "description": "Author display name"
+                                                            },
+                                                            "isVerified": {
+                                                                "type": "boolean",
+                                                                "example": false,
+                                                                "description": "Whether the author is verified"
+                                                            },
+                                                            "verifiedType": {
+                                                                "type": "string",
+                                                                "example": "Business",
+                                                                "description": "Verification type"
+                                                            },
+                                                            "isBlueVerified": {
+                                                                "type": "boolean",
+                                                                "example": true,
+                                                                "description": "Whether the author has blue verification"
+                                                            },
+                                                            "profilePicture": {
+                                                                "type": "string",
+                                                                "example": "https://pbs.twimg.com/profile_images/1889684530245554177/hNcrFUJ0_normal.jpg",
+                                                                "description": "Profile picture URL"
+                                                            },
+                                                            "coverPicture": {
+                                                                "type": "string",
+                                                                "example": "https://pbs.twimg.com/profile_banners/14955353/1762962343",
+                                                                "description": "Cover picture URL"
+                                                            },
+                                                            "description": {
+                                                                "type": "string",
+                                                                "example": "The official home of NBC's coverage of the Olympics and Paralympics.",
+                                                                "description": "Author description"
+                                                            },
+                                                            "followers": {
+                                                                "type": "number",
+                                                                "example": 1077295,
+                                                                "description": "Number of followers"
+                                                            },
+                                                            "following": {
+                                                                "type": "number",
+                                                                "example": 2809,
+                                                                "description": "Number of users following"
+                                                            },
+                                                            "createdAt": {
+                                                                "type": "string",
+                                                                "example": "Fri May 30 15:20:31 +0000 2008",
+                                                                "description": "Account creation timestamp"
+                                                            }
+                                                        }
+                                                    },
+                                                    "extendedEntities": {
+                                                        "type": "object",
+                                                        "description": "Extended media entities",
+                                                        "properties": {
+                                                            "media": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "type": "object",
+                                                                    "properties": {
+                                                                        "display_url": {
+                                                                            "type": "string",
+                                                                            "example": "pic.x.com/901FxyK1Jc"
+                                                                        },
+                                                                        "expanded_url": {
+                                                                            "type": "string",
+                                                                            "example": "https://x.com/NBCOlympics/status/1989901761650323606/video/1"
+                                                                        },
+                                                                        "id_str": {
+                                                                            "type": "string",
+                                                                            "example": "1989901699746516992"
+                                                                        },
+                                                                        "type": {
+                                                                            "type": "string",
+                                                                            "example": "video",
+                                                                            "description": "Media type"
+                                                                        },
+                                                                        "media_url_https": {
+                                                                            "type": "string",
+                                                                            "example": "https://pbs.twimg.com/media/G52NGsBXMAAniJV.jpg",
+                                                                            "description": "Media URL"
+                                                                        },
+                                                                        "video_info": {
+                                                                            "type": "object",
+                                                                            "description": "Video information",
+                                                                            "properties": {
+                                                                                "aspect_ratio": {
+                                                                                    "type": "array",
+                                                                                    "items": {
+                                                                                        "type": "number"
+                                                                                    },
+                                                                                    "example": [16, 9],
+                                                                                    "description": "Video aspect ratio"
+                                                                                },
+                                                                                "duration_millis": {
+                                                                                    "type": "number",
+                                                                                    "example": 18261,
+                                                                                    "description": "Video duration in milliseconds"
+                                                                                },
+                                                                                "variants": {
+                                                                                    "type": "array",
+                                                                                    "items": {
+                                                                                        "type": "object",
+                                                                                        "properties": {
+                                                                                            "content_type": {
+                                                                                                "type": "string",
+                                                                                                "example": "video/mp4"
+                                                                                            },
+                                                                                            "url": {
+                                                                                                "type": "string",
+                                                                                                "example": "https://video.twimg.com/amplify_video/1989901699746516992/vid/avc1/1280x720/OSp0AyG0fnyvfjZP.mp4?tag=14"
+                                                                                            },
+                                                                                            "bitrate": {
+                                                                                                "type": "number",
+                                                                                                "example": 2176000,
+                                                                                                "description": "Video bitrate"
+                                                                                            }
+                                                                                        }
+                                                                                    },
+                                                                                    "description": "Array of video variants with different bitrates"
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "description": "Array of media objects"
+                                                            }
+                                                        }
+                                                    },
+                                                    "isRetweet": {
+                                                        "type": "boolean",
+                                                        "example": false,
+                                                        "description": "Whether the tweet is a retweet"
+                                                    },
+                                                    "isQuote": {
+                                                        "type": "boolean",
+                                                        "example": false,
+                                                        "description": "Whether the tweet is a quote"
+                                                    },
+                                                    "media": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        },
+                                                        "example": ["https://pbs.twimg.com/media/G52NGsBXMAAniJV.jpg"],
+                                                        "description": "Array of media URLs"
+                                                    },
+                                                    "isConversationControlled": {
+                                                        "type": "boolean",
+                                                        "example": false,
+                                                        "description": "Whether the conversation is controlled"
+                                                    }
+                                                }
+                                            },
+                                            "description": "Array containing Twitter/X tweet metadata objects"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true,
+                                            "description": "Indicates whether the operation was successful"
+                                        },
+                                        "failed": {
+                                            "type": "boolean",
+                                            "example": false,
+                                            "description": "Indicates whether the operation failed"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/twitter/video/transcript": {
+            "post": {
+                "summary": "Twitter Video Transcript",
+                "operationId": "twitter_video_transcript",
+                "description": "Get Twitter video transcript.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "video_url": {
+                                        "type": "string",
+                                        "description": "The Twitter video URL",
+                                        "example": "https://x.com/NBCOlympics/status/1989901761650323606"
+                                    },
+                                    "channel": {
+                                        "type": "string",
+                                        "description": "The channel name. Supported values: apify, rapid, memories.ai",
+                                        "enum": ["apify", "rapid", "memories.ai"],
+                                        "example": "apify"
+                                    }
+                                },
+                                "required": [
+                                    "video_url",
+                                    "channel"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Video transcript in multiple formats (plain text and WEBVTT)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "string",
+                                            "example": "0000",
+                                            "description": "Response code indicating the result status"
+                                        },
+                                        "msg": {
+                                            "type": "string",
+                                            "example": "success",
+                                            "description": "Response message describing the operation result"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "tweetId": {
+                                                        "type": "string",
+                                                        "example": "1989901761650323606",
+                                                        "description": "Twitter/X tweet ID"
+                                                    },
+                                                    "transcript_text": {
+                                                        "type": "string",
+                                                        "example": ">> 159.97 SO HE GOES. INTO THE LEAD AND THIS PLAY. LEAD AND THIS PLAY. >> HIS REACTION. >> HIS REACTION. >> YES. >> YES. >> FIRST PLACE ARE.",
+                                                        "description": "Plain text transcript without timing information"
+                                                    },
+                                                    "json_text": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object"
+                                                        },
+                                                        "example": [],
+                                                        "description": "JSON format transcript (may be empty array)"
+                                                    },
+                                                    "webvtt_text": {
+                                                        "type": "string",
+                                                        "example": "WEBVTT\n\n00:00:00.000 --> 00:00:05.696\n>> 159.97 SO HE GOES. INTO THE \nLEAD AND THIS PLAY.\n\n00:00:05.707 --> 00:00:07.974\nLEAD AND THIS PLAY. \n>> HIS REACTION.",
+                                                        "description": "Transcript in WEBVTT format with timing information"
+                                                    }
+                                                }
+                                            },
+                                            "description": "Array containing transcript data objects"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true,
+                                            "description": "Indicates whether the operation was successful"
+                                        },
+                                        "failed": {
+                                            "type": "boolean",
+                                            "example": false,
+                                            "description": "Indicates whether the operation failed"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/twitter/video/mai/transcript": {
+            "post": {
+                "summary": "Twitter Video MAI Transcript",
+                "operationId": "twitter_video_mai_transcript",
+                "description": "Get Twitter video transcript using MAI.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "video_url": {
+                                        "type": "string",
+                                        "description": "The Twitter video URL",
+                                        "example": "https://x.com/NBCOlympics/status/1989901761650323606"
+                                    }
+                                },
+                                "required": [
+                                    "video_url"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Transcription task information",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "string",
+                                            "example": "0000",
+                                            "description": "Response code indicating the result status"
+                                        },
+                                        "msg": {
+                                            "type": "string",
+                                            "example": "success",
+                                            "description": "Response message describing the operation result"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "task_id": {
+                                                    "type": "string",
+                                                    "example": "1cd78354af824c8eb1dafe4ed2435720",
+                                                    "description": "Unique identifier of the transcription task"
+                                                }
+                                            },
+                                            "description": "Response data object containing task information"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true,
+                                            "description": "Indicates whether the operation was successful"
+                                        },
+                                        "failed": {
+                                            "type": "boolean",
+                                            "example": false,
+                                            "description": "Indicates whether the operation failed"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "Authorization"
+            }
+        }
+    }
+}

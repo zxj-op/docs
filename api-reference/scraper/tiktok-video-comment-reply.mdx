@@ -1,0 +1,108 @@
+---
+openapi: POST /tiktok/video/comment/reply
+title: TikTok Video Comment Reply
+description: "Get the reply list for TikTok video comments."
+---
+
+This API is used to get the reply list for TikTok video comments with pagination support.
+
+<Note>
+Each API call costs **$0.01 USD**.
+</Note>
+
+<Warning>
+- The maximum value for pagination parameter `page_size` is **6**
+- `cursor` starts from **0**, increment by `page_size` value each time
+- When the number of returned replies is less than `page_size`, it indicates all replies have been retrieved
+</Warning>
+
+### Code Example
+
+<CodeGroup>
+
+```python Python
+import requests
+
+BASE_URL = "https://mavi-security-backend.openinterx.com/serve"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}",
+    "Content-Type": "application/json"
+}
+
+def tiktok_video_comment_reply(video_id: str, comment_id: str):
+    url = f"{BASE_URL}/tiktok/video/comment/reply"
+    page_size = 6
+    cursor = 0
+    all_replies = []
+    while True:
+        data = {"video_id": video_id, "comment_id": comment_id, "page_size": page_size, "cursor": cursor}
+        resp = requests.post(url, json=data, headers=HEADERS).json()
+        replies = resp if isinstance(resp, list) else []
+        all_replies.extend(replies)
+        if len(replies) < page_size:
+            break
+        cursor += page_size
+    return all_replies
+
+# Usage example
+replies = tiktok_video_comment_reply("your_tiktok_video_id", "comment_id")
+print(replies)
+```
+
+</CodeGroup>
+
+### Request Body
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| video_id | string | Yes | TikTok video ID |
+| comment_id | string | Yes | Comment ID |
+| page_size | number | No | Number of replies returned per page, maximum value is 6, default is 6 |
+| cursor | number | No | Pagination cursor, starts from 0, default is 0 |
+
+### Response
+
+Returns an array of reply list.
+
+<ResponseExample>
+```json
+[
+  {
+    "rid": "reply_id_1",
+    "text": "Reply content",
+    "create_time": 1756245606,
+    "like_count": 5,
+    "author": {
+      "id": "user_id",
+      "name": "username",
+      "nick_name": "Display name"
+    }
+  },
+  {
+    "rid": "reply_id_2",
+    "text": "Another reply",
+    "create_time": 1756245700,
+    "like_count": 3,
+    "author": {
+      "id": "user_id_2",
+      "name": "username2",
+      "nick_name": "Display name 2"
+    }
+  }
+]
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| [].rid | string | Reply ID |
+| [].text | string | Reply content |
+| [].create_time | number | Reply creation timestamp |
+| [].like_count | number | Like count |
+| [].author | object | Reply author information |
+| [].author.id | string | Author ID |
+| [].author.name | string | Author username |
+| [].author.nick_name | string | Author display name |

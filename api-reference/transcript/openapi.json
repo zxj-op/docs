@@ -1,0 +1,713 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Mem0 API Reference",
+    "description": "REST APIs for memory management, search, and entity operations",
+    "version": "v1.0.1"
+  },
+  "servers": [
+    {
+      "url": "https://mavi-backend.memories.ai/serve/api/v2"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/transcriptions/sync-generate-speaker": {
+      "post": {
+        "summary": "Sync Generate Speaker",
+        "operationId": "sync_generate_speaker",
+        "description": "Generate speaker identification synchronously.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_id": {
+                    "type": "string",
+                    "description": "The asset ID to identify speakers for",
+                    "example": "re_657929111888723968"
+                  }
+                },
+                "required": [
+                  "asset_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Speaker identification result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "example": "0000",
+                      "description": "Response code indicating the result status"
+                    },
+                    "msg": {
+                      "type": "string",
+                      "example": "success",
+                      "description": "Response message describing the operation result"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "model": {
+                          "type": "string",
+                          "example": "pyannote",
+                          "description": "The model used for speaker identification"
+                        },
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "start": {
+                                "type": "number",
+                                "example": 0.03096875,
+                                "description": "Start time of the speaker segment in seconds"
+                              },
+                              "end": {
+                                "type": "number",
+                                "example": 0.13221875,
+                                "description": "End time of the speaker segment in seconds"
+                              },
+                              "speaker": {
+                                "type": "string",
+                                "example": "SPEAKER_01",
+                                "description": "Speaker identifier"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "start": 0.03096875,
+                              "end": 0.13221875,
+                              "speaker": "SPEAKER_01"
+                            },
+                            {
+                              "start": 0.13221875,
+                              "end": 13.395968750000002,
+                              "speaker": "SPEAKER_00"
+                            }
+                          ],
+                          "description": "Array of speaker segments with timing information"
+                        }
+                      },
+                      "description": "Response data object containing speaker identification results"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true,
+                      "description": "Indicates whether the operation was successful"
+                    },
+                    "failed": {
+                      "type": "boolean",
+                      "example": false,
+                      "description": "Indicates whether the operation failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transcriptions/sync-generate-audio": {
+      "post": {
+        "summary": "Sync Generate Audio Transcription",
+        "operationId": "sync_generate_audio",
+        "description": "Generate audio transcription synchronously.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_id": {
+                    "type": "string",
+                    "description": "The asset ID to transcribe",
+                    "example": "re_657929111888723968"
+                  },
+                  "model": {
+                    "type": "string",
+                    "description": "The transcription model to use",
+                    "example": "whisper-1"
+                  },
+                  "speaker": {
+                    "type": "boolean",
+                    "description": "Whether to include speaker identification",
+                    "example": true
+                  }
+                },
+                "required": [
+                  "asset_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Transcription result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "example": "0000",
+                      "description": "Response code indicating the result status"
+                    },
+                    "msg": {
+                      "type": "string",
+                      "example": "success",
+                      "description": "Response message describing the operation result"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "model": {
+                          "type": "string",
+                          "example": "whisper-1",
+                          "description": "The transcription model used"
+                        },
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "text": {
+                                "type": "string",
+                                "example": "Hello, how are you today?",
+                                "description": "Transcribed text for the segment"
+                              },
+                              "start_time": {
+                                "type": "number",
+                                "example": 0.0,
+                                "description": "Start time of the segment in seconds"
+                              },
+                              "end_time": {
+                                "type": "number",
+                                "example": 2.98,
+                                "description": "End time of the segment in seconds"
+                              },
+                              "speaker": {
+                                "type": "string",
+                                "example": "SPEAKER_00",
+                                "description": "Speaker identifier (only present when speaker=true)"
+                              }
+                            },
+                            "required": [
+                              "text",
+                              "start_time",
+                              "end_time"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "text": "Hello, how are you today?",
+                              "start_time": 0.0,
+                              "end_time": 2.98
+                            },
+                            {
+                              "text": "I'm doing well, thank you.",
+                              "speaker": "SPEAKER_00",
+                              "start_time": 2.98,
+                              "end_time": 6.78
+                            }
+                          ],
+                          "description": "Array of transcription segments with timing information"
+                        }
+                      },
+                      "description": "Response data object containing transcription results"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true,
+                      "description": "Indicates whether the operation was successful"
+                    },
+                    "failed": {
+                      "type": "boolean",
+                      "example": false,
+                      "description": "Indicates whether the operation failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transcriptions/async-summary": {
+      "post": {
+        "summary": "Async Generate Summary",
+        "operationId": "async_summary",
+        "description": "Generate transcription summary asynchronously.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_id": {
+                    "type": "string",
+                    "description": "The transcription asset ID",
+                    "example": "re_657929111888723968"
+                  }
+                },
+                "required": [
+                  "asset_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Summary generation task information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "example": "0000",
+                      "description": "Response code indicating the result status"
+                    },
+                    "msg": {
+                      "type": "string",
+                      "example": "success",
+                      "description": "Response message describing the operation result"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "task_id": {
+                          "type": "string",
+                          "example": "ec2449885ba84c4f943a80ff0633158e",
+                          "description": "Unique identifier of the summary generation task"
+                        }
+                      },
+                      "description": "Response data object containing task information"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true,
+                      "description": "Indicates whether the operation was successful"
+                    },
+                    "failed": {
+                      "type": "boolean",
+                      "example": false,
+                      "description": "Indicates whether the operation failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transcriptions/async-generate-video": {
+      "post": {
+        "summary": "Async Generate Video Transcription",
+        "operationId": "async_generate_video",
+        "description": "Generate video transcription asynchronously.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_id": {
+                    "type": "string",
+                    "description": "The video asset ID to transcribe",
+                    "example": "re_657929111888723968"
+                  },
+                  "model": {
+                    "type": "string",
+                    "description": "The transcription model to use",
+                    "example": "gemini-2.5-flash-lite"
+                  }
+                },
+                "required": [
+                  "asset_id",
+                  "model"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Transcription task information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "example": "0000",
+                      "description": "Response code indicating the result status"
+                    },
+                    "msg": {
+                      "type": "string",
+                      "example": "success",
+                      "description": "Response message describing the operation result"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "task_id": {
+                          "type": "string",
+                          "example": "ec2449885ba84c4f943a80ff0633158e",
+                          "description": "Unique identifier of the video transcription task"
+                        }
+                      },
+                      "description": "Response data object containing task information"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true,
+                      "description": "Indicates whether the operation was successful"
+                    },
+                    "failed": {
+                      "type": "boolean",
+                      "example": false,
+                      "description": "Indicates whether the operation failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transcriptions/async-generate-speaker": {
+      "post": {
+        "summary": "Async Generate Speaker",
+        "operationId": "async_generate_speaker",
+        "description": "Generate speaker identification asynchronously.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_id": {
+                    "type": "string",
+                    "description": "The asset ID to identify speakers for",
+                    "example": "re_657929111888723968"
+                  }
+                },
+                "required": [
+                  "asset_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Speaker identification task information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "example": "0000",
+                      "description": "Response code indicating the result status"
+                    },
+                    "msg": {
+                      "type": "string",
+                      "example": "success",
+                      "description": "Response message describing the operation result"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "task_id": {
+                          "type": "string",
+                          "example": "ec2449885ba84c4f943a80ff0633158e",
+                          "description": "Unique identifier of the speaker identification task"
+                        }
+                      },
+                      "description": "Response data object containing task information"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true,
+                      "description": "Indicates whether the operation was successful"
+                    },
+                    "failed": {
+                      "type": "boolean",
+                      "example": false,
+                      "description": "Indicates whether the operation failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transcriptions/async-generate-multi-speaker": {
+      "post": {
+        "summary": "Async Generate Multi Speaker",
+        "operationId": "async_generate_multi_speaker",
+        "description": "Generate multi-speaker identification asynchronously.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_id": {
+                    "type": "string",
+                    "description": "The asset ID to identify multiple speakers for",
+                    "example": "re_657929111888723968"
+                  }
+                },
+                "required": [
+                  "asset_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Multi-speaker identification task information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "example": "0000",
+                      "description": "Response code indicating the result status"
+                    },
+                    "msg": {
+                      "type": "string",
+                      "example": "success",
+                      "description": "Response message describing the operation result"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "task_id": {
+                          "type": "string",
+                          "example": "ec2449885ba84c4f943a80ff0633158e",
+                          "description": "Unique identifier of the multi-speaker identification task"
+                        }
+                      },
+                      "description": "Response data object containing task information"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true,
+                      "description": "Indicates whether the operation was successful"
+                    },
+                    "failed": {
+                      "type": "boolean",
+                      "example": false,
+                      "description": "Indicates whether the operation failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transcriptions/async-generate-audio": {
+      "post": {
+        "summary": "Async Generate Audio Transcription",
+        "operationId": "async_generate_audio",
+        "description": "Generate audio transcription asynchronously.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_id": {
+                    "type": "string",
+                    "description": "The audio asset ID to transcribe",
+                    "example": "re_657929111888723968"
+                  },
+                  "model": {
+                    "type": "string",
+                    "description": "The transcription model to use",
+                    "example": "whisper-1"
+                  },
+                  "speaker": {
+                    "type": "boolean",
+                    "description": "Whether to include speaker identification",
+                    "example": true
+                  }
+                },
+                "required": [
+                  "asset_id",
+                  "model",
+                  "speaker"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Transcription task information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "example": "0000",
+                      "description": "Response code indicating the result status"
+                    },
+                    "msg": {
+                      "type": "string",
+                      "example": "success",
+                      "description": "Response message describing the operation result"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "task_id": {
+                          "type": "string",
+                          "example": "ec2449885ba84c4f943a80ff0633158e",
+                          "description": "Unique identifier of the audio transcription task"
+                        }
+                      },
+                      "description": "Response data object containing task information"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true,
+                      "description": "Indicates whether the operation was successful"
+                    },
+                    "failed": {
+                      "type": "boolean",
+                      "example": false,
+                      "description": "Indicates whether the operation failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Message": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          }
+        }
+      },
+      "AddMemoriesPayload": {
+        "type": "object",
+        "properties": {
+          "messages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Message"
+            }
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          }
+        }
+      },
+      "UpdateMemoryPayload": {
+        "type": "object",
+        "properties": {
+          "memory_id": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          }
+        }
+      },
+      "Memory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "metadata": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization"
+      }
+    }
+  }
+}
