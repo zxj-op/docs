@@ -1,44 +1,26 @@
 {
-  "name": "DocForge Docs",
+  "name": "OpenInterX Docs",
   "theme": "mint",
-  "logo": {
-    "dark": "/logo/dark.svg",
-    "light": "/logo/light.svg"
+  "openapi": {
+    "path": "docs/api-reference/openapi.json"
   },
   "navigation": [
     {
-      "group": "Getting Started",
+      "group": "Guides",
       "pages": [
-        "docs/index",
-        "docs/quickstart",
-        "docs/development"
-      ]
-    },
-    {
-      "group": "AI Tools",
-      "pages": [
-        "docs/ai-tools/claude-code",
-        "docs/ai-tools/cursor",
-        "docs/ai-tools/windsurf"
+        "index",
+        "quickstart",
+        "development"
       ]
     },
     {
       "group": "API Reference",
       "pages": [
-        "docs/api-reference/introduction",
-        "docs/api-reference/getting-started/overview",
-        "docs/api-reference/getting-started/organizations-and-projects"
-      ]
-    },
-    {
-      "group": "Essentials",
-      "pages": [
-        "docs/essentials/markdown",
-        "docs/essentials/navigation",
-        "docs/essentials/code",
-        "docs/essentials/images",
-        "docs/essentials/reusable-snippets",
-        "docs/essentials/settings"
+        "api-reference/introduction",
+        "api-reference/Base/index",
+        "api-reference/Embeddings/index",
+        "api-reference/Transcript/index",
+        "api-reference/Video-Metadata-Transcript/index"
       ]
     }
   ]
