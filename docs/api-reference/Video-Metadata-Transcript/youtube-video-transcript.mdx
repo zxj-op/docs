@@ -1,0 +1,110 @@
+---
+openapi: POST /youtube/video/transcript
+title: YouTube Video Transcript
+description: "Get YouTube video transcript."
+---
+
+This endpoint allows you to retrieve transcript for a YouTube video.
+
+<Note>
+**Pricing:**
+- **rapid** channel: \$0.02 per video
+- **memories.ai** channel: \$0.01 per video
+- **apify** channel: Charged at Apify's actual cost (higher and variable pricing)
+</Note>
+
+### Code Example
+
+<CodeGroup>
+
+
+
+```python Python
+import requests
+
+BASE_URL = "https://mavi-backend.memories.ai/serve/api/v2"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}"
+}
+
+def youtube_video_transcript(video_url: str, channel: str):
+    url = f"{BASE_URL}/youtube/video/transcript"
+    data = {"video_url": video_url, "channel": channel}
+    resp = requests.post(url, headers=HEADERS, json=data)
+    return resp.json()
+
+# Usage example
+result = youtube_video_transcript("https://www.youtube.com/watch?v=Y2y4OpzKIK4", "apify")
+print(result)
+```
+
+</CodeGroup>
+
+### Request Body
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| video_url | string | Yes | The YouTube video URL |
+| channel | string | Yes | The channel name. Supported values: `apify`, `rapid`, `memories.ai` |
+
+### Response
+
+Returns the video transcript.
+
+<ResponseExample>
+```json
+{
+  "code": "0000",
+  "msg": "success",
+  "data": [
+    {
+      "data": [
+        {
+          "start": "1.480",
+          "dur": "4.839",
+          "text": "they've intercepted a croc from the"
+        },
+        {
+          "start": "3.360",
+          "dur": "5.720",
+          "text": "jungle up for sale this is a a young"
+        },
+        {
+          "start": "6.319",
+          "dur": "5.081",
+          "text": "female that was taken from a wildlife"
+        },
+        {
+          "start": "9.080",
+          "dur": "4.439",
+          "text": "Trader okay obviously uh trying to make"
+        },
+        {
+          "start": "11.400",
+          "dur": "4.680",
+          "text": "a dollar so what we want to do is catch"
+        }
+      ]
+    }
+  ],
+  "failed": false,
+  "success": true
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code indicating the result status |
+| msg | string | Response message describing the operation result |
+| data | array[object] | Array containing transcript data objects |
+| data[].data | array[object] | Array of transcript segments |
+| data[].data[].start | string | Start time of the transcript segment in seconds |
+| data[].data[].dur | string | Duration of the transcript segment in seconds |
+| data[].data[].text | string | The transcript text for this segment |
+| success | boolean | Indicates whether the operation was successful |
+| failed | boolean | Indicates whether the operation failed |
+

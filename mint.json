@@ -1,0 +1,46 @@
+{
+  "name": "DocForge Docs",
+  "theme": "mint",
+  "logo": {
+    "dark": "/logo/dark.svg",
+    "light": "/logo/light.svg"
+  },
+  "navigation": [
+    {
+      "group": "Getting Started",
+      "pages": [
+        "docs/index",
+        "docs/quickstart",
+        "docs/development"
+      ]
+    },
+    {
+      "group": "AI Tools",
+      "pages": [
+        "docs/ai-tools/claude-code",
+        "docs/ai-tools/cursor",
+        "docs/ai-tools/windsurf"
+      ]
+    },
+    {
+      "group": "API Reference",
+      "pages": [
+        "docs/api-reference/introduction",
+        "docs/api-reference/getting-started/overview",
+        "docs/api-reference/getting-started/organizations-and-projects"
+      ]
+    },
+    {
+      "group": "Essentials",
+      "pages": [
+        "docs/essentials/markdown",
+        "docs/essentials/navigation",
+        "docs/essentials/code",
+        "docs/essentials/images",
+        "docs/essentials/reusable-snippets",
+        "docs/essentials/settings"
+      ]
+    }
+  ]
+}
+

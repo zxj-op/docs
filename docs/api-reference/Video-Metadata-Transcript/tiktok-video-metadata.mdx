@@ -1,0 +1,186 @@
+---
+openapi: POST /tiktok/video/metadata
+title: TikTok Video Metadata
+description: "Get TikTok video metadata."
+---
+
+This endpoint allows you to retrieve metadata for a TikTok video.
+
+<Note>
+**Pricing:**
+- **rapid** channel: \$0.02 per video
+- **memories.ai** channel: \$0.01 per video
+- **apify** channel: Charged at Apify's actual cost (higher and variable pricing)
+</Note>
+
+### Code Example
+
+<CodeGroup>
+
+
+
+```python Python
+import requests
+
+BASE_URL = "https://mavi-backend.memories.ai/serve/api/v2"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}"
+}
+
+def tiktok_video_metadata(video_url: str, channel: str):
+    url = f"{BASE_URL}/tiktok/video/metadata"
+    data = {"video_url": video_url, "channel": channel}
+    resp = requests.post(url, headers=HEADERS, json=data)
+    return resp.json()
+
+# Usage example
+result = tiktok_video_metadata("https://www.tiktok.com/@cutshall73/video/7543017294226558221", "apify")
+print(result)
+```
+
+</CodeGroup>
+
+### Request Body
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| video_url | string | Yes | The TikTok video URL |
+| channel | string | Yes | The channel name. Supported values: `apify`, `rapid`, `memories.ai` |
+
+### Response
+
+Returns the video metadata information with detailed TikTok data.
+
+<ResponseExample>
+```json
+{
+  "code": "0000",
+  "msg": "success",
+  "data": [
+    {
+      "id": "7543017294226558221",
+      "text": "OOTD and confirmation Reacher is alive 🧸🏼",
+      "textLanguage": "en",
+      "createTime": 1756245606,
+      "createTimeISO": "2025-08-26T22:00:06.000Z",
+      "locationCreated": "US",
+      "isAd": true,
+      "authorMeta": {
+        "id": "6638037497953681414",
+        "name": "cutshall73",
+        "profileUrl": "https://www.tiktok.com/@cutshall73",
+        "nickName": "Whitney Lee Cutshall",
+        "verified": false,
+        "avatar": "https://p19-common-sign.tiktokcdn-us.com/tos-useast5-avt-0068-tx/...",
+        "following": 5835,
+        "fans": 3908,
+        "heart": 3600000,
+        "video": 76,
+        "digg": 33000
+      },
+      "musicMeta": {
+        "musicName": "original sound",
+        "musicAuthor": "Whitney Lee Cutshall",
+        "musicOriginal": true,
+        "playUrl": "https://v16m.tiktokcdn-us.com/401d56406f99341037e41da12523731a/...",
+        "coverMediumUrl": "https://p19-common-sign.tiktokcdn-us.com/tos-useast5-avt-0068-tx/...",
+        "musicId": "7543017437262023437"
+      },
+      "webVideoUrl": "https://www.tiktok.com/@cutshall73/video/7543017294226558221",
+      "mediaUrls": [
+        "https://api.apify.com/v2/key-value-stores/YvBVzx9NfbVwyqE45/records/video-cutshall73-20250826220006-7543017294226558221.mp4"
+      ],
+      "videoMeta": {
+        "height": 1024,
+        "width": 576,
+        "duration": 36,
+        "coverUrl": "https://api.apify.com/v2/key-value-stores/YvBVzx9NfbVwyqE45/records/cover-cutshall73-20250826220006-7543017294226558221.jpg",
+        "originalCoverUrl": "https://p16-common-sign.tiktokcdn-us.com/tos-useast5-p-0068-tx/...",
+        "definition": "540p",
+        "format": "mp4",
+        "subtitleLinks": [
+          {
+            "language": "eng-US",
+            "downloadLink": "https://v16m-webapp.tiktokcdn-us.com/2c1ed634ee265bbff4a38111e7511061/...",
+            "tiktokLink": "https://v16m-webapp.tiktokcdn-us.com/2c1ed634ee265bbff4a38111e7511061/...",
+            "source": "ASR",
+            "sourceUnabbreviated": "automatic speech recognition",
+            "version": "1:big_caption"
+          }
+        ],
+        "downloadAddr": "https://api.apify.com/v2/key-value-stores/YvBVzx9NfbVwyqE45/records/video-cutshall73-20250826220006-7543017294226558221.mp4"
+      },
+      "diggCount": 507,
+      "shareCount": 2,
+      "playCount": 20200,
+      "collectCount": 3,
+      "commentCount": 6,
+      "repostCount": 0,
+      "mentions": [],
+      "detailedMentions": [],
+      "hashtags": [],
+      "effectStickers": [],
+      "isSlideshow": false,
+      "isPinned": false,
+      "isSponsored": false,
+      "submittedVideoUrl": "https://www.tiktok.com/@cutshall73/video/7543017294226558221"
+    }
+  ],
+  "failed": false,
+  "success": true
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code indicating the result status |
+| msg | string | Response message describing the operation result |
+| data | array[object] | Array containing TikTok video metadata objects |
+| data[].id | string | Video ID |
+| data[].text | string | Video caption/text |
+| data[].textLanguage | string | Language of the video text |
+| data[].createTime | number | Creation timestamp |
+| data[].createTimeISO | string | Creation time in ISO format |
+| data[].locationCreated | string | Location where the video was created |
+| data[].isAd | boolean | Whether the video is an advertisement |
+| data[].authorMeta | object | Author/user metadata |
+| data[].authorMeta.name | string | Author username |
+| data[].authorMeta.nickName | string | Author display name |
+| data[].authorMeta.verified | boolean | Whether the author is verified |
+| data[].authorMeta.following | number | Number of users the author follows |
+| data[].authorMeta.fans | number | Number of followers |
+| data[].authorMeta.heart | number | Total likes received |
+| data[].authorMeta.video | number | Number of videos posted |
+| data[].musicMeta | object | Music metadata |
+| data[].musicMeta.musicName | string | Music name |
+| data[].musicMeta.musicAuthor | string | Music author |
+| data[].musicMeta.musicOriginal | boolean | Whether it's original audio |
+| data[].musicMeta.playUrl | string | Music playback URL |
+| data[].musicMeta.musicId | string | Music ID |
+| data[].webVideoUrl | string | TikTok web video URL |
+| data[].mediaUrls | array[string] | Array of media URLs |
+| data[].videoMeta | object | Video metadata |
+| data[].videoMeta.height | number | Video height in pixels |
+| data[].videoMeta.width | number | Video width in pixels |
+| data[].videoMeta.duration | number | Video duration in seconds |
+| data[].videoMeta.coverUrl | string | Cover image URL |
+| data[].videoMeta.definition | string | Video definition (e.g., "540p") |
+| data[].videoMeta.format | string | Video format (e.g., "mp4") |
+| data[].videoMeta.subtitleLinks | array[object] | Array of subtitle links with language information |
+| data[].videoMeta.downloadAddr | string | Video download address |
+| data[].diggCount | number | Number of likes |
+| data[].shareCount | number | Number of shares |
+| data[].playCount | number | Number of plays |
+| data[].collectCount | number | Number of collections |
+| data[].commentCount | number | Number of comments |
+| data[].repostCount | number | Number of reposts |
+| data[].isSlideshow | boolean | Whether the video is a slideshow |
+| data[].isPinned | boolean | Whether the video is pinned |
+| data[].isSponsored | boolean | Whether the video is sponsored |
+| success | boolean | Indicates whether the operation was successful |
+| failed | boolean | Indicates whether the operation failed |
+

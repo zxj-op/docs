@@ -1,0 +1,181 @@
+---
+openapi: POST /transcriptions/async-generate-video
+title: Async Generate Video Transcription
+description: "Generate video transcription asynchronously."
+---
+
+This endpoint allows you to generate video transcription asynchronously.
+
+<Note>
+**Pricing:**
+- Input tokens: \$0.45/1M tokens
+- Output tokens: \$3.75/1M tokens
+</Note>
+
+## Supported Models
+
+- `gemini-2.5-flash-lite`
+- `gemini-2.5-flash`
+- `gemini-2.5-flash-preview-09-2025`
+- `gemini-2.5-flash-lite-preview-09-2025`
+
+### Code Example
+
+<CodeGroup>
+
+
+
+```python Python
+import requests
+
+BASE_URL = "https://mavi-backend.memories.ai/serve/api/v2/transcriptions"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}"
+}
+
+def async_generate_video(asset_id: str, model: str):
+    url = f"{BASE_URL}/async-generate-video"
+    data = {"asset_id": asset_id, "model": model}
+    resp = requests.post(url, json=data, headers=HEADERS)
+    return resp.json()
+
+# Usage example
+result = async_generate_video("re_657929111888723968", "gemini-2.5-flash-lite")
+print(result)
+```
+
+</CodeGroup>
+
+### Response
+
+Returns the transcription task information.
+
+<ResponseExample>
+```json Response
+{
+  "code": "0000",
+  "msg": "success",
+  "data": {
+    "task_id": "ec2449885ba84c4f943a80ff0633158e"
+  },
+  "failed": false,
+  "success": true
+}
+```
+
+```json Callback Response
+{
+  "code": "0000",
+  "message": "SUCCESS",
+  "data": {
+    "data": {
+      "data": [
+        {
+          "end_time": 2.0,
+          "start_time": 0.0,
+          "transcript": "A drone shot flies over a dense forest with lush green trees and some bare branches, suggesting early spring."
+        },
+        {
+          "end_time": 4.0,
+          "start_time": 2.0,
+          "transcript": "A woman in a flowing light green dress runs across a grassy area towards a wooden structure, her back to the camera."
+        },
+        {
+          "end_time": 6.0,
+          "start_time": 4.0,
+          "transcript": "A close-up shows a person wearing a costume with antlers and dreadlocks, with a distressed expression."
+        }
+      ],
+      "error_rate": 0.0,
+      "usage_metadata": {
+        "duration": 0.0,
+        "model": "openai/gpt-5-mini",
+        "output_tokens": 24641,
+        "prompt_tokens": 283901
+      }
+    },
+    "msg": "Video transcription completed successfully",
+    "success": true
+  },
+  "task_id": "580e35a50faa437480b2d425bdcf1c87"
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code indicating the result status |
+| msg | string | Response message describing the operation result |
+| data | object | Response data object containing task information |
+| data.task_id | string | Unique identifier of the video transcription task |
+| success | boolean | Indicates whether the operation was successful |
+| failed | boolean | Indicates whether the operation failed |
+
+### Callback Response Parameters
+
+When the video transcription is complete, a callback will be sent to your configured webhook URL.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code ("0000" indicates success) |
+| message | string | Status message (e.g., "SUCCESS") |
+| data | object | Response data object containing the transcription result and metadata |
+| data.data | object | Inner data object containing transcription segments and usage information |
+| data.data.data | array | Array of transcription segments with timestamps |
+| data.data.data[].start_time | number | Start time of the segment in seconds |
+| data.data.data[].end_time | number | End time of the segment in seconds |
+| data.data.data[].transcript | string | Transcription text for this time segment |
+| data.data.error_rate | number | Error rate of the transcription (0.0 means no errors) |
+| data.data.usage_metadata | object | Usage statistics for the API call |
+| data.data.usage_metadata.duration | number | Processing duration in seconds |
+| data.data.usage_metadata.model | string | The AI model used for transcription (e.g., "openai/gpt-5-mini") |
+| data.data.usage_metadata.output_tokens | integer | Number of tokens in the generated transcription |
+| data.data.usage_metadata.prompt_tokens | integer | Number of tokens in the input prompt |
+| data.msg | string | Detailed message about the operation result |
+| data.success | boolean | Indicates whether the transcription was successful |
+| task_id | string | The task ID associated with this transcription request |
+
+### Understanding the Callback Response
+
+The callback response has a nested structure with the transcription segments and usage information inside `data.data`.
+
+**Response Structure:**
+```
+callback_response
+├── code: "0000"
+├── message: "SUCCESS"
+├── data
+│   ├── data
+│   │   ├── data: [array of transcription segments]
+│   │   │   └── [
+│   │   │       {
+│   │   │         start_time: 0.0,
+│   │   │         end_time: 2.0,
+│   │   │         transcript: "..."
+│   │   │       },
+│   │   │       ...
+│   │   │     ]
+│   │   ├── error_rate: 0.0
+│   │   └── usage_metadata
+│   │       ├── duration: 0.0
+│   │       ├── model: "openai/gpt-5-mini"
+│   │       ├── output_tokens: 24641
+│   │       └── prompt_tokens: 283901
+│   ├── msg: "Video transcription completed successfully"
+│   └── success: true
+└── task_id: "580e35a50faa437480b2d425bdcf1c87"
+```
+
+**How to access the data:**
+- Transcription segments: `callback_response.data.data.data`
+- First segment text: `callback_response.data.data.data[0].transcript`
+- Error rate: `callback_response.data.data.error_rate`
+- Usage statistics: `callback_response.data.data.usage_metadata`
+- Model used: `callback_response.data.data.usage_metadata.model`
+- Token counts: `callback_response.data.data.usage_metadata.output_tokens` and `callback_response.data.data.usage_metadata.prompt_tokens`
+- Success status: `callback_response.data.success`
+- Task ID: `callback_response.task_id`
+

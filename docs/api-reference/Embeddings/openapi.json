@@ -1,0 +1,362 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Embeddings API Reference",
+    "description": "REST APIs for generating vector embeddings from images, videos, and text",
+    "version": "v1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://mavi-backend.memories.ai/serve/api/v2"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/embeddings/image": {
+      "post": {
+        "summary": "Generate Image Embedding",
+        "operationId": "image_embedding",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Image file to upload"
+                  },
+                  "model": {
+                    "type": "string",
+                    "description": "Embedding model name",
+                    "example": "multimodalembedding@001",
+                    "enum": [
+                      "multimodalembedding@001",
+                      "mobileclip"
+                    ]
+                  }
+                },
+                "required": [
+                  "model"
+                ]
+              }
+            },
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_id": {
+                    "type": "string",
+                    "description": "Existing image asset ID",
+                    "example": "imc_657766047105290240_15"
+                  },
+                  "model": {
+                    "type": "string",
+                    "description": "Embedding model name",
+                    "example": "multimodalembedding@001",
+                    "enum": [
+                      "multimodalembedding@001",
+                      "mobileclip"
+                    ]
+                  }
+                },
+                "required": [
+                  "asset_id",
+                  "model"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Embedding generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "example": "0000",
+                      "description": "Response code indicating the result status"
+                    },
+                    "msg": {
+                      "type": "string",
+                      "example": "success",
+                      "description": "Response message describing the operation result"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "embedding": {
+                          "type": "array",
+                          "items": {
+                            "type": "number"
+                          },
+                          "description": "Vector embedding array",
+                          "example": [0.0234375, -0.015625, 0.0078125, 0.0390625]
+                        }
+                      },
+                      "description": "Response data object containing the embedding"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true,
+                      "description": "Indicates whether the operation was successful"
+                    },
+                    "failed": {
+                      "type": "boolean",
+                      "example": false,
+                      "description": "Indicates whether the operation failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/embeddings/video": {
+      "post": {
+        "summary": "Generate Video Embedding",
+        "operationId": "video_embedding",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_id": {
+                    "type": "string",
+                    "description": "Video asset ID",
+                    "example": "re_657745568997527552"
+                  },
+                  "model": {
+                    "type": "string",
+                    "description": "Embedding model name",
+                    "example": "multimodalembedding@001",
+                    "enum": [
+                      "multimodalembedding@001"
+                    ]
+                  }
+                },
+                "required": [
+                  "asset_id",
+                  "model"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Embedding generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "example": "0000",
+                      "description": "Response code indicating the result status"
+                    },
+                    "msg": {
+                      "type": "string",
+                      "example": "success",
+                      "description": "Response message describing the operation result"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "embedding": {
+                          "type": "array",
+                          "items": {
+                            "type": "number"
+                          },
+                          "description": "Vector embedding array representing the entire video",
+                          "example": [0.0156250, -0.0234375, 0.0312500, 0.0078125]
+                        }
+                      },
+                      "description": "Response data object containing the embedding"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true,
+                      "description": "Indicates whether the operation was successful"
+                    },
+                    "failed": {
+                      "type": "boolean",
+                      "example": false,
+                      "description": "Indicates whether the operation failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/embeddings/text": {
+      "post": {
+        "summary": "Generate Text Embedding",
+        "operationId": "text_embedding",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "input": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "List of text strings to embed",
+                    "example": ["Sample text to embed", "Another text string"]
+                  },
+                  "model": {
+                    "type": "string",
+                    "description": "Embedding model name",
+                    "example": "gemini-embedding-001",
+                    "enum": [
+                      "gemini-embedding-001"
+                    ]
+                  },
+                  "dimensionality": {
+                    "type": "integer",
+                    "description": "Output embedding dimension size",
+                    "example": 512
+                  }
+                },
+                "required": [
+                  "input",
+                  "model"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Embeddings generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "description": "Response for single input",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "example": "0000",
+                          "description": "Response code indicating the result status"
+                        },
+                        "msg": {
+                          "type": "string",
+                          "example": "success",
+                          "description": "Response message describing the operation result"
+                        },
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "embedding": {
+                              "type": "array",
+                              "items": {
+                                "type": "number"
+                              },
+                              "description": "Vector embedding array for the input text",
+                              "example": [0.0234375, -0.0156250, 0.0390625, 0.0078125]
+                            }
+                          },
+                          "description": "Response data object containing the embedding"
+                        },
+                        "success": {
+                          "type": "boolean",
+                          "example": true,
+                          "description": "Indicates whether the operation was successful"
+                        },
+                        "failed": {
+                          "type": "boolean",
+                          "example": false,
+                          "description": "Indicates whether the operation failed"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "description": "Response for multiple inputs",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "example": "0000",
+                          "description": "Response code indicating the result status"
+                        },
+                        "msg": {
+                          "type": "string",
+                          "example": "success",
+                          "description": "Response message describing the operation result"
+                        },
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "embeddings": {
+                              "type": "array",
+                              "items": {
+                                "type": "array",
+                                "items": {
+                                  "type": "number"
+                                }
+                              },
+                              "description": "Array of embedding vectors, one for each input text",
+                              "example": [
+                                [0.0234375, -0.0156250, 0.0390625],
+                                [0.0312500, -0.0234375, 0.0468750]
+                              ]
+                            }
+                          },
+                          "description": "Response data object containing the embeddings"
+                        },
+                        "success": {
+                          "type": "boolean",
+                          "example": true,
+                          "description": "Indicates whether the operation was successful"
+                        },
+                        "failed": {
+                          "type": "boolean",
+                          "example": false,
+                          "description": "Indicates whether the operation failed"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization"
+      }
+    }
+  }
+}

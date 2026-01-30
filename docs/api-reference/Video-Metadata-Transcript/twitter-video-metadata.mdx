@@ -1,0 +1,177 @@
+---
+openapi: POST /twitter/video/metadata
+title: Twitter Video Metadata
+description: "Get Twitter video metadata."
+---
+
+This endpoint allows you to retrieve metadata for a Twitter video.、
+
+<Note>
+**Pricing:**
+- **rapid** channel: \$0.01 per video
+- **memories.ai** channel: \$0.01 per video
+- **apify** channel: Charged at Apify's actual cost (higher and variable pricing)
+</Note>
+
+
+### Code Example
+
+<CodeGroup>
+
+
+
+```python Python
+import requests
+
+BASE_URL = "https://mavi-backend.memories.ai/serve/api/v2"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}"
+}
+
+def twitter_video_metadata(video_url: str, channel: str):
+    url = f"{BASE_URL}/twitter/video/metadata"
+    data = {"video_url": video_url, "channel": channel}
+    resp = requests.post(url, headers=HEADERS, json=data)
+    return resp.json()
+
+# Usage example
+result = twitter_video_metadata("https://x.com/NBCOlympics/status/1989901761650323606", "apify")
+print(result)
+```
+
+</CodeGroup>
+
+### Request Body
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| video_url | string | Yes | The Twitter video URL |
+| channel | string | Yes | The channel name. Supported values: `apify`, `rapid`, `memories.ai` |
+
+### Response
+
+Returns the video metadata information with detailed Twitter/X data.
+
+<ResponseExample>
+```json
+{
+  "code": "0000",
+  "msg": "success",
+  "data": [
+    {
+      "type": "tweet",
+      "id": "1989901761650323606",
+      "url": "https://x.com/NBCOlympics/status/1989901761650323606",
+      "twitterUrl": "https://twitter.com/NBCOlympics/status/1989901761650323606",
+      "text": "France's Kevin Aymoz couldn't believe his 159.97 free skate score that led to his first-ever ISU Grand Prix GOLD. 🤯 https://t.co/901FxyK1Jc",
+      "fullText": "France's Kevin Aymoz couldn't believe his 159.97 free skate score that led to his first-ever ISU Grand Prix GOLD. 🤯 https://t.co/901FxyK1Jc",
+      "source": "Wildmoka",
+      "retweetCount": 257,
+      "replyCount": 139,
+      "likeCount": 5002,
+      "quoteCount": 39,
+      "viewCount": 43099524,
+      "createdAt": "Sun Nov 16 03:42:05 +0000 2025",
+      "lang": "en",
+      "bookmarkCount": 607,
+      "isReply": false,
+      "conversationId": "1989901761650323606",
+      "possiblySensitive": false,
+      "isPinned": false,
+      "author": {
+        "type": "user",
+        "userName": "NBCOlympics",
+        "url": "https://x.com/NBCOlympics",
+        "twitterUrl": "https://twitter.com/NBCOlympics",
+        "id": "14955353",
+        "name": "NBC Olympics & Paralympics",
+        "isVerified": false,
+        "verifiedType": "Business",
+        "isBlueVerified": true,
+        "profilePicture": "https://pbs.twimg.com/profile_images/1889684530245554177/hNcrFUJ0_normal.jpg",
+        "coverPicture": "https://pbs.twimg.com/profile_banners/14955353/1762962343",
+        "description": "The official home of NBC's coverage of the Olympics and Paralympics.",
+        "followers": 1077295,
+        "following": 2809,
+        "createdAt": "Fri May 30 15:20:31 +0000 2008"
+      },
+      "extendedEntities": {
+        "media": [
+          {
+            "display_url": "pic.x.com/901FxyK1Jc",
+            "expanded_url": "https://x.com/NBCOlympics/status/1989901761650323606/video/1",
+            "id_str": "1989901699746516992",
+            "type": "video",
+            "media_url_https": "https://pbs.twimg.com/media/G52NGsBXMAAniJV.jpg",
+            "video_info": {
+              "aspect_ratio": [16, 9],
+              "duration_millis": 18261,
+              "variants": [
+                {
+                  "content_type": "application/x-mpegURL",
+                  "url": "https://video.twimg.com/amplify_video/1989901699746516992/pl/Y7hhhkSJzh19OnTV.m3u8?tag=14&v=19e"
+                },
+                {
+                  "bitrate": 2176000,
+                  "content_type": "video/mp4",
+                  "url": "https://video.twimg.com/amplify_video/1989901699746516992/vid/avc1/1280x720/OSp0AyG0fnyvfjZP.mp4?tag=14"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "isRetweet": false,
+      "isQuote": false,
+      "media": ["https://pbs.twimg.com/media/G52NGsBXMAAniJV.jpg"],
+      "isConversationControlled": false
+    }
+  ],
+  "failed": false,
+  "success": true
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code indicating the result status |
+| msg | string | Response message describing the operation result |
+| data | array[object] | Array containing Twitter/X tweet metadata objects |
+| data[].type | string | Content type (e.g., "tweet") |
+| data[].id | string | Tweet ID |
+| data[].url | string | X.com URL |
+| data[].twitterUrl | string | Twitter.com URL |
+| data[].text | string | Tweet text |
+| data[].fullText | string | Full tweet text |
+| data[].source | string | Source of the tweet |
+| data[].retweetCount | number | Number of retweets |
+| data[].replyCount | number | Number of replies |
+| data[].likeCount | number | Number of likes |
+| data[].quoteCount | number | Number of quotes |
+| data[].viewCount | number | Number of views |
+| data[].createdAt | string | Creation timestamp |
+| data[].lang | string | Language code |
+| data[].bookmarkCount | number | Number of bookmarks |
+| data[].author | object | Author/user information |
+| data[].author.userName | string | Author username |
+| data[].author.name | string | Author display name |
+| data[].author.isVerified | boolean | Whether the author is verified |
+| data[].author.isBlueVerified | boolean | Whether the author has blue verification |
+| data[].author.followers | number | Number of followers |
+| data[].author.following | number | Number of users following |
+| data[].extendedEntities | object | Extended media entities |
+| data[].extendedEntities.media | array[object] | Array of media objects |
+| data[].extendedEntities.media[].type | string | Media type (e.g., "video") |
+| data[].extendedEntities.media[].video_info | object | Video information |
+| data[].extendedEntities.media[].video_info.duration_millis | number | Video duration in milliseconds |
+| data[].extendedEntities.media[].video_info.variants | array[object] | Array of video variants with different bitrates |
+| data[].isRetweet | boolean | Whether the tweet is a retweet |
+| data[].isQuote | boolean | Whether the tweet is a quote |
+| data[].media | array[string] | Array of media URLs |
+| success | boolean | Indicates whether the operation was successful |
+| failed | boolean | Indicates whether the operation failed |
+

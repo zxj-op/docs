@@ -1,0 +1,177 @@
+---
+openapi: POST /instagram/video/metadata
+title: Instagram Video Metadata
+description: "Get Instagram video metadata."
+---
+
+This endpoint allows you to retrieve metadata for an Instagram video.
+
+<Note>
+**Pricing:**
+- **rapid** channel: \$0.01 per video
+- **memories.ai** channel: \$0.01 per video
+- **apify** channel: Charged at Apify's actual cost (higher and variable pricing)
+</Note>
+
+### Code Example
+
+<CodeGroup>
+
+
+
+```python Python
+import requests
+
+BASE_URL = "https://mavi-backend.memories.ai/serve/api/v2"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}"
+}
+
+def instagram_video_metadata(video_url: str, channel: str):
+    url = f"{BASE_URL}/instagram/video/metadata"
+    data = {"video_url": video_url, "channel": channel}
+    resp = requests.post(url, headers=HEADERS, json=data)
+    return resp.json()
+
+# Usage example
+result = instagram_video_metadata("https://www.instagram.com/reels/DLlGZiCOBQ0/", "apify")
+print(result)
+```
+
+</CodeGroup>
+
+### Request Body
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| video_url | string | Yes | The Instagram video URL |
+| channel | string | Yes | The channel name. Supported values: `apify`, `rapid`, `memories.ai` |
+
+### Response
+
+Returns the video metadata information with detailed Instagram data.
+
+<ResponseExample>
+```json
+{
+  "code": "0000",
+  "msg": "success",
+  "data": {
+    "data": {
+      "xdt_shortcode_media": {
+        "__typename": "XDTGraphVideo",
+        "id": "3667365614373573684",
+        "shortcode": "DLlGZiCOBQ0",
+        "thumbnail_src": "https://scontent-jnb2-1.cdninstagram.com/v/t51.2885-15/...",
+        "dimensions": {
+          "height": 1136,
+          "width": 640
+        },
+        "display_url": "https://scontent-jnb2-1.cdninstagram.com/v/t51.2885-15/...",
+        "display_resources": [
+          {
+            "src": "https://scontent-jnb2-1.cdninstagram.com/v/t51.2885-15/...",
+            "config_width": 640,
+            "config_height": 1136
+          }
+        ],
+        "dash_info": {
+          "is_dash_eligible": true,
+          "video_dash_manifest": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>...",
+          "number_of_qualities": 1
+        },
+        "has_audio": true,
+        "video_url": "https://scontent-jnb2-1.cdninstagram.com/o1/v/t2/f2/m86/...",
+        "video_view_count": 27040,
+        "video_play_count": 1799817,
+        "product_type": "clips",
+        "video_duration": 41.125,
+        "clips_music_attribution_info": {
+          "artist_name": "humansofny",
+          "song_name": "Original audio",
+          "uses_original_audio": true,
+          "audio_id": "24313369781619226"
+        },
+        "is_video": true,
+        "owner": {
+          "id": "242598499",
+          "username": "humansofny",
+          "is_verified": true,
+          "profile_pic_url": "https://scontent-jnb2-1.cdninstagram.com/v/t51.2885-19/...",
+          "full_name": "Humans of New York",
+          "edge_followed_by": {
+            "count": 12804266
+          }
+        },
+        "edge_media_to_caption": {
+          "edges": [
+            {
+              "node": {
+                "text": "I have the moves that they're looking for.",
+                "created_at": "1751404145"
+              }
+            }
+          ]
+        },
+        "edge_media_to_parent_comment": {
+          "count": 487,
+          "edges": [
+            {
+              "node": {
+                "id": "18094151056886709",
+                "text": "Go for it sweetie!!!",
+                "created_at": 1762011704,
+                "owner": {
+                  "username": "iam_carrongrazette"
+                }
+              }
+            }
+          ]
+        },
+        "edge_media_preview_like": {
+          "count": 27791
+        },
+        "taken_at_timestamp": 1751404144
+      }
+    },
+    "extensions": {
+      "is_final": true
+    },
+    "status": "ok"
+  },
+  "failed": false,
+  "success": true
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code indicating the result status |
+| msg | string | Response message describing the operation result |
+| data | object | Response data object containing Instagram metadata |
+| data.data | object | Instagram data object |
+| data.data.xdt_shortcode_media | object | Instagram video media object |
+| data.data.xdt_shortcode_media.id | string | Video ID |
+| data.data.xdt_shortcode_media.shortcode | string | Instagram short code |
+| data.data.xdt_shortcode_media.thumbnail_src | string | Thumbnail image URL |
+| data.data.xdt_shortcode_media.dimensions | object | Video dimensions (height, width) |
+| data.data.xdt_shortcode_media.display_url | string | Display image URL |
+| data.data.xdt_shortcode_media.video_url | string | Direct video URL |
+| data.data.xdt_shortcode_media.video_view_count | number | Number of video views |
+| data.data.xdt_shortcode_media.video_play_count | number | Number of video plays |
+| data.data.xdt_shortcode_media.video_duration | number | Video duration in seconds |
+| data.data.xdt_shortcode_media.product_type | string | Product type (e.g., "clips") |
+| data.data.xdt_shortcode_media.owner | object | Video owner information |
+| data.data.xdt_shortcode_media.owner.username | string | Owner username |
+| data.data.xdt_shortcode_media.owner.full_name | string | Owner full name |
+| data.data.xdt_shortcode_media.edge_media_to_caption | object | Video caption information |
+| data.data.xdt_shortcode_media.edge_media_to_parent_comment | object | Comments information |
+| data.data.xdt_shortcode_media.edge_media_preview_like | object | Likes information |
+| data.status | string | Response status |
+| success | boolean | Indicates whether the operation was successful |
+| failed | boolean | Indicates whether the operation failed |
+

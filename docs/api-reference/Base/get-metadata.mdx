@@ -1,0 +1,120 @@
+---
+openapi: GET /{asset_id}/metadata
+title: Get Asset Metadata
+description: "Retrieve metadata information for a specific asset"
+---
+
+This endpoint retrieves detailed metadata about an asset, including file information, dimensions, duration, and other properties.
+
+### Code Examples
+
+<CodeGroup>
+
+```javascript fetch
+const assetId = "re_657739295220518912";
+
+const response = await fetch(`/${assetId}/metadata`, {
+  method: 'GET',
+  headers: {
+    'Authorization': 'sk-mai-this_a_test_string_please_use_your_generated_key_during_testing'
+  }
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```javascript axios
+import axios from 'axios';
+
+const assetId = "re_657739295220518912";
+
+const response = await axios.get(`/${assetId}/metadata`, {
+  headers: {
+    'Authorization': 'sk-mai-this_a_test_string_please_use_your_generated_key_during_testing'
+  }
+});
+
+console.log(response.data);
+```
+
+```python Python
+import requests
+
+BASE_URL = "https://mavi-backend.memories.ai/serve/api/v2"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}"
+}
+
+def get_metadata(asset_id):
+    url = f"{BASE_URL}/{asset_id}/metadata"
+    response = requests.get(url, headers=HEADERS)
+    return response.json()
+
+# Usage example
+metadata = get_metadata("re_657739295220518912")
+print(metadata)
+```
+
+</CodeGroup>
+
+### Path Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| asset_id | string | Yes | The unique identifier of the asset (e.g., "re_660729180626595840") |
+
+### Response
+
+Returns comprehensive metadata about the asset.
+
+<ResponseExample>
+```json
+{
+  "code": "0000",
+  "msg": "success",
+  "data": {
+    "total": 1,
+    "resource": [
+      {
+        "extension": "mp4",
+        "asset_id": "re_660729180626595840",
+        "original_filename": "3",
+        "file_size": "133652816",
+        "upload_status": "SUCCESS",
+        "create_time": "1766989317192",
+        "modify_time": "1766989317192"
+      }
+    ]
+  },
+  "success": true,
+  "failed": false
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code indicating the result status |
+| msg | string | Response message describing the operation result |
+| data | object | Response data object containing asset metadata information |
+| data.total | integer | Total number of assets returned |
+| data.resource | array | Array of asset metadata objects |
+| data.resource[].extension | string | File extension of the asset (e.g., "mp4", "jpg") |
+| data.resource[].asset_id | string | Unique identifier of the asset |
+| data.resource[].original_filename | string | Original filename of the uploaded file |
+| data.resource[].file_size | string | Size of the file in bytes (as string) |
+| data.resource[].upload_status | string | Status of the upload operation (e.g., "SUCCESS") |
+| data.resource[].create_time | string | Timestamp when the asset was created (Unix timestamp in milliseconds) |
+| data.resource[].modify_time | string | Timestamp when the asset was last modified (Unix timestamp in milliseconds) |
+| success | boolean | Indicates whether the operation was successful |
+| failed | boolean | Indicates whether the operation failed |
+
+### Notes
+
+- Returns detailed file properties and encoding information
+- Video assets include duration, resolution, and format details
+- Image assets include dimensions and color space information

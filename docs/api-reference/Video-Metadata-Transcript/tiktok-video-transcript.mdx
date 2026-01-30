@@ -1,0 +1,88 @@
+---
+openapi: POST /tiktok/video/transcript
+title: TikTok Video Transcript
+description: "Get TikTok video transcript."
+---
+
+This endpoint allows you to retrieve transcript for a TikTok video.
+
+<Note>
+**Pricing:**
+- **rapid** channel: \$0.01 per video
+- **memories.ai** channel: \$0.01 per video
+- **apify** channel: Charged at Apify's actual cost (higher and variable pricing)
+</Note>
+
+
+### Code Example
+
+<CodeGroup>
+
+
+
+```python Python
+import requests
+
+BASE_URL = "https://mavi-backend.memories.ai/serve/api/v2"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}"
+}
+
+def tiktok_video_transcript(video_url: str, channel: str):
+    url = f"{BASE_URL}/tiktok/video/transcript"
+    data = {"video_url": video_url, "channel": channel}
+    resp = requests.post(url, headers=HEADERS, json=data)
+    return resp.json()
+
+# Usage example
+result = tiktok_video_transcript("https://www.tiktok.com/@cutshall73/video/7543017294226558221", "apify")
+print(result)
+```
+
+</CodeGroup>
+
+### Request Body
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| video_url | string | Yes | The TikTok video URL |
+| channel | string | Yes | The channel name. Supported values: `apify`, `rapid`, `memories.ai` |
+
+### Response
+
+Returns the video transcript in WEBVTT format.
+
+<ResponseExample>
+```json
+{
+  "code": "0000",
+  "msg": "success",
+  "data": [
+    {
+      "credits_remaining": "9997665621",
+      "id": "7543017294226558221",
+      "url": "https://www.tiktok.com/@cutshall73/video/7543017294226558221",
+      "transcript": "WEBVTT\n\n\n00:00:00.140 --> 00:00:01.600\nSay hi. Hi.\n\n00:00:01.700 --> 00:00:03.560\nSay. Say I'm alive.\n\n00:00:03.660 --> 00:00:06.280\nI'm alive. We're gonna do a little OOTD.\n\n00:00:07.460 --> 00:00:09.380\nI've got on my pretty,\n\n00:00:09.381 --> 00:00:14.401\ncute little cheetah print dress I got from my friend on Facebook.\n\n00:00:16.780 --> 00:00:18.460\nHair up in a clip. It's brush.\n\n00:00:18.461 --> 00:00:21.281\nNo makeup because I'm tired.\n\n00:00:21.580 --> 00:00:23.640\nI'm tired. Are you tired?\n\n00:00:24.140 --> 00:00:25.360\nSay, I'm alive.\n\n00:00:25.380 --> 00:00:27.480\nI'm alive! And I'm crazy.\n\n00:00:27.500 --> 00:00:28.300\nI'm crazy.\n\n00:00:28.820 --> 00:00:30.920\nSay bye. Bye.\n\n00:00:31.180 --> 00:00:31.980\nMwah! Mwah.\n\n00:00:32.660 --> 00:00:33.720\nSay hi, river.\n\n00:00:33.860 --> 00:00:35.280\nYou showing your lip gloss?\n"
+    }
+  ],
+  "failed": false,
+  "success": true
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code indicating the result status |
+| msg | string | Response message describing the operation result |
+| data | array[object] | Array containing transcript data objects |
+| data[].credits_remaining | string | Remaining API credits |
+| data[].id | string | TikTok video ID |
+| data[].url | string | TikTok video URL |
+| data[].transcript | string | Video transcript in WEBVTT format with timing information |
+| success | boolean | Indicates whether the operation was successful |
+| failed | boolean | Indicates whether the operation failed |
+

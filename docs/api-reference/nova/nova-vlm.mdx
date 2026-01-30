@@ -1,0 +1,167 @@
+---
+openapi: api-reference/nova/openapi.json POST /vu/chat/completions
+title: Nova
+description: "Generate chat completions using Nova model."
+---
+
+This endpoint allows you to generate chat completions with video and text inputs using Nova model.
+
+## Supported Models
+
+All models require the `nova:` prefix when used in the `model` parameter (e.g., `nova:us.amazon.nova-lite-v1:0`).
+
+### Amazon Nova Models
+
+| Model | Input Price | Output Price |
+|-------|------------|--------------|
+| **us.amazon.nova-premier-v1:0** | \$0.0025/1K tokens | \$0.0125/1K tokens |
+| **us.amazon.nova-pro-v1:0** | \$0.0008/1K tokens | \$0.0032/1K tokens |
+| **us.amazon.nova-2-lite-v1:0** | \$0.00033/1K tokens | \$0.00275/1K tokens |
+| **us.amazon.nova-lite-v1:0** | \$0.00006/1K tokens | \$0.00024/1K tokens |
+
+<Note>
+**Pricing Notes:**
+- All prices are per 1,000 tokens
+- Nova Premier offers the highest quality for complex multimodal tasks
+- Nova Pro provides balanced performance and cost
+- Nova 2 Lite and Nova Lite are optimized for cost-effective operations
+- Remember to include the `nova:` prefix: `"model": "nova:us.amazon.nova-lite-v1:0"`
+</Note>
+
+### Request Body
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| model | string | Yes | - | The model to use (e.g., `nova:amazon.nova-lite-v1:0`) |
+| messages | array | Yes | - | Array of message objects. Each message contains:<br/>- `role`: Role type, values: `system`, `user`, `assistant`<br/>- `content`: Message content, can be a string or array. Array items can contain:<br/>  - `type`: Content type, `text` or `video_url`<br/>  - `text`: Text content (when type is text)<br/>  - `video_url`: Video URL or base64 encoded video (when type is video_url) |
+| temperature | number | No | 1.0 | Controls randomness: 0.0-2.0, higher = more random |
+| max_tokens | integer | No | 1000 | Maximum number of tokens to generate |
+| top_p | number | No | 1.0 | Nucleus sampling: 0.0-1.0, consider tokens with top_p probability mass |
+| frequency_penalty | number | No | 0.0 | Reduces repetition of frequent tokens: -2.0 to 2.0 |
+| presence_penalty | number | No | 0.0 | Increases likelihood of new topics: -2.0 to 2.0 |
+| n | integer | No | 1 | Number of completions to generate |
+| stream | boolean | No | false | Whether to stream the response |
+| stop | string \| array \| null | No | null | Stop sequences. Can be a string, array of strings, or null |
+| extra_body | object | No | - | Additional body parameters. Contains:<br/>- `metadata`: Metadata object<br/>  - `toolConfig`: Tool configuration<br/>    - `tools`: Array of tool specifications |
+
+### Code Example
+
+<CodeGroup>
+
+
+
+```python Python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-mai-this_a_test_string_please_use_your_generated_key_during_testing",
+    base_url="https://mavi-backend.memories.ai/serve/api/v2/"
+)
+
+def call_my_ilm():
+    resp = client.chat.completions.create(
+        model="nova:amazon.nova-lite-v1:0",
+        messages=[
+            {"role": "system", "content": "You are a multimodal assistant. Keep your answers concise."},
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "video_url",
+                        "video_url": {
+                            "url": "https://storage.googleapis.com/memories-test-data/test_1min.mp4"
+                            # or use base64: "url": f"data:video/mp4;base64,{base64_string}"
+                        }
+                    },
+                    {"type": "text", "text": "What is the content of this video?"}
+                ]
+            }
+        ],
+        temperature=1.0,  # Controls randomness: 0.0-2.0, higher = more random
+        max_tokens=1000,  # Maximum number of tokens to generate
+        top_p=1.0,  # Nucleus sampling: 0.0-1.0, consider tokens with top_p probability mass
+        frequency_penalty=0.0,  # -2.0 to 2.0, reduces repetition of frequent tokens
+        presence_penalty=0.0,  # -2.0 to 2.0, increases likelihood of new topics
+        n=1,  # Number of completions to generate
+        stream=False,  # Whether to stream the response
+        stop=None,  # Stop sequences (list of strings)
+        extra_body={
+            "metadata": {
+                "toolConfig": {
+                    "tools": [
+                        {
+                            "toolSpec": {
+                                "name": "extract_video_summary",
+                                "description": "Extract a concise summary of the video",
+                                "inputSchema": {
+                                    "json": {
+                                        "type": "object",
+                                        "properties": {
+                                            "result": {"type": "string", "description": "Summary content."}
+                                        },
+                                        "required": ["result"]
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    )
+    return resp
+
+# Usage example
+result = call_my_ilm()
+print(result)
+```
+
+</CodeGroup>
+
+### Response
+
+Returns the chat completion response.
+
+<ResponseExample>
+```json
+{
+  "id": "chatcmpl_705304384e4143db9e162cda30295762",
+  "object": "chat.completion",
+  "created": 1767098064,
+  "model": "nova:amazon.nova-lite-v1:0",
+  "choices": [{
+    "index": 0,
+    "message": {
+      "role": "assistant",
+      "content": "At the start of the video, the screen displays the words \"VACUUM VS ORANGE\". The objects in the video are visible. The first is an orange resting on a stand. The second involves a small orange placed on a stand that is inside of a tall glass. The third is a glass filled with a yellow, orange-like liquid. The background is blurry. At 3 seconds, there is a small burst of citrus juice from the small orange that was resting on a stand. The juice splatters and travels onto the large orange. At 7 seconds, there is another burst of juice. This time, the juice comes from the glass, and more juices splatters onto the large orange. A hand can be seen at the top of the screen. This hand adjusts some sort of machinery, which is the metal pipe and circular object that is directly above the objects in the glass box. At around 14 seconds, liquid pours from the glass. At 17 seconds, the person adjusts the machinery again. The same things happens around 27 seconds. By 34 seconds, there is an excessive amount of juice and liquid inside of the glass box. At 43 seconds, all of the juice and liquid is gone from the glass box. At 46 seconds, there is no juice or liquid inside of the glass box. At 53 seconds, the person adjusts the machinery again."
+    },
+    "finish_reason": "stop"
+  }],
+  "usage": {
+    "prompt_tokens": 17463,
+    "output_token": 290,
+    "total_tokens": 17753
+  }
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| id | string | Unique identifier for the chat completion |
+| object | string | Object type, always "chat.completion" |
+| created | integer | Unix timestamp of when the completion was created |
+| model | string | The model used for the completion |
+| choices | array | Array of completion choices |
+| choices[].index | integer | Index of the choice in the choices array |
+| choices[].message | object | Message object containing the assistant's response |
+| choices[].message.role | string | Role of the message, always "assistant" |
+| choices[].message.content | string | Content of the message |
+| choices[].finish_reason | string | Reason why the completion finished |
+| usage | object | Token usage information |
+| usage.prompt_tokens | integer | Number of tokens in the prompt |
+| usage.output_token | integer | Number of tokens in the completion output |
+| usage.total_tokens | integer | Total number of tokens used |
+

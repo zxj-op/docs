@@ -1,0 +1,204 @@
+---
+openapi: POST /transcriptions/async-generate-multi-speaker
+title: Speaker Recgonition
+description: "Generate multi-speaker identification asynchronously."
+---
+
+This endpoint allows you to identify multiple speakers asynchronously.
+
+<Note>
+**Pricing:**
+- \$0.1/min of video and aduio
+</Note>
+
+### Code Example
+
+<CodeGroup>
+
+
+
+```python Python
+import requests
+
+BASE_URL = "https://mavi-backend.memories.ai/serve/api/v2/transcriptions"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}"
+}
+
+def async_generate_multi_speaker(asset_id: str):
+    url = f"{BASE_URL}/async-generate-multi-speaker"
+    data = {"asset_id": asset_id}
+    resp = requests.post(url, json=data, headers=HEADERS)
+    return resp.json()
+
+# Usage example
+result = async_generate_multi_speaker("re_657929111888723968")
+print(result)
+```
+
+</CodeGroup>
+
+### Response
+
+Returns the multi-speaker identification task information.
+
+<ResponseExample>
+```json Response
+{
+  "code": "0000",
+  "msg": "success",
+  "data": {
+    "task_id": "ec2449885ba84c4f943a80ff0633158e"
+  },
+  "failed": false,
+  "success": true
+}
+```
+
+```json Callback Response
+{
+  "code": "0000",
+  "message": "SUCCESS",
+  "data": {
+    "data": {
+      "audio_transcription": [
+        {
+          "end_time": 1.8,
+          "speaker": "Kiara S Stepsister",
+          "start_time": 0.0,
+          "text": "You wolfless Omega! Clean that up, you jinx!"
+        }
+      ],
+      "faces": [
+        {
+          "face_file_blob": "api-backend/0c5dfd30-7285-4e1e-bd20-dd31fd405365/multimodal-asr/9e545636_batch_1_video_9_person_001.jpg",
+          "face_file_bucket": "memories-cache",
+          "face_file_protocol": "gs",
+          "face_id": "9e545636-509a-4a7d-b7c8-6359ea6a6d8b_person_001",
+          "name": "Kiara S Stepsister"
+        }
+      ],
+      "usage_metadata": [
+        {
+          "duration": 0.0,
+          "model": "gemini-2.5-pro",
+          "output_tokens": 6143,
+          "prompt_tokens": 442368
+        },
+        {
+          "duration": 0.0,
+          "model": "gemini-2.5-flash",
+          "output_tokens": 15643,
+          "prompt_tokens": 32508
+        }
+      ]
+    },
+    "msg": "Multimodal ASR completed successfully",
+    "success": true
+  },
+  "task_id": "29799938cfd344db8e10243a266b9990"
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code indicating the result status |
+| msg | string | Response message describing the operation result |
+| data | object | Response data object containing task information |
+| data.task_id | string | Unique identifier of the multi-speaker identification task |
+| success | boolean | Indicates whether the operation was successful |
+| failed | boolean | Indicates whether the operation failed |
+
+### Callback Response Parameters
+
+When the multi-speaker identification is complete, a callback will be sent to your configured webhook URL.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code ("0000" indicates success) |
+| message | string | Status message (e.g., "SUCCESS") |
+| data | object | Response data object containing the multimodal ASR result and metadata |
+| data.data | object | Inner data object containing transcription, faces, and usage information |
+| data.data.audio_transcription | array | Array of transcription segments with speaker identification |
+| data.data.audio_transcription[].start_time | number | Start time of the segment in seconds |
+| data.data.audio_transcription[].end_time | number | End time of the segment in seconds |
+| data.data.audio_transcription[].speaker | string | Identified speaker name |
+| data.data.audio_transcription[].text | string | Transcription text for this segment |
+| data.data.faces | array | Array of detected faces with metadata |
+| data.data.faces[].face_id | string | Unique identifier for the detected face |
+| data.data.faces[].name | string | Identified name of the person |
+| data.data.faces[].face_file_protocol | string | Storage protocol (e.g., "gs" for Google Cloud Storage) |
+| data.data.faces[].face_file_bucket | string | Storage bucket name |
+| data.data.faces[].face_file_blob | string | File path in the storage bucket |
+| data.data.usage_metadata | array | Array of usage statistics for different models used |
+| data.data.usage_metadata[].duration | number | Processing duration in seconds |
+| data.data.usage_metadata[].model | string | The AI model used (e.g., "gemini-2.5-pro", "gemini-2.5-flash") |
+| data.data.usage_metadata[].output_tokens | integer | Number of tokens in the output |
+| data.data.usage_metadata[].prompt_tokens | integer | Number of tokens in the input prompt |
+| data.msg | string | Detailed message about the operation result |
+| data.success | boolean | Indicates whether the multimodal ASR was successful |
+| task_id | string | The task ID associated with this multi-speaker identification request |
+
+### Understanding the Callback Response
+
+The callback response has a nested structure with audio transcription, face detection results, and usage information inside `data.data`.
+
+**Response Structure:**
+```
+callback_response
+├── code: "0000"
+├── message: "SUCCESS"
+├── data
+│   ├── data
+│   │   ├── audio_transcription: [array of transcription segments]
+│   │   │   └── [
+│   │   │       {
+│   │   │         start_time: 0.0,
+│   │   │         end_time: 1.8,
+│   │   │         speaker: "Kiara S Stepsister",
+│   │   │         text: "You wolfless Omega! Clean that up, you jinx!"
+│   │   │       },
+│   │   │       ...
+│   │   │     ]
+│   │   ├── faces: [array of detected faces]
+│   │   │   └── [
+│   │   │       {
+│   │   │         face_id: "9e545636-509a-4a7d-b7c8-6359ea6a6d8b_person_001",
+│   │   │         name: "Kiara S Stepsister",
+│   │   │         face_file_protocol: "gs",
+│   │   │         face_file_bucket: "memories-cache",
+│   │   │         face_file_blob: "api-backend/.../9e545636_batch_1_video_9_person_001.jpg"
+│   │   │       },
+│   │   │       ...
+│   │   │     ]
+│   │   └── usage_metadata: [array of usage stats]
+│   │       └── [
+│   │           {
+│   │             duration: 0.0,
+│   │             model: "gemini-2.5-pro",
+│   │             output_tokens: 6143,
+│   │             prompt_tokens: 442368
+│   │           },
+│   │           ...
+│   │         ]
+│   ├── msg: "Multimodal ASR completed successfully"
+│   └── success: true
+└── task_id: "29799938cfd344db8e10243a266b9990"
+```
+
+**How to access the data:**
+- Audio transcription segments: `callback_response.data.data.audio_transcription`
+- First segment speaker: `callback_response.data.data.audio_transcription[0].speaker`
+- First segment text: `callback_response.data.data.audio_transcription[0].text`
+- Detected faces: `callback_response.data.data.faces`
+- First face name: `callback_response.data.data.faces[0].name`
+- First face image path: `callback_response.data.data.faces[0].face_file_blob`
+- Usage statistics: `callback_response.data.data.usage_metadata`
+- Models used: `callback_response.data.data.usage_metadata[i].model`
+- Success status: `callback_response.data.success`
+- Task ID: `callback_response.task_id`
+

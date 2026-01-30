@@ -1,0 +1,165 @@
+---
+openapi: POST /transcriptions/async-generate-speaker
+title: Async Generate Speaker
+description: "Generate speaker identification asynchronously."
+---
+
+This endpoint allows you to identify speakers asynchronously.
+
+<Note>
+**Pricing:**
+- \$0.001/second of video and aduio
+</Note>
+
+### Code Example
+
+<CodeGroup>
+
+
+
+```python Python
+import requests
+
+BASE_URL = "https://mavi-backend.memories.ai/serve/api/v2/transcriptions"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}"
+}
+
+def async_generate_speaker(asset_id: str):
+    url = f"{BASE_URL}/async-generate-speaker"
+    data = {"asset_id": asset_id}
+    resp = requests.post(url, json=data, headers=HEADERS)
+    return resp.json()
+
+# Usage example
+result = async_generate_speaker("re_657929111888723968")
+print(result)
+```
+
+</CodeGroup>
+
+### Response
+
+Returns the speaker identification task information.
+
+<ResponseExample>
+```json Response
+{
+  "code": "0000",
+  "msg": "success",
+  "data": {
+    "task_id": "ec2449885ba84c4f943a80ff0633158e"
+  },
+  "failed": false,
+  "success": true
+}
+```
+
+```json Callback Response
+{
+  "code": "0000",
+  "message": "SUCCESS",
+  "data": {
+    "data": {
+      "data": [
+        {
+          "end": 1.68471875,
+          "speaker": "SPEAKER_06",
+          "start": 0.43596875
+        },
+        {
+          "end": 20.75346875,
+          "speaker": "SPEAKER_00",
+          "start": 13.800968750000003
+        }
+      ],
+      "usage_metadata": {
+        "duration": 20.75346875,
+        "model": "pyannote",
+        "output_tokens": 0,
+        "prompt_tokens": 0
+      }
+    },
+    "msg": "Speech diarization completed successfully",
+    "success": true
+  },
+  "task_id": "0d2d50fbdd0c4597a6a45c0359a42d76"
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code indicating the result status |
+| msg | string | Response message describing the operation result |
+| data | object | Response data object containing task information |
+| data.task_id | string | Unique identifier of the speaker identification task |
+| success | boolean | Indicates whether the operation was successful |
+| failed | boolean | Indicates whether the operation failed |
+
+### Callback Response Parameters
+
+When the speaker identification is complete, a callback will be sent to your configured webhook URL.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code ("0000" indicates success) |
+| message | string | Status message (e.g., "SUCCESS") |
+| data | object | Response data object containing the speaker diarization result and metadata |
+| data.data | object | Inner data object containing speaker segments and usage information |
+| data.data.data | array | Array of speaker segments with timestamps |
+| data.data.data[].start | number | Start time of the speaker segment in seconds |
+| data.data.data[].end | number | End time of the speaker segment in seconds |
+| data.data.data[].speaker | string | Speaker identifier (e.g., "SPEAKER_00", "SPEAKER_06") |
+| data.data.usage_metadata | object | Usage statistics for the API call |
+| data.data.usage_metadata.duration | number | Total audio duration in seconds |
+| data.data.usage_metadata.model | string | The model used for speaker diarization (e.g., "pyannote") |
+| data.data.usage_metadata.output_tokens | integer | Number of output tokens (0 for speaker diarization) |
+| data.data.usage_metadata.prompt_tokens | integer | Number of prompt tokens (0 for speaker diarization) |
+| data.msg | string | Detailed message about the operation result |
+| data.success | boolean | Indicates whether the speaker identification was successful |
+| task_id | string | The task ID associated with this speaker identification request |
+
+### Understanding the Callback Response
+
+The callback response has a nested structure with the speaker segments and usage information inside `data.data`.
+
+**Response Structure:**
+```
+callback_response
+├── code: "0000"
+├── message: "SUCCESS"
+├── data
+│   ├── data
+│   │   ├── data: [array of speaker segments]
+│   │   │   └── [
+│   │   │       {
+│   │   │         start: 0.43596875,
+│   │   │         end: 1.68471875,
+│   │   │         speaker: "SPEAKER_06"
+│   │   │       },
+│   │   │       ...
+│   │   │     ]
+│   │   └── usage_metadata
+│   │       ├── duration: 20.75346875
+│   │       ├── model: "pyannote"
+│   │       ├── output_tokens: 0
+│   │       └── prompt_tokens: 0
+│   ├── msg: "Speech diarization completed successfully"
+│   └── success: true
+└── task_id: "0d2d50fbdd0c4597a6a45c0359a42d76"
+```
+
+**How to access the data:**
+- Speaker segments: `callback_response.data.data.data`
+- First segment speaker: `callback_response.data.data.data[0].speaker`
+- First segment time range: `callback_response.data.data.data[0].start` to `callback_response.data.data.data[0].end`
+- Usage statistics: `callback_response.data.data.usage_metadata`
+- Audio duration: `callback_response.data.data.usage_metadata.duration`
+- Model used: `callback_response.data.data.usage_metadata.model`
+- Success status: `callback_response.data.success`
+- Task ID: `callback_response.task_id`
+

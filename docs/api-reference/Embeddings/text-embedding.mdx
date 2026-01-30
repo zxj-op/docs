@@ -1,0 +1,179 @@
+---
+openapi: POST /embeddings/text
+title: Generate Text Embedding
+description: "Generate vector embeddings for text using language models"
+---
+
+This endpoint generates vector embeddings for text strings. You can embed single or multiple text inputs in one request, and optionally specify the output dimensionality.
+
+<Note>
+**Pricing:**
+- \$0.0000002 per token (2e-7/token)
+</Note>
+
+### Code Examples
+
+<CodeGroup>
+
+```javascript fetch
+const response = await fetch('/embeddings/text', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'sk-mai-this_a_test_string_please_use_your_generated_key_during_testing'
+  },
+  body: JSON.stringify({
+    input: ['Sample text to embed', 'Another text string'],
+    model: 'gemini-embedding-001',
+    dimensionality: 512
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```javascript axios
+import axios from 'axios';
+
+const response = await axios.post('/embeddings/text', {
+  input: ['Sample text to embed', 'Another text string'],
+  model: 'gemini-embedding-001',
+  dimensionality: 512
+}, {
+  headers: {
+    'Authorization': 'sk-mai-this_a_test_string_please_use_your_generated_key_during_testing'
+  }
+});
+
+console.log(response.data);
+```
+
+```python Python
+import requests
+
+BASE_URL = "https://mavi-backend.memories.ai/serve/api/v2"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}"
+}
+
+def text_embedding(input_list, model="gemini-embedding-001", dimensionality=512):
+    url = f"{BASE_URL}/embeddings/text"
+    data = {
+        "input": input_list,
+        "model": model,
+        "dimensionality": dimensionality
+    }
+    response = requests.post(url, headers=HEADERS, json=data)
+    return response.json()
+
+# Usage example
+result = text_embedding(
+    ["Sample text to embed", "Another text string"],
+    model="gemini-embedding-001",
+    dimensionality=512
+)
+print(result)
+```
+
+</CodeGroup>
+
+### Request Body
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| input | array[string] | Yes | List of text strings to embed (can be a single string or multiple strings) |
+| model | string | Yes | Embedding model name |
+| dimensionality | integer | No | Output embedding dimension size (e.g., 256, 512, 768). Model-dependent. |
+
+**Supported Models:**
+- `gemini-embedding-001` - Google's Gemini text embedding model
+
+### Response
+
+Returns embedding vectors for each input text.
+
+<ResponseExample>
+```json Single Input
+{
+  "code": "0000",
+  "msg": "success",
+  "data": {
+    "embedding": [
+      0.0234375,
+      -0.0156250,
+      0.0390625,
+      0.0078125,
+      "... (continues for dimensionality length)"
+    ]
+  },
+  "success": true,
+  "failed": false
+}
+```
+
+```json Multiple Inputs
+{
+  "code": "0000",
+  "msg": "success",
+  "data": {
+    "embeddings": [
+      [
+        0.0234375,
+        -0.0156250,
+        0.0390625,
+        "... (embedding for input[0])"
+      ],
+      [
+        0.0312500,
+        -0.0234375,
+        0.0468750,
+        "... (embedding for input[1])"
+      ]
+    ]
+  },
+  "success": true,
+  "failed": false
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+**Single Input Response:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code indicating the result status ("0000" indicates success) |
+| msg | string | Response message describing the operation result |
+| data | object | Response data object containing the embedding |
+| data.embedding | array[number] | Vector embedding array for the input text |
+| success | boolean | Indicates whether the operation was successful |
+| failed | boolean | Indicates whether the operation failed |
+
+**Multiple Inputs Response:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code indicating the result status ("0000" indicates success) |
+| msg | string | Response message describing the operation result |
+| data | object | Response data object containing the embeddings |
+| data.embeddings | array[array[number]] | Array of embedding vectors, one for each input text |
+| success | boolean | Indicates whether the operation was successful |
+| failed | boolean | Indicates whether the operation failed |
+
+### Notes
+
+- Text embeddings are returned synchronously in the response
+- When providing a single text in the `input` array, the response contains `data.embedding` (singular)
+- When providing multiple texts, the response contains `data.embeddings` (plural) as an array of vectors
+- The `dimensionality` parameter allows you to control the output vector size
+- Supported dimensionality depends on the model (common values: 256, 512, 768, 1024)
+- Lower dimensionality results in faster processing and reduced storage, but may have lower accuracy
+- Use text embeddings for:
+  - Semantic search and similarity matching
+  - Text classification and clustering
+  - Question answering and information retrieval
+  - Recommendation systems
+  - Duplicate detection

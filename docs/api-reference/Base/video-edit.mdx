@@ -1,0 +1,192 @@
+---
+openapi: POST /video/edit
+title: Edit Video
+description: "Edit and compose videos with AI-powered instructions"
+---
+
+This endpoint allows you to edit videos by combining multiple assets with custom orientation and AI-guided editing instructions.
+
+<Note>
+**Pricing:**
+- \$0.15/min of video
+</Note>
+
+
+### Code Examples
+
+<CodeGroup>
+
+```javascript fetch
+const response = await fetch('/video/edit', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'sk-mai-this_a_test_string_please_use_your_generated_key_during_testing'
+  },
+  body: JSON.stringify({
+    asset_ids: ['re_657739295220518912', 're_657739295220518913'],
+    orientation: 'portrait',
+    user_prompt: 'Create a dynamic montage with smooth transitions'
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```javascript axios
+import axios from 'axios';
+
+const response = await axios.post('/video/edit', {
+  asset_ids: ['re_657739295220518912', 're_657739295220518913'],
+  orientation: 'portrait',
+  user_prompt: 'Create a dynamic montage with smooth transitions'
+}, {
+  headers: {
+    'Authorization': 'sk-mai-this_a_test_string_please_use_your_generated_key_during_testing'
+  }
+});
+
+console.log(response.data);
+```
+
+```python Python
+import requests
+
+BASE_URL = "https://mavi-backend.memories.ai/serve/api/v2"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}"
+}
+
+def video_edit(asset_ids, orientation, user_prompt):
+    url = f"{BASE_URL}/video/edit"
+    data = {
+        "asset_ids": asset_ids,
+        "orientation": orientation,
+        "user_prompt": user_prompt
+    }
+    resp = requests.post(url, headers=HEADERS, json=data)
+    return resp.json()
+
+# Usage example
+asset_ids = ["re_657739295220518912", "re_657739295220518913"]
+result = video_edit(
+    asset_ids=asset_ids,
+    orientation="portrait",
+    user_prompt="Create a dynamic montage with smooth transitions"
+)
+print(result)
+```
+
+</CodeGroup>
+
+### Request Body
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| asset_ids | array[string] | Yes | Array of video asset IDs to combine and edit |
+| orientation | string | Yes | Output video orientation: `"landscape"` or `"portrait"` |
+| user_prompt | string | Yes | AI editing instructions describing desired output |
+
+### Response
+
+Returns task information for the video editing operation.
+
+<ResponseExample>
+```json Response
+{
+  "code": "0000",
+  "msg": "success",
+  "data": {
+    "task_id": "f432bc84bfd141d1b05c1d24af0abe6a"
+  },
+  "failed": false,
+  "success": true
+}
+```
+
+```json Callback Response
+{
+  "code": "0000",
+  "message": "SUCCESS",
+  "data": {
+    "asset_id": "re_666942269501235201",
+    "create_time": "1768470628237",
+    "extension": "mp4",
+    "file_size": 62217261,
+    "modify_time": "1768470628237",
+    "original_filename": "final_video",
+    "upload_status": "SUCCESS"
+  },
+  "task_id": "b5b93c1ff93e460aaea67d328ab463f0"
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code indicating the result status |
+| msg | string | Response message describing the operation result |
+| data | object | Response data object containing task information |
+| data.task_id | string | Unique identifier of the video editing task |
+| success | boolean | Indicates whether the operation was successful |
+| failed | boolean | Indicates whether the operation failed |
+
+### Callback Response Parameters
+
+When the video editing is complete, a callback will be sent to your configured webhook URL.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code ("0000" indicates success) |
+| message | string | Status message (e.g., "SUCCESS") |
+| data | object | Response data object containing the edited video information |
+| data.asset_id | string | Unique asset ID for the edited video |
+| data.create_time | string | Creation timestamp in milliseconds |
+| data.extension | string | File extension of the edited video (e.g., "mp4") |
+| data.file_size | integer | Size of the edited video in bytes |
+| data.modify_time | string | Last modification timestamp in milliseconds |
+| data.original_filename | string | Filename of the edited video (e.g., "final_video") |
+| data.upload_status | string | Upload status of the edited video (e.g., "SUCCESS") |
+| task_id | string | The task ID associated with this video editing request |
+
+### Understanding the Callback Response
+
+The callback response contains metadata about the final edited video created from combining and editing the input assets.
+
+**Response Structure:**
+```
+callback_response
+├── code: "0000"
+├── message: "SUCCESS"
+├── data
+│   ├── asset_id: "re_666942269501235201"
+│   ├── create_time: "1768470628237"
+│   ├── extension: "mp4"
+│   ├── file_size: 62217261
+│   ├── modify_time: "1768470628237"
+│   ├── original_filename: "final_video"
+│   └── upload_status: "SUCCESS"
+└── task_id: "b5b93c1ff93e460aaea67d328ab463f0"
+```
+
+**How to access the data:**
+- Edited video asset ID: `callback_response.data.asset_id`
+- Video file size: `callback_response.data.file_size`
+- Video filename: `callback_response.data.original_filename`
+- Upload status: `callback_response.data.upload_status`
+- Creation timestamp: `callback_response.data.create_time`
+- Task ID: `callback_response.task_id`
+
+### Notes
+
+- Video editing is processed asynchronously using AI
+- Returns a task_id that can be used to track the editing progress
+- Use the task_id to query the status and results of video editing
+- Supports combining multiple video assets
+- Orientation options: `landscape` (16:9) or `portrait` (9:16)
+- User prompt guides AI editing decisions
+- Processing time varies based on complexity and video length

@@ -1,0 +1,200 @@
+---
+openapi: POST /video/extract-frames
+title: Extract Video Frames
+description: "Extract individual frames from a video asset"
+---
+
+This endpoint extracts frames from a video file at specified intervals or timestamps.
+
+<Note>
+**Pricing:**
+- \$0.01/second of video
+</Note>
+
+### Code Examples
+
+<CodeGroup>
+
+```javascript fetch
+const response = await fetch('/video/extract-frames', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'sk-mai-this_a_test_string_please_use_your_generated_key_during_testing'
+  },
+  body: JSON.stringify({
+    asset_id: 're_657739295220518912'
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```javascript axios
+import axios from 'axios';
+
+const response = await axios.post('/video/extract-frames', {
+  asset_id: 're_657739295220518912'
+}, {
+  headers: {
+    'Authorization': 'sk-mai-this_a_test_string_please_use_your_generated_key_during_testing'
+  }
+});
+
+console.log(response.data);
+```
+
+```python Python
+import requests
+
+BASE_URL = "https://mavi-backend.memories.ai/serve/api/v2"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}"
+}
+
+def extract_frames(asset_id):
+    url = f"{BASE_URL}/video/extract-frames"
+    data = {"asset_id": asset_id}
+    response = requests.post(url, json=data, headers=HEADERS)
+    return response.json()
+
+# Usage example
+result = extract_frames("re_657739295220518912")
+print(result)
+```
+
+</CodeGroup>
+
+### Request Body
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| asset_id | string | Yes | The video asset ID to extract frames from |
+
+### Response
+
+Returns task information for the frame extraction operation.
+
+<ResponseExample>
+```json Response
+{
+  "code": "0000",
+  "msg": "success",
+  "data": {
+    "task_id": "1e8ae1075e054e8abb58e7598c53cbf1"
+  },
+  "failed": false,
+  "success": true
+}
+```
+
+```json Callback Response
+{
+  "code": "0000",
+  "message": "SUCCESS",
+  "data": {
+    "asset_ch_ids": [
+      "imc_666914042514116608_0",
+      "imc_666914042514116608_1",
+      "imc_666914042514116608_2",
+      "imc_666914042514116608_3",
+      "imc_666914042514116608_4",
+      "imc_666914042514116608_5",
+      "imc_666914042514116608_6",
+      "imc_666914042514116608_7",
+      "imc_666914042514116608_8",
+      "imc_666914042514116608_9",
+      "imc_666914042514116608_10",
+      "imc_666914042514116608_11",
+      "imc_666914042514116608_12",
+      "imc_666914042514116608_13",
+      "imc_666914042514116608_14",
+      "imc_666914042514116608_15",
+      "imc_666914042514116608_16",
+      "imc_666914042514116608_17",
+      "imc_666914042514116608_18",
+      "imc_666914042514116608_19",
+      "imc_666914042514116608_20",
+      "imc_666914042514116608_21",
+      "imc_666914042514116608_22",
+      "imc_666914042514116608_23",
+      "imc_666914042514116608_24",
+      "imc_666914042514116608_25",
+      "imc_666914042514116608_26",
+      "imc_666914042514116608_27",
+      "imc_666914042514116608_28"
+    ],
+    "asset_id": "im_666914042514116608"
+  },
+  "task_id": "90b7eaf351824f3ba88229eaf2bf7c3d"
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code indicating the result status |
+| msg | string | Response message describing the operation result |
+| data | object | Response data object containing task information |
+| data.task_id | string | Unique identifier of the frame extraction task |
+| success | boolean | Indicates whether the operation was successful |
+| failed | boolean | Indicates whether the operation failed |
+
+### Callback Response Parameters
+
+When the frame extraction is complete, a callback will be sent to your configured webhook URL.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code ("0000" indicates success) |
+| message | string | Status message (e.g., "SUCCESS") |
+| data | object | Response data object containing the extracted frame information |
+| data.asset_ch_ids | array | Array of asset IDs for each extracted frame |
+| data.asset_id | string | The parent asset ID (image collection) containing all extracted frames |
+| task_id | string | The task ID associated with this frame extraction request |
+
+### Understanding the Callback Response
+
+The callback response contains an array of frame asset IDs and a parent asset ID that represents the collection of all extracted frames.
+
+**Response Structure:**
+```
+callback_response
+├── code: "0000"
+├── message: "SUCCESS"
+├── data
+│   ├── asset_ch_ids: [array of frame asset IDs]
+│   │   └── [
+│   │       "imc_666914042514116608_0",
+│   │       "imc_666914042514116608_1",
+│   │       "imc_666914042514116608_2",
+│   │       ...
+│   │     ]
+│   └── asset_id: "im_666914042514116608"
+└── task_id: "90b7eaf351824f3ba88229eaf2bf7c3d"
+```
+
+**How to access the data:**
+- All extracted frame IDs: `callback_response.data.asset_ch_ids`
+- Number of frames extracted: `callback_response.data.asset_ch_ids.length`
+- First frame ID: `callback_response.data.asset_ch_ids[0]`
+- Parent asset ID (collection): `callback_response.data.asset_id`
+- Task ID: `callback_response.task_id`
+
+**Frame Asset ID Format:**
+Each frame asset ID follows the pattern `imc_<parent_id>_<frame_index>`, where:
+- `imc_` is the prefix for image collection items
+- `<parent_id>` is the numerical portion of the parent asset ID
+- `<frame_index>` is the sequential frame number (0-indexed)
+
+### Notes
+
+- Frame extraction is processed asynchronously
+- Returns a task_id that can be used to track the extraction progress
+- Each extracted frame is assigned a unique asset ID that can be used to download or process the frame
+- The parent `asset_id` represents the image collection containing all frames
+- Suitable for thumbnail generation and video analysis

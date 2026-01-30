@@ -1,0 +1,76 @@
+---
+openapi: POST /upload
+title: Upload File
+description: "Store new memories from conversations and interactions."
+---
+
+This endpoint allows you to upload a file to the server.
+
+<Note>
+**Pricing:**
+- API calls are free
+- Storage fee: \$0.001/1GB per day
+</Note>
+
+### Code Example
+
+<CodeGroup>
+
+
+
+```python Python
+import requests
+
+BASE_URL = "https://mavi-backend.memories.ai/serve/api/v2"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}"
+}
+
+def upload(file_path):
+    url = f"{BASE_URL}/upload"
+    files = {"file": open(file_path, "rb")}
+    response = requests.post(url, headers=HEADERS, files=files)
+    return response.json()
+
+# Usage example
+result = upload("video.mp4")
+print(result)
+```
+
+</CodeGroup>
+
+### Request Body
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| file | file | Yes | The file to upload (supports various file formats) |
+
+### Response
+
+Return the resource information after the upload is successful.
+
+<ResponseExample>
+```json
+{
+  "code": "0000",
+  "msg": "success",
+  "data": {
+    "asset_id": "re_660727003963174912"
+  },
+  "success": true,
+  "failed": false
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code indicating the result status |
+| msg | string | Response message describing the operation result |
+| data | object | Response data object containing the uploaded asset information |
+| data.asset_id | string | Unique identifier of the uploaded asset |
+| success | boolean | Indicates whether the operation was successful |
+| failed | boolean | Indicates whether the operation failed |

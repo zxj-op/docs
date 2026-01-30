@@ -1,0 +1,98 @@
+---
+openapi: DELETE /{asset_id}
+title: Delete Asset
+description: "Delete an asset by its ID"
+---
+
+This endpoint allows you to permanently delete an asset from the system.
+
+### Code Examples
+
+<CodeGroup>
+
+```javascript fetch
+const assetId = "re_657739295220518912";
+
+const response = await fetch(`/${assetId}`, {
+  method: 'DELETE',
+  headers: {
+    'Authorization': 'sk-mai-this_a_test_string_please_use_your_generated_key_during_testing'
+  }
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```javascript axios
+import axios from 'axios';
+
+const assetId = "re_657739295220518912";
+
+const response = await axios.delete(`/${assetId}`, {
+  headers: {
+    'Authorization': 'sk-mai-this_a_test_string_please_use_your_generated_key_during_testing'
+  }
+});
+
+console.log(response.data);
+```
+
+```python Python
+import requests
+
+BASE_URL = "https://mavi-backend.memories.ai/serve/api/v2"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}"
+}
+
+def delete_asset(asset_id):
+    url = f"{BASE_URL}/{asset_id}"
+    response = requests.delete(url, headers=HEADERS)
+    return response.json()
+
+# Usage example
+result = delete_asset("re_657739295220518912")
+print(result)
+```
+
+</CodeGroup>
+
+### Path Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| asset_id | string | Yes | The unique identifier of the asset to delete (e.g., "re_657739295220518912") |
+
+### Response
+
+Returns a confirmation of the deletion.
+
+<ResponseExample>
+```json
+{
+  "code": "0000",
+  "msg": "success",
+  "data": null,
+  "success": true,
+  "failed": false
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code indicating the result status |
+| msg | string | Response message describing the operation result |
+| data | null | Response data object (null for delete operations) |
+| success | boolean | Indicates whether the operation was successful |
+| failed | boolean | Indicates whether the operation failed |
+
+### Notes
+
+- This operation is **irreversible**
+- All associated data will be permanently removed
+- Returns error if asset ID doesn't exist

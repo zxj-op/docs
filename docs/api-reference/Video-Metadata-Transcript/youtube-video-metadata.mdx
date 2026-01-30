@@ -1,0 +1,152 @@
+---
+openapi: POST /youtube/video/metadata
+title: YouTube Video Metadata
+description: "Get YouTube video metadata."
+---
+
+This endpoint allows you to retrieve metadata for a YouTube video.
+
+<Note>
+**Pricing:**
+- **rapid** channel: \$0.01 per video
+- **memories.ai** channel: \$0.01 per video
+- **apify** channel: Charged at Apify's actual cost (higher and variable pricing)
+</Note>
+
+### Code Example
+
+<CodeGroup>
+
+
+
+```python Python
+import requests
+
+BASE_URL = "https://mavi-backend.memories.ai/serve/api/v2"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}"
+}
+
+def youtube_video_metadata(video_url: str, channel: str):
+    url = f"{BASE_URL}/youtube/video/metadata"
+    data = {"video_url": video_url, "channel": channel}
+    resp = requests.post(url, headers=HEADERS, json=data)
+    return resp.json()
+
+# Usage example
+result = youtube_video_metadata("https://www.youtube.com/watch?v=Y2y4OpzKIK4", "apify")
+print(result)
+```
+
+</CodeGroup>
+
+### Request Body
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| video_url | string | Yes | The YouTube video URL |
+| channel | string | Yes | The channel name. Supported values: `apify`, `rapid`, `memories.ai` |
+
+### Response
+
+Returns the video metadata information.
+
+<ResponseExample>
+```json
+{
+  "code": "0000",
+  "msg": "success",
+  "data": [
+    {
+      "original_url": "https://www.youtube.com/watch?v=Y2y4OpzKIK4",
+      "requested_resolution": "720p",
+      "title": "Close Encounter with a Siamese Crocodile | Saving Planet Earth: Crocodiles | BBC Earth",
+      "channel": "BBC Earth",
+      "duration": "2m 39s",
+      "provided_resolution": "360p",
+      "thumbnail": "https://i.ytimg.com/vi/Y2y4OpzKIK4/maxresdefault.jpg",
+      "downloadable_video_link": "https://rr8---sn-bvvbaxivnuxq5uu-vgql.googlevideo.com/videoplayback?...",
+      "downloadable_audio_link": "https://rr8---sn-bvvbaxivnuxq5uu-vgql.googlevideo.com/videoplayback?...",
+      "merged_downloadable_link": "https://rr8---sn-bvvbaxivnuxq5uu-vgql.googlevideo.com/videoplayback?...",
+      "view_count": "48.4K",
+      "categories": ["Pets & Animals"],
+      "description": "Radio DJ Edith Bowman has a close encounter with a young crocodile...",
+      "availability": "public",
+      "live_status": "not_live",
+      "channel_subscribers": "14.2M",
+      "video_filesize": "8.50MB",
+      "audio_filesize": "950.39KB",
+      "additional_metadata": {
+        "view_count": "48.4K",
+        "like_count": "223",
+        "comment_count": "7",
+        "video_type": "long",
+        "hashtags": [],
+        "keywords": ["Close encounter with a Siamese Crocodile", "saving siamese crocodile", ...],
+        "categories": ["Pets & Animals"],
+        "language": "en",
+        "channel_name": "BBC Earth",
+        "channel_id": "UCwmZiChSryoWQCZMIQezgTg",
+        "channel_url": "https://www.youtube.com/channel/UCwmZiChSryoWQCZMIQezgTg",
+        "channel_followers": "14.2M",
+        "uploader_id": "@bbcearth",
+        "uploader_url": "https://www.youtube.com/@bbcearth",
+        "upload_date": "2009-08-29",
+        "video_format": {
+          "ext": "mp4",
+          "format_note": "360p",
+          "height": 360,
+          "width": 636,
+          "fps": 25,
+          "vcodec": "avc1.4d401e",
+          "acodec": "none",
+          "filesize": "8.50MB"
+        },
+        "audio_format": {
+          "ext": "m4a",
+          "format_note": "low",
+          "acodec": "mp4a.40.5",
+          "abr": 48.82,
+          "filesize": "950.39KB"
+        },
+        "source_platform": "youtube",
+        "webpage_url": "https://www.youtube.com/watch?v=Y2y4OpzKIK4"
+      }
+    }
+  ],
+  "failed": false,
+  "success": true
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code indicating the result status |
+| msg | string | Response message describing the operation result |
+| data | array[object] | Array of video metadata objects |
+| data[].original_url | string | The original YouTube video URL |
+| data[].requested_resolution | string | The requested video resolution (e.g., "720p") |
+| data[].title | string | Video title |
+| data[].channel | string | YouTube channel name |
+| data[].duration | string | Video duration in human-readable format (e.g., "2m 39s") |
+| data[].provided_resolution | string | The actual video resolution provided |
+| data[].thumbnail | string | Thumbnail image URL |
+| data[].downloadable_video_link | string | Direct download link for video file |
+| data[].downloadable_audio_link | string | Direct download link for audio file |
+| data[].merged_downloadable_link | string | Merged video and audio download link |
+| data[].view_count | string | Number of views |
+| data[].categories | array[string] | Video categories |
+| data[].description | string | Video description |
+| data[].availability | string | Video availability status |
+| data[].live_status | string | Live streaming status |
+| data[].channel_subscribers | string | Number of channel subscribers |
+| data[].video_filesize | string | Video file size |
+| data[].audio_filesize | string | Audio file size |
+| data[].additional_metadata | object | Additional metadata including format details, keywords, etc. |
+| success | boolean | Indicates whether the operation was successful |
+| failed | boolean | Indicates whether the operation failed |
+

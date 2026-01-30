@@ -1,0 +1,213 @@
+---
+title: Upload File Using Signed URL
+description: "Upload file directly to storage using pre-signed URL"
+---
+
+This is a client-side method to upload files using the signed URL obtained from the `/upload/signed-url` endpoint.
+
+<Note>
+**Pricing:**
+- API calls are free
+- Storage fee: \$0.001/1GB per day
+</Note>
+
+<Tip>
+**Quick Start**: Use the "Complete Example" section below to get a signed URL and upload a file in one go. Just replace the file path and run the code!
+</Tip>
+
+### Workflow
+
+1. Get a signed URL from `/upload/signed-url`
+2. Use the signed URL to upload your file directly to storage
+
+### Complete Example (Ready to Test)
+
+Here's a complete example that shows how to get a signed URL and use it for upload:
+
+<CodeGroup>
+
+```python Python
+import requests
+
+BASE_URL = "https://mavi-backend.memories.ai/serve/api/v2"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}"
+}
+
+# Step 1: Get signed URL from /upload/signed-url
+def get_signed_url(original_filename: str) -> str:
+    """Get a signed URL for file upload"""
+    url = f"{BASE_URL}/upload/signed-url"
+    data = {"original_filename": original_filename}
+    response = requests.post(url, json=data, headers=HEADERS)
+    result = response.json()
+    print(f"Signed URL response: {result}")
+    return result['data']['signed_url']
+
+# Step 2: Upload file using the signed URL
+def upload_by_signed_url(signed_url: str, file_path: str) -> tuple[int, str]:
+    """
+    Upload file using signed URL
+    
+    Args:
+        signed_url: The signed URL obtained from /upload/signed-url
+        file_path: Path to the local file to upload
+    
+    Returns:
+        Tuple of (status_code, response_text)
+    """
+    with open(file_path, "rb") as f:
+        files = {"file": (file_path, f)}
+        resp = requests.post(signed_url, files=files)
+    
+    return resp.status_code, resp.text
+
+# Complete workflow - ready to test
+if __name__ == "__main__":
+    # Replace with your actual file path
+    file_path = "path/to/your/video.mp4"
+    original_filename = "video.mp4"
+    
+    # Get signed URL
+    print("Step 1: Getting signed URL...")
+    signed_url = get_signed_url(original_filename)
+    print(f"Signed URL: {signed_url[:100]}...")
+    
+    # Upload file
+    print("\nStep 2: Uploading file...")
+    status, response = upload_by_signed_url(signed_url, file_path)
+    print(f"Upload status: {status}")
+    print(f"Upload response: {response}")
+```
+
+```bash cURL
+# Step 1: Get signed URL
+curl --request POST \
+  --url https://mavi-backend.memories.ai/serve/api/v2/upload/signed-url \
+  --header 'Authorization: sk-mai-this_a_test_string_please_use_your_generated_key_during_testing' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "original_filename": "video.mp4"
+  }'
+
+# Response will contain signed_url in data.signed_url
+# Step 2: Use the signed_url to upload your file
+# Replace <SIGNED_URL> with the actual signed_url from Step 1
+curl --request POST \
+  --url "<SIGNED_URL>" \
+  --form 'file=@path/to/your/video.mp4'
+```
+
+</CodeGroup>
+
+### Code Examples (Using Existing Signed URL)
+
+<CodeGroup>
+
+```javascript fetch
+// Assuming you have the signed URL
+const signedUrl = "https://storage.example.com/upload?signature=...";
+const fileInput = document.getElementById('fileInput');
+const file = fileInput.files[0];
+
+const formData = new FormData();
+formData.append('file', file);
+
+const response = await fetch(signedUrl, {
+  method: 'POST',
+  body: formData
+});
+
+if (response.ok) {
+  console.log('Upload successful');
+} else {
+  console.error('Upload failed:', response.status);
+}
+```
+
+```javascript axios
+import axios from 'axios';
+
+async function uploadBySignedUrl(signedUrl, file) {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    const response = await axios.post(signedUrl, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response.status;
+  } catch (error) {
+    console.error('Upload error:', error);
+    throw error;
+  }
+}
+
+// Usage
+const signedUrl = "https://storage.example.com/upload?signature=...";
+const status = await uploadBySignedUrl(signedUrl, file);
+console.log('Upload status:', status);
+```
+
+```python Python
+import requests
+
+def upload_by_signed_url(signed_url_info, file_path):
+    """
+    Upload file using signed URL
+
+    Args:
+        signed_url_info: String containing the signed URL
+        file_path: Path to the local file to upload
+
+    Returns:
+        Tuple of (status_code, response_text)
+    """
+    upload_url = signed_url_info
+
+    with open(file_path, "rb") as f:
+        files = {"file": (file_path, f)}
+        resp = requests.post(upload_url, files=files)
+
+    return resp.status_code, resp.text
+
+# Usage example
+signed_url = "https://storage.example.com/upload?signature=..."
+status, response = upload_by_signed_url(signed_url, "path/to/video.mp4")
+print(f"Upload status: {status}")
+```
+
+</CodeGroup>
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| signed_url | string | Yes | The pre-signed URL obtained from `/upload/signed-url` |
+| file | File/Blob | Yes | The file to upload |
+
+### Response
+
+Returns HTTP status code and response text from the storage service.
+
+**Success Response (200):**
+```
+Status: 200 OK
+File uploaded successfully
+```
+
+**Error Response (4xx/5xx):**
+```
+Status: 400/500
+Error message from storage service
+```
+
+### Notes
+
+- This upload happens directly to cloud storage (e.g.,  GCS)
+- No authentication headers needed - the URL contains the signature
+- Signed URLs typically expire after a certain time (e.g., 24 hour)
+- Make sure to handle upload before URL expiration

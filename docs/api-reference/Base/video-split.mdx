@@ -1,0 +1,218 @@
+---
+openapi: POST /video/split
+title: Split Video
+description: "Split a video into multiple segments"
+---
+
+This endpoint splits a video asset into multiple parts based on specified criteria.
+
+<Note>
+**Pricing:**
+- \$0.02/second of video
+</Note>
+
+### Code Examples
+
+<CodeGroup>
+
+```javascript fetch
+const response = await fetch('/video/split', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'sk-mai-this_a_test_string_please_use_your_generated_key_during_testing'
+  },
+  body: JSON.stringify({
+    asset_id: 're_657739295220518912'
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```javascript axios
+import axios from 'axios';
+
+const response = await axios.post('/video/split', {
+  asset_id: 're_657739295220518912'
+}, {
+  headers: {
+    'Authorization': 'sk-mai-this_a_test_string_please_use_your_generated_key_during_testing'
+  }
+});
+
+console.log(response.data);
+```
+
+```python Python
+import requests
+
+BASE_URL = "https://mavi-backend.memories.ai/serve/api/v2"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}"
+}
+
+def video_split(asset_id):
+    url = f"{BASE_URL}/video/split"
+    data = {"asset_id": asset_id}
+    response = requests.post(url, json=data, headers=HEADERS)
+    return response.json()
+
+# Usage example
+result = video_split("re_657739295220518912")
+print(result)
+```
+
+</CodeGroup>
+
+### Request Body
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| asset_id | string | Yes | The video asset ID to split |
+
+### Response
+
+Returns task information for the video split operation.
+
+<ResponseExample>
+```json Response
+{
+  "code": "0000",
+  "msg": "success",
+  "data": {
+    "task_id": "f432bc84bfd141d1b05c1d24af0abe6a"
+  },
+  "failed": false,
+  "success": true
+}
+```
+
+```json Callback Response
+{
+  "code": "0000",
+  "message": "SUCCESS",
+  "data": {
+    "splits": [
+      {
+        "asset_id": "re_666934884455964673",
+        "create_time": "1768468867505",
+        "extension": "mp4",
+        "file_size": 49164198,
+        "modify_time": "1768468867505",
+        "original_filename": "segment_video_79e54dd3_0000",
+        "upload_status": "SUCCESS"
+      },
+      {
+        "asset_id": "re_666934888084037633",
+        "create_time": "1768468868370",
+        "extension": "mp4",
+        "file_size": 56074135,
+        "modify_time": "1768468868370",
+        "original_filename": "segment_video_79e54dd3_0001",
+        "upload_status": "SUCCESS"
+      },
+      {
+        "asset_id": "re_666934893062676481",
+        "create_time": "1768468869557",
+        "extension": "mp4",
+        "file_size": 28377039,
+        "modify_time": "1768468869557",
+        "original_filename": "segment_video_79e54dd3_0002",
+        "upload_status": "SUCCESS"
+      }
+    ]
+  },
+  "task_id": "41cf434821fd42368232b3d9ade53d2c"
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code indicating the result status |
+| msg | string | Response message describing the operation result |
+| data | object | Response data object containing task information |
+| data.task_id | string | Unique identifier of the video split task |
+| success | boolean | Indicates whether the operation was successful |
+| failed | boolean | Indicates whether the operation failed |
+
+### Callback Response Parameters
+
+When the video splitting is complete, a callback will be sent to your configured webhook URL.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code ("0000" indicates success) |
+| message | string | Status message (e.g., "SUCCESS") |
+| data | object | Response data object containing the split video segments |
+| data.splits | array | Array of video segment objects created from the original video |
+| data.splits[].asset_id | string | Unique asset ID for this video segment |
+| data.splits[].create_time | string | Creation timestamp in milliseconds |
+| data.splits[].extension | string | File extension of the video segment (e.g., "mp4") |
+| data.splits[].file_size | integer | Size of the video segment in bytes |
+| data.splits[].modify_time | string | Last modification timestamp in milliseconds |
+| data.splits[].original_filename | string | Generated filename for the segment (format: segment_video_{id}_{index}) |
+| data.splits[].upload_status | string | Upload status of the segment (e.g., "SUCCESS") |
+| task_id | string | The task ID associated with this video split request |
+
+### Understanding the Callback Response
+
+The callback response contains an array of video segments, each representing a portion of the original video with its own asset ID and metadata.
+
+**Response Structure:**
+```
+callback_response
+├── code: "0000"
+├── message: "SUCCESS"
+├── data
+│   └── splits: [array of video segments]
+│       └── [
+│           {
+│             asset_id: "re_666934884455964673",
+│             create_time: "1768468867505",
+│             extension: "mp4",
+│             file_size: 49164198,
+│             modify_time: "1768468867505",
+│             original_filename: "segment_video_79e54dd3_0000",
+│             upload_status: "SUCCESS"
+│           },
+│           {
+│             asset_id: "re_666934888084037633",
+│             create_time: "1768468868370",
+│             extension: "mp4",
+│             file_size: 56074135,
+│             modify_time: "1768468868370",
+│             original_filename: "segment_video_79e54dd3_0001",
+│             upload_status: "SUCCESS"
+│           },
+│           ...
+│         ]
+└── task_id: "41cf434821fd42368232b3d9ade53d2c"
+```
+
+**How to access the data:**
+- All video segments: `callback_response.data.splits`
+- Number of segments: `callback_response.data.splits.length`
+- First segment asset ID: `callback_response.data.splits[0].asset_id`
+- First segment file size: `callback_response.data.splits[0].file_size`
+- First segment filename: `callback_response.data.splits[0].original_filename`
+- Task ID: `callback_response.task_id`
+
+**Segment Filename Format:**
+Each segment filename follows the pattern `segment_video_{id}_{index}`, where:
+- `segment_video_` is the prefix for split video segments
+- `{id}` is a unique identifier for this split operation
+- `{index}` is the sequential segment number (0-indexed)
+
+### Notes
+
+- Video splitting is processed asynchronously
+- Returns a task_id that can be used to track the split progress
+- Use the task_id to query the status and results of video splitting
+- Original video remains unchanged
+- Useful for creating shorter clips from long videos

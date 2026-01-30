@@ -1,0 +1,192 @@
+---
+openapi: POST /embeddings/image
+title: Generate Image Embedding
+description: "Generate vector embeddings for images using multimodal models"
+---
+
+This endpoint generates vector embeddings for images. You can either upload an image file directly or reference an existing asset by its ID.
+
+<Note>
+**Pricing:**
+- \$0.0001 per image
+</Note>
+
+### Code Examples
+
+<CodeGroup>
+
+```javascript fetch (File Upload)
+const formData = new FormData();
+formData.append('file', imageFile);
+formData.append('model', 'multimodalembedding@001');
+
+const response = await fetch('/embeddings/image', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'sk-mai-this_a_test_string_please_use_your_generated_key_during_testing'
+  },
+  body: formData
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```javascript fetch (Asset ID)
+const response = await fetch('/embeddings/image', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'sk-mai-this_a_test_string_please_use_your_generated_key_during_testing'
+  },
+  body: JSON.stringify({
+    asset_id: 'imc_657766047105290240_15',
+    model: 'multimodalembedding@001'
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```javascript axios (File Upload)
+import axios from 'axios';
+
+const formData = new FormData();
+formData.append('file', imageFile);
+formData.append('model', 'multimodalembedding@001');
+
+const response = await axios.post('/embeddings/image', formData, {
+  headers: {
+    'Authorization': 'sk-mai-this_a_test_string_please_use_your_generated_key_during_testing'
+  }
+});
+
+console.log(response.data);
+```
+
+```javascript axios (Asset ID)
+import axios from 'axios';
+
+const response = await axios.post('/embeddings/image', {
+  asset_id: 'imc_657766047105290240_15',
+  model: 'multimodalembedding@001'
+}, {
+  headers: {
+    'Authorization': 'sk-mai-this_a_test_string_please_use_your_generated_key_during_testing'
+  }
+});
+
+console.log(response.data);
+```
+
+```python Python (File Upload)
+import requests
+
+BASE_URL = "https://mavi-backend.memories.ai/serve/api/v2"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}"
+}
+
+def image_embedding_from_file(file_path, model="multimodalembedding@001"):
+    url = f"{BASE_URL}/embeddings/image"
+    data = {"model": model}
+    files = {"file": open(file_path, "rb")}
+    response = requests.post(url, headers=HEADERS, data=data, files=files)
+    return response.json()
+
+# Usage example
+result = image_embedding_from_file("path/to/image.png", model="multimodalembedding@001")
+print(result)
+```
+
+```python Python (Asset ID)
+import requests
+
+BASE_URL = "https://mavi-backend.memories.ai/serve/api/v2"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}"
+}
+
+def image_embedding_from_asset(asset_id, model="multimodalembedding@001"):
+    url = f"{BASE_URL}/embeddings/image"
+    data = {"asset_id": asset_id, "model": model}
+    response = requests.post(url, headers=HEADERS, json=data)
+    return response.json()
+
+# Usage example
+result = image_embedding_from_asset("imc_657766047105290240_15", model="multimodalembedding@001")
+print(result)
+```
+
+</CodeGroup>
+
+### Request Parameters
+
+This endpoint supports two methods of providing images:
+
+**Method 1: File Upload (multipart/form-data)**
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| file | file | Yes | Image file to upload (JPEG, PNG, GIF, WebP, etc.) |
+| model | string | Yes | Embedding model name |
+
+**Method 2: Asset ID (application/json)**
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| asset_id | string | Yes | Existing image asset ID from a previous upload |
+| model | string | Yes | Embedding model name |
+
+**Supported Models:**
+- `multimodalembedding@001` - Google's multimodal embedding model
+- `mobileclip` - Efficient mobile-optimized CLIP model
+
+### Response
+
+Returns the embedding vector synchronously.
+
+<ResponseExample>
+```json
+{
+  "code": "0000",
+  "msg": "success",
+  "data": {
+    "embedding": [
+      0.0234375,
+      -0.015625,
+      0.0078125,
+      0.0390625,
+      -0.0234375,
+      "... (continues for vector length)"
+    ]
+  },
+  "success": true,
+  "failed": false
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code indicating the result status ("0000" indicates success) |
+| msg | string | Response message describing the operation result |
+| data | object | Response data object containing the embedding |
+| data.embedding | array[number] | Vector embedding array (dimensionality depends on the model) |
+| success | boolean | Indicates whether the operation was successful |
+| failed | boolean | Indicates whether the operation failed |
+
+### Notes
+
+- Image embeddings are returned synchronously in the response
+- Embedding dimensions vary by model (typically 512-1024 dimensions)
+- Supported image formats: JPEG, PNG, GIF, WebP, BMP, TIFF
+- Maximum file size may vary by deployment
+- Use the file upload method for one-time embedding generation
+- Use the asset ID method when you've already uploaded the image via the `/upload` endpoint
+- Embeddings can be used for image similarity search, classification, and clustering

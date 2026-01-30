@@ -1,0 +1,87 @@
+---
+openapi: POST /twitter/video/transcript
+title: Twitter Video Transcript
+description: "Get Twitter video transcript."
+---
+
+This endpoint allows you to retrieve transcript for a Twitter video.
+
+<Note>
+**Pricing:**
+- **rapid** channel: \$0.01 per video
+- **memories.ai** channel: \$0.01 per video
+- **apify** channel: Charged at Apify's actual cost (higher and variable pricing)
+</Note>
+
+### Code Example
+
+<CodeGroup>
+
+
+
+```python Python
+import requests
+
+BASE_URL = "https://mavi-backend.memories.ai/serve/api/v2"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}"
+}
+
+def twitter_video_transcript(video_url: str, channel: str):
+    url = f"{BASE_URL}/twitter/video/transcript"
+    data = {"video_url": video_url, "channel": channel}
+    resp = requests.post(url, headers=HEADERS, json=data)
+    return resp.json()
+
+# Usage example
+result = twitter_video_transcript("https://x.com/NBCOlympics/status/1989901761650323606", "apify")
+print(result)
+```
+
+</CodeGroup>
+
+### Request Body
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| video_url | string | Yes | The Twitter video URL |
+| channel | string | Yes | The channel name. Supported values: `apify`, `rapid`, `memories.ai` |
+
+### Response
+
+Returns the video transcript in multiple formats (plain text and WEBVTT).
+
+<ResponseExample>
+```json
+{
+  "code": "0000",
+  "msg": "success",
+  "data": [
+    {
+      "tweetId": "1989901761650323606",
+      "transcript_text": ">> 159.97 SO HE GOES. INTO THE LEAD AND THIS PLAY. LEAD AND THIS PLAY. >> HIS REACTION. >> HIS REACTION. >> YES. >> YES. >> FIRST PLACE ARE.",
+      "json_text": [],
+      "webvtt_text": "WEBVTT\n\n00:00:00.000 --> 00:00:05.696\n>> 159.97 SO HE GOES. INTO THE \nLEAD AND THIS PLAY.\n\n00:00:05.707 --> 00:00:07.974\nLEAD AND THIS PLAY. \n>> HIS REACTION.\n\n00:00:07.975 --> 00:00:08.208\n>> HIS REACTION. \n>> YES.\n\n00:00:08.242 --> 00:00:18.218\n>> YES. \n>> FIRST PLACE ARE.\n"
+    }
+  ],
+  "failed": false,
+  "success": true
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code indicating the result status |
+| msg | string | Response message describing the operation result |
+| data | array[object] | Array containing transcript data objects |
+| data[].tweetId | string | Twitter/X tweet ID |
+| data[].transcript_text | string | Plain text transcript without timing information |
+| data[].json_text | array | JSON format transcript (may be empty array) |
+| data[].webvtt_text | string | Transcript in WEBVTT format with timing information |
+| success | boolean | Indicates whether the operation was successful |
+| failed | boolean | Indicates whether the operation failed |
+

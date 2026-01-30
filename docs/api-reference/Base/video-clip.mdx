@@ -1,0 +1,219 @@
+---
+openapi: POST /video/clip
+title: Clip Video
+description: "Create a clip from a video asset"
+---
+
+This endpoint creates a trimmed clip from a video by specifying start and end timestamps.
+
+<Note>
+**Pricing:**
+- \$0.02/second of video
+</Note>
+
+
+### Code Examples
+
+<CodeGroup>
+
+```javascript fetch
+const response = await fetch('/video/clip', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'sk-mai-this_a_test_string_please_use_your_generated_key_during_testing'
+  },
+  body: JSON.stringify({
+    asset_id: 're_657739295220518912'
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```javascript axios
+import axios from 'axios';
+
+const response = await axios.post('/video/clip', {
+  asset_id: 're_657739295220518912'
+}, {
+  headers: {
+    'Authorization': 'sk-mai-this_a_test_string_please_use_your_generated_key_during_testing'
+  }
+});
+
+console.log(response.data);
+```
+
+```python Python
+import requests
+
+BASE_URL = "https://mavi-backend.memories.ai/serve/api/v2"
+API_KEY = "sk-mai-this_a_test_string_please_use_your_generated_key_during_testing"
+HEADERS = {
+    "Authorization": f"{API_KEY}"
+}
+
+def video_clip(asset_id):
+    url = f"{BASE_URL}/video/clip"
+    data = {"asset_id": asset_id}
+    response = requests.post(url, json=data, headers=HEADERS)
+    return response.json()
+
+# Usage example
+result = video_clip("re_657739295220518912")
+print(result)
+```
+
+</CodeGroup>
+
+### Request Body
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| asset_id | string | Yes | The video asset ID to create a clip from |
+
+### Response
+
+Returns task information for the video clip creation operation.
+
+<ResponseExample>
+```json Response
+{
+  "code": "0000",
+  "msg": "success",
+  "data": {
+    "task_id": "f432bc84bfd141d1b05c1d24af0abe6a"
+  },
+  "failed": false,
+  "success": true
+}
+```
+
+```json Callback Response
+{
+  "code": "0000",
+  "message": "SUCCESS",
+  "data": {
+    "data": {
+      "data": [
+        {
+          "end": 46,
+          "start": 0
+        },
+        {
+          "end": 143,
+          "start": 47
+        },
+        {
+          "end": 214,
+          "start": 144
+        },
+        {
+          "end": 290,
+          "start": 215
+        },
+        {
+          "end": 466,
+          "start": 291
+        },
+        {
+          "end": 518,
+          "start": 467
+        },
+        {
+          "end": 605,
+          "start": 519
+        }
+      ],
+      "exec_time": 7.277834177017212
+    },
+    "msg": "Frame extraction completed successfully",
+    "success": true
+  },
+  "task_id": "a33f84793d0849f78825dc83c3b42671"
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code indicating the result status |
+| msg | string | Response message describing the operation result |
+| data | object | Response data object containing task information |
+| data.task_id | string | Unique identifier of the video clip creation task |
+| success | boolean | Indicates whether the operation was successful |
+| failed | boolean | Indicates whether the operation failed |
+
+### Callback Response Parameters
+
+When the video clipping is complete, a callback will be sent to your configured webhook URL.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| code | string | Response code ("0000" indicates success) |
+| message | string | Status message (e.g., "SUCCESS") |
+| data | object | Response data object containing scene segmentation results |
+| data.data | object | Inner data object containing the clipping information |
+| data.data.data | array | Array of scene segments with frame ranges |
+| data.data.data[].start | integer | Starting frame number of the scene segment |
+| data.data.data[].end | integer | Ending frame number of the scene segment |
+| data.data.exec_time | number | Execution time for the clipping operation in seconds |
+| data.msg | string | Detailed message about the clipping result |
+| data.success | boolean | Indicates whether the clipping was successful |
+| task_id | string | The task ID associated with this clipping request |
+
+### Understanding the Callback Response
+
+The callback response contains an array of scene segments identified in the video, each with start and end frame numbers.
+
+**Response Structure:**
+```
+callback_response
+├── code: "0000"
+├── message: "SUCCESS"
+├── data
+│   ├── data
+│   │   ├── data: [array of scene segments]
+│   │   │   └── [
+│   │   │       {
+│   │   │         start: 0,
+│   │   │         end: 46
+│   │   │       },
+│   │   │       {
+│   │   │         start: 47,
+│   │   │         end: 143
+│   │   │       },
+│   │   │       ...
+│   │   │     ]
+│   │   └── exec_time: 7.277834177017212
+│   ├── msg: "Frame extraction completed successfully"
+│   └── success: true
+└── task_id: "a33f84793d0849f78825dc83c3b42671"
+```
+
+**How to access the data:**
+- Scene segments: `callback_response.data.data.data`
+- Number of scenes detected: `callback_response.data.data.data.length`
+- First scene start frame: `callback_response.data.data.data[0].start`
+- First scene end frame: `callback_response.data.data.data[0].end`
+- Execution time: `callback_response.data.data.exec_time`
+- Success status: `callback_response.data.success`
+- Task ID: `callback_response.task_id`
+
+**Frame Range Format:**
+Each segment represents a continuous scene in the video:
+- `start`: The frame number where the scene begins (inclusive)
+- `end`: The frame number where the scene ends (inclusive)
+- Frame numbers are 0-indexed
+- Scenes are automatically detected based on visual content changes
+
+### Notes
+
+- Video clipping is processed asynchronously
+- Returns a task_id that can be used to track the clip creation progress
+- Use the task_id to query the status and results of clip creation
+- Original video remains unchanged

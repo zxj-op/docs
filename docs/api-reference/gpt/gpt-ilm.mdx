@@ -1,0 +1,242 @@
+---
+openapi: api-reference/gpt/openapi.json POST /iu/chat/completions 
+title: GPT
+description: "Generate chat completions using GPT ILM model with image inputs."
+---
+
+This endpoint allows you to generate chat completions with image inputs using GPT ILM model.
+
+## Supported Models
+
+All models require the `gpt:` prefix when used in the `model` parameter (e.g., `gpt:gpt-4o`).
+
+### GPT-5 Series (Latest)
+
+| Model | Input Price | Output Price |
+|-------|------------|--------------|
+| **gpt-5.2** | \$1.75/1M tokens | \$14/1M tokens |
+| **gpt-5.2-2025-12-11** | \$1.75/1M tokens | \$14/1M tokens |
+| **gpt-5.2-chat-latest** | \$1.75/1M tokens | \$14/1M tokens |
+| **gpt-5.1** | \$1.25/1M tokens | \$10/1M tokens |
+| **gpt-5.1-2025-11-13** | \$1.25/1M tokens | \$10/1M tokens |
+| **gpt-5.1-chat-latest** | \$1.25/1M tokens | \$10/1M tokens |
+| **gpt-5** | \$1.25/1M tokens | \$10/1M tokens |
+| **gpt-5-2025-08-07** | \$1.25/1M tokens | \$10/1M tokens |
+| **gpt-5-chat-latest** | \$1.25/1M tokens | \$10/1M tokens |
+| **gpt-5-mini** | \$0.25/1M tokens | \$2/1M tokens |
+| **gpt-5-mini-2025-08-07** | \$0.25/1M tokens | \$2/1M tokens |
+| **gpt-5-nano** | \$0.05/1M tokens | \$0.4/1M tokens |
+| **gpt-5-nano-2025-08-07** | \$0.05/1M tokens | \$0.4/1M tokens |
+
+### O-Series (Reasoning Models)
+
+| Model | Input Price | Output Price |
+|-------|------------|--------------|
+| **o1** | \$15/1M tokens | \$60/1M tokens |
+| **o1-2024-12-17** | \$15/1M tokens | \$60/1M tokens |
+| **o3** | \$2/1M tokens | \$8/1M tokens |
+| **o3-2025-04-16** | \$2/1M tokens | \$8/1M tokens |
+| **o4-mini** | \$1.1/1M tokens | \$4.4/1M tokens |
+| **o4-mini-2025-04-16** | \$1.1/1M tokens | \$4.4/1M tokens |
+
+### GPT-4.1 Series
+
+| Model | Input Price | Output Price |
+|-------|------------|--------------|
+| **gpt-4.1** | \$2/1M tokens | \$8/1M tokens |
+| **gpt-4.1-2025-04-14** | \$2/1M tokens | \$8/1M tokens |
+| **gpt-4.1-mini** | \$0.4/1M tokens | \$1.6/1M tokens |
+| **gpt-4.1-mini-2025-04-14** | \$0.4/1M tokens | \$1.6/1M tokens |
+| **gpt-4.1-nano** | \$0.1/1M tokens | \$0.4/1M tokens |
+| **gpt-4.1-nano-2025-04-14** | \$0.1/1M tokens | \$0.4/1M tokens |
+
+### GPT-4o Series
+
+| Model | Input Price | Output Price |
+|-------|------------|--------------|
+| **gpt-4o** | \$2.5/1M tokens | \$10/1M tokens |
+| **gpt-4o-2024-08-06** | \$2.5/1M tokens | \$10/1M tokens |
+| **gpt-4o-2024-05-13** | \$5/1M tokens | \$15/1M tokens |
+| **chatgpt-4o-latest** | \$5/1M tokens | \$15/1M tokens |
+| **gpt-4o-mini** | \$0.15/1M tokens | \$0.60/1M tokens |
+| **gpt-4o-mini-2024-07-18** | \$0.15/1M tokens | \$0.60/1M tokens |
+
+### GPT-4 Turbo
+
+| Model | Input Price | Output Price |
+|-------|------------|--------------|
+| **gpt-4-turbo** | \$10/1M tokens | \$30/1M tokens |
+| **gpt-4-turbo-2024-04-09** | \$10/1M tokens | \$30/1M tokens |
+
+<Note>
+**Pricing Notes:**
+- All prices are per 1 million tokens
+- GPT-5 series offers the latest capabilities with improved performance
+- O-series models are optimized for complex reasoning tasks
+- GPT-4.1 and GPT-4o provide balanced performance and cost
+- Mini and Nano variants offer cost-effective alternatives
+- Remember to include the `gpt:` prefix: `"model": "gpt:gpt-4o"`
+</Note>
+
+### Request Body
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| model | string | Yes | - | The model to use (e.g., `gpt:gpt-4o`) |
+| messages | array | Yes | - | Array of message objects. Each message contains:<br/>- `role`: Role type, values: `system`, `user`, `assistant`<br/>- `content`: Message content, can be a string or array. Array items can contain:<br/>  - `type`: Content type, `text` or `image_url`<br/>  - `text`: Text content (when type is text)<br/>  - `image_url`: Image object (when type is image_url)<br/>    - `url`: Image URL or base64 encoded image |
+| response_format | object | No | - | Force JSON output format. Contains `type` field with value `json_object` |
+| temperature | number | No | 0 | Controls randomness: 0.0-2.0, 0 = deterministic |
+| max_tokens | integer | No | 1000 | Maximum number of tokens to generate |
+| top_p | number | No | 1.0 | Nucleus sampling: 0.0-1.0, consider tokens with top_p probability mass |
+| frequency_penalty | number | No | 0.0 | Reduces repetition of frequent tokens: -2.0 to 2.0 |
+| presence_penalty | number | No | 0.0 | Increases likelihood of new topics: -2.0 to 2.0 |
+| n | integer | No | 1 | Number of completions to generate |
+| stream | boolean | No | false | Whether to stream the response |
+| stop | string \| array \| null | No | null | Stop sequences. Can be a string, array of strings, or null |
+
+### Code Example
+
+<CodeGroup>
+
+
+
+```python Python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-mai-this_a_test_string_please_use_your_generated_key_during_testing",
+    base_url="https://mavi-backend.memories.ai/serve/api/v2/iu"
+)
+
+def call_my_ilm():
+    resp = client.chat.completions.create(
+        model="gpt:gpt-4o",
+        messages=[
+            {"role": "system", "content": "You are a multimodal assistant. Only output JSON, do not output any extra text."},
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": """
+Please analyze the image and strictly output the following JSON structure (all fields must be present, use null or empty array for missing values):
+
+{
+  "title": string,
+  "summary": string,
+  "objects": [
+    {"name": string, "count": integer, "confidence": number}
+  ],
+  "scene": string,
+  "warnings": [string]
+}
+
+Note:
+- Only output JSON
+- No Markdown
+- No explanation of the process
+"""
+                    },
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": "https://storage.googleapis.com/memories-test-data/gun5.png"  # base64 or url
+                        }
+                    }
+                ]
+            }
+        ],
+        response_format={"type": "json_object"},  # Force JSON output format
+        temperature=0,  # Controls randomness: 0.0-2.0, 0 = deterministic
+        max_tokens=1000,  # Maximum number of tokens to generate
+        top_p=1.0,  # Nucleus sampling: 0.0-1.0, consider tokens with top_p probability mass
+        frequency_penalty=0.0,  # -2.0 to 2.0, reduces repetition of frequent tokens
+        presence_penalty=0.0,  # -2.0 to 2.0, increases likelihood of new topics
+        n=1,  # Number of completions to generate
+        stream=False,  # Whether to stream the response
+        stop=None  # Stop sequences (list of strings)
+    )
+    return resp
+
+# Usage example
+result = call_my_ilm()
+print(result)
+```
+
+</CodeGroup>
+
+### Response
+
+Returns the chat completion response with JSON format.
+
+<ResponseExample>
+```json
+{
+  "id": "chatcmpl-123",
+  "object": "chat.completion",
+  "created": 1677652288,
+  "model": "gpt-4o-2024-08-06",
+  "choices": [{
+    "index": 0,
+    "message": {
+      "role": "assistant",
+      "content": "{\"title\": \"Image Title\", \"summary\": \"Image summary...\", \"objects\": [{\"name\": \"object1\", \"count\": 1, \"confidence\": 0.95}], \"scene\": \"indoor\", \"warnings\": []}",
+      "refusal": null,
+      "annotations": []
+    },
+    "logprobs": null,
+    "finish_reason": "stop"
+  }],
+  "usage": {
+    "prompt_tokens": 447,
+    "completion_tokens": 112,
+    "total_tokens": 559,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "service_tier": "default",
+  "system_fingerprint": "fp_deacdd5f6f"
+}
+```
+</ResponseExample>
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| id | string | Unique identifier for the chat completion |
+| object | string | Object type, always "chat.completion" |
+| created | integer | Unix timestamp of when the completion was created |
+| model | string | The model used for the completion |
+| choices | array | Array of completion choices |
+| choices[].index | integer | Index of the choice in the choices array |
+| choices[].message | object | Message object containing the assistant's response |
+| choices[].message.role | string | Role of the message, always "assistant" |
+| choices[].message.content | string | Content of the message |
+| choices[].message.refusal | string \| null | Refusal message if the request was refused |
+| choices[].message.annotations | array | Annotations for the message |
+| choices[].logprobs | object \| null | Log probability information |
+| choices[].finish_reason | string | Reason why the completion finished |
+| usage | object | Token usage information |
+| usage.prompt_tokens | integer | Number of tokens in the prompt |
+| usage.completion_tokens | integer | Number of tokens in the completion |
+| usage.total_tokens | integer | Total number of tokens used |
+| usage.prompt_tokens_details | object | Detailed prompt token information |
+| usage.prompt_tokens_details.cached_tokens | integer | Number of cached tokens |
+| usage.prompt_tokens_details.audio_tokens | integer | Number of audio tokens |
+| usage.completion_tokens_details | object | Detailed completion token information |
+| usage.completion_tokens_details.reasoning_tokens | integer | Number of reasoning tokens |
+| usage.completion_tokens_details.audio_tokens | integer | Number of audio tokens |
+| usage.completion_tokens_details.accepted_prediction_tokens | integer | Number of accepted prediction tokens |
+| usage.completion_tokens_details.rejected_prediction_tokens | integer | Number of rejected prediction tokens |
+| service_tier | string | The service tier used for the request |
+| system_fingerprint | string | System fingerprint for the model version |
+
