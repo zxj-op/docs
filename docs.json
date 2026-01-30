@@ -60,18 +60,18 @@
             "group": "Video Metadata & Transcript",
             "icon": "video",
             "pages": [
-              "api-reference/video-Metadata-Transcript/youtube-video-metadata",
-              "api-reference/video-Metadata-Transcript/youtube-video-transcript",
-              "api-reference/video-Metadata-Transcript/youtube-video-mai-transcript",
-              "api-reference/video-Metadata-Transcript/instagram-video-metadata",
-              "api-reference/video-Metadata-Transcript/instagram-video-transcript",
-              "api-reference/video-Metadata-Transcript/instagram-video-mai-transcript",
-              "api-reference/video-Metadata-Transcript/tiktok-video-metadata",
-              "api-reference/video-Metadata-Transcript/tiktok-video-transcript",
-              "api-reference/video-Metadata-Transcript/tiktok-video-mai-transcript",
-              "api-reference/video-Metadata-Transcript/twitter-video-metadata",
-              "api-reference/video-Metadata-Transcript/twitter-video-transcript",
-              "api-reference/video-Metadata-Transcript/twitter-video-mai-transcript"
+              "api-reference/video-metadata-transcript/youtube-video-metadata",
+              "api-reference/video-metadata-transcript/youtube-video-transcript",
+              "api-reference/video-metadata-transcript/youtube-video-mai-transcript",
+              "api-reference/video-metadata-transcript/instagram-video-metadata",
+              "api-reference/video-metadata-transcript/instagram-video-transcript",
+              "api-reference/video-metadata-transcript/instagram-video-mai-transcript",
+              "api-reference/video-metadata-transcript/tiktok-video-metadata",
+              "api-reference/video-metadata-transcript/tiktok-video-transcript",
+              "api-reference/video-metadata-transcript/tiktok-video-mai-transcript",
+              "api-reference/video-metadata-transcript/twitter-video-metadata",
+              "api-reference/video-metadata-transcript/twitter-video-transcript",
+              "api-reference/video-metadata-transcript/twitter-video-mai-transcript"
             ]
           },
           {
@@ -129,8 +129,8 @@
     ]
   },
   "logo": {
-    "light": "/docs/logo/light.svg",
-    "dark": "/docs/logo/dark.svg"
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
   },
   "navbar": {
     "links": [
